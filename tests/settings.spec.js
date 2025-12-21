@@ -13,18 +13,18 @@ test.describe('Settings & Fonts', () => {
         const initialFont = await page.locator('#content').evaluate((el) => getComputedStyle(el).fontFamily);
         expect(initialFont).toContain('Source Code Pro');
 
-        // Change to JetBrains Mono
-        await page.locator('#fontFamily').selectOption("'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace");
+        // Change to Roboto Mono
+        await page.locator('#fontFamily').selectOption("'Roboto Mono', monospace");
 
         // Verify immediate change
         const newFont = await page.locator('#content').evaluate((el) => getComputedStyle(el).fontFamily);
-        expect(newFont).toContain('JetBrains Mono');
+        expect(newFont).toContain('Roboto Mono');
 
         // Reload and verify persistence
         await page.reload();
-        await expect(page.locator('#fontFamily')).toHaveValue("'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace");
+        await expect(page.locator('#fontFamily')).toHaveValue("'Roboto Mono', monospace");
         const persistedFont = await page.locator('#content').evaluate((el) => getComputedStyle(el).fontFamily);
-        expect(persistedFont).toContain('JetBrains Mono');
+        expect(persistedFont).toContain('Roboto Mono');
     });
 
     test('adjusts font size with A+/A- buttons', async ({ page }) => {

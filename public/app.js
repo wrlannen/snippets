@@ -83,14 +83,7 @@ function applyFontSettings(settings) {
   if (els && els.content) {
     els.content.style.fontSize = fontSize + "px";
     els.content.style.fontFamily = fontFamily;
-    els.content.style.lineHeight = '1.6';
-  }
-
-  const overlay = document.getElementById('firstLineOverlay');
-  if (overlay) {
-    overlay.style.fontSize = fontSize + "px";
-    overlay.style.fontFamily = fontFamily;
-    overlay.style.lineHeight = '1.6';
+    els.content.style.lineHeight = '1.4';
   }
 }
 
@@ -167,20 +160,6 @@ function updateCharCount() {
   els.charCount.textContent = len.toLocaleString() + " " + word;
 }
 
-function updateFirstLineOverlay() {
-  const overlay = document.getElementById('firstLineOverlay');
-  if (!overlay || !els || !els.content) return;
-
-  const content = els.content.value || '';
-  const firstLine = content.split(/\r?\n/)[0] || '';
-
-  if (firstLine) {
-    overlay.textContent = firstLine;
-    overlay.style.display = 'block';
-  } else {
-    overlay.style.display = 'none';
-  }
-}
 
 function clearEditor() {
   activeId = null;
@@ -188,7 +167,7 @@ function clearEditor() {
     els.content.value = "";
     els.content.focus();
   }
-  updateFirstLineOverlay();
+
   setStatus("Ready");
   updateCharCount();
 }
@@ -232,8 +211,8 @@ function renderList() {
       '<div class="truncate text-[13px] font-bold leading-none ' + (isActive ? "text-white" : "text-gray-300") + '">' + escapeHtml(firstLine || "Untitled") + '</div>' +
       '<div class="text-[11px] leading-none ' + (isActive ? "text-gray-400" : "text-gray-500") + '">' + escapeHtml(formatDate(s.updatedAt)) + '</div>' +
       '</button>' +
-      '<div class="flex items-center ml-auto pr-2" style="position: absolute; right: 0; top: 0; height: 100%;">' +
-      '<button type="button" data-action="delete" class="h-6 w-6 shrink-0 rounded text-[14px] leading-none text-gray-700 hover:text-gray-400 focus:text-gray-400 flex items-center justify-center" aria-label="Delete snippet" title="Delete">' +
+      '<div class="flex items-center ml-auto pr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="position: absolute; right: 0; top: 0; height: 100%;">' +
+      '<button type="button" data-action="delete" class="h-6 w-6 shrink-0 rounded text-[14px] leading-none text-gray-500 hover:text-gray-200 focus:text-gray-200 flex items-center justify-center" aria-label="Delete snippet" title="Delete">' +
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 pointer-events-none"><path fill-rule="evenodd" d="M7.5 3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V4h3.25a.75.75 0 0 1 0 1.5h-.305l-.548 9.32A2.75 2.75 0 0 1 12.156 17H7.844a2.75 2.75 0 0 1-2.741-2.18l-.548-9.32H4.25a.75.75 0 0 1 0-1.5H7.5V3Zm1 .5V4h3v-.5h-3ZM5.75 5.5l.54 9.18a1.25 1.25 0 0 0 1.246 1.07h4.312a1.25 1.25 0 0 0 1.246-1.07l.54-9.18H5.75Z" clip-rule="evenodd" /></svg>' +
       '</button>' +
       '</div>' +
@@ -262,7 +241,7 @@ function loadIntoEditor(id) {
   if (els && els.content) {
     els.content.value = found.content ?? "";
   }
-  updateFirstLineOverlay();
+
   setStatus("Editing");
   updateCharCount();
   renderList();
@@ -405,7 +384,7 @@ function initializeApp() {
 
   els.content.addEventListener("input", () => {
     updateCharCount();
-    updateFirstLineOverlay();
+
     scheduleAutosave();
     debouncedRenderList();
   });
@@ -458,6 +437,25 @@ function initializeApp() {
   }
 
   initializeFontControls();
+
+  // About modal
+  const aboutBtn = document.getElementById('aboutBtn');
+  const aboutModal = document.getElementById('aboutModal');
+  const closeAboutModal = document.getElementById('closeAboutModal');
+
+  aboutBtn?.addEventListener('click', () => {
+    aboutModal?.classList.remove('hidden');
+  });
+
+  closeAboutModal?.addEventListener('click', () => {
+    aboutModal?.classList.add('hidden');
+  });
+
+  aboutModal?.addEventListener('click', (e) => {
+    if (e.target === aboutModal) {
+      aboutModal.classList.add('hidden');
+    }
+  });
 }
 
 if (document.readyState === 'loading') {

@@ -13,18 +13,44 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400..800&family=Source+Code+Pro:wght@400..900&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Roboto+Mono:wght@400..700&family=JetBrains+Mono:wght@400..800&family=Source+Code+Pro:wght@400..900&display=swap"
     rel="stylesheet">
+  <style>
+    /* Modern minimalist scrollbars */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #424242;
+      border-radius: 5px;
+      border: 2px solid #252526;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4f4f4f;
+    }
+
+    #content::-webkit-scrollbar-thumb {
+      border-color: #1e1e1e;
+    }
+  </style>
 </head>
 
-<body class="h-screen overflow-hidden bg-[#1e1e1e] text-gray-300 antialiased">
+<body
+  class="h-screen overflow-hidden bg-[#1e1e1e] text-gray-300 antialiased selection:bg-[#3a6996] selection:text-white">
   <div class="flex h-screen flex-col">
     <div class="flex flex-1 min-h-0">
       <!-- Sidebar -->
       <aside class="flex w-64 flex-col border-r border-[#2d2d2d] bg-[#252526]">
-        <div id="searchWrapper" class="hidden border-b border-[#2d2d2d] p-2">
+        <div id="searchWrapper" class="hidden border-b border-[#2d2d2d] p-3">
           <input type="text" id="search" placeholder="Search snippets..."
-            class="w-full rounded border border-[#3e3e3e] bg-[#1e1e1e] px-3 py-1.5 text-xs text-gray-300 outline-none placeholder:text-gray-600 focus:border-[#007acc]" />
+            class="w-full rounded-sm border border-transparent bg-[#3c3c3c] px-3 py-1.5 text-xs text-gray-200 outline-none placeholder:text-gray-500 focus:border-[#007acc] focus:ring-1 focus:ring-[#007acc]" />
         </div>
         <div class="flex-1 overflow-y-auto">
           <ul id="list" class=""></ul>
@@ -44,10 +70,7 @@
       <main class="flex flex-1 flex-col">
         <div class="flex-1 overflow-hidden relative">
           <textarea id="content" placeholder="Start typing..."
-            class="h-full w-full resize-none bg-[#1e1e1e] px-6 py-4 text-gray-300 outline-none placeholder:text-gray-700"></textarea>
-          <div id="firstLineOverlay"
-            class="absolute top-0 left-0 w-full px-6 py-4 font-bold text-gray-200 pointer-events-none whitespace-pre">
-          </div>
+            class="h-full w-full resize-none bg-[#1e1e1e] px-8 py-6 text-gray-300 outline-none placeholder:text-gray-600 font-medium"></textarea>
         </div>
       </main>
     </div>
@@ -58,6 +81,9 @@
         <span id="status">Editing</span>
         <span class="text-gray-700">|</span>
         <span id="charCount">0 characters</span>
+        <span class="text-gray-700">|</span>
+        <span class="text-gray-600">⌘. New</span>
+        <span class="text-gray-600">⌘F Search</span>
       </div>
       <div class="flex items-center gap-3">
         <div class="flex items-center gap-1">
@@ -71,9 +97,57 @@
           class="bg-[#1e1e1e] border border-[#3e3e3e] rounded px-2 py-1 text-xs text-gray-300 outline-none focus:border-[#007acc]">
           <option value="'Source Code Pro', monospace">Source Code Pro</option>
           <option value="'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace">JetBrains Mono</option>
+          <option value="'Roboto Mono', monospace">Roboto Mono</option>
+          <option value="'Inter', sans-serif">Inter (Sans)</option>
           <option value="Menlo, Monaco, 'Courier New', monospace">Menlo</option>
           <option value="'Consolas', 'Courier New', monospace">Consolas</option>
         </select>
+        <span class="text-gray-700">|</span>
+        <button id="aboutBtn"
+          class="px-2 py-1 rounded hover:bg-[#2d2d2d] text-gray-400 hover:text-gray-300 flex items-center gap-1"
+          title="About">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+            <path fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
+              clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Modal -->
+  <div id="aboutModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+    <div class="bg-[#252526] border border-[#3e3e3e] rounded-lg shadow-2xl max-w-md w-full mx-4 p-6">
+      <div class="flex items-start justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-200">About Snippets</h2>
+        <button id="closeAboutModal" class="text-gray-500 hover:text-gray-300 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+            <path
+              d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+          </svg>
+        </button>
+      </div>
+      <div class="space-y-3 text-sm text-gray-400">
+        <p>A lightweight, privacy-focused snippet manager built for developers.</p>
+        <div class="bg-[#1e1e1e] border border-[#2d2d2d] rounded p-3">
+          <p class="text-gray-300 font-medium mb-2">🔒 Privacy First</p>
+          <p class="text-xs">All your snippets are stored locally in your browser's <code
+              class="text-[#4ec9b0]">localStorage</code>. No server, no database, no tracking.</p>
+        </div>
+        <div class="space-y-1">
+          <p class="text-gray-300 font-medium">Keyboard Shortcuts:</p>
+          <ul class="text-xs space-y-1 ml-2">
+            <li><kbd class="px-1.5 py-0.5 bg-[#1e1e1e] border border-[#3e3e3e] rounded text-gray-300">⌘</kbd> + <kbd
+                class="px-1.5 py-0.5 bg-[#1e1e1e] border border-[#3e3e3e] rounded text-gray-300">.</kbd> New snippet
+            </li>
+            <li><kbd class="px-1.5 py-0.5 bg-[#1e1e1e] border border-[#3e3e3e] rounded text-gray-300">⌘</kbd> + <kbd
+                class="px-1.5 py-0.5 bg-[#1e1e1e] border border-[#3e3e3e] rounded text-gray-300">F</kbd> Search snippets
+            </li>
+            <li><kbd class="px-1.5 py-0.5 bg-[#1e1e1e] border border-[#3e3e3e] rounded text-gray-300">Esc</kbd> Close
+              search</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
