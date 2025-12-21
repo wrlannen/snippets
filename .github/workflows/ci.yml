@@ -3,8 +3,26 @@ name: CI/CD
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - '**.js'
+      - '**.json'
+      - 'Dockerfile'
+      - 'public/**'
+      - 'server.js'
+      - 'tests/**'
+      - 'playwright.config.js'
+      - '.github/workflows/**'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - '**.js'
+      - '**.json'
+      - 'Dockerfile'
+      - 'public/**'
+      - 'server.js'
+      - 'tests/**'
+      - 'playwright.config.js'
+      - '.github/workflows/**'
 
 env:
   REGISTRY: ghcr.io
