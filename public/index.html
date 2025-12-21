@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Snippets</title>
+    <meta name="description" content="A lightweight in-browser snippet keeper." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23232323'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-size='18' fill='white' font-family='monospace'%3ES%3C/text%3E%3C/svg%3E" />
+  </head>
+  <body class="h-screen overflow-hidden bg-[#1e1e1e] text-gray-300 antialiased">
+    <div class="flex h-screen flex-col">
+      <div class="flex flex-1 min-h-0">
+        <!-- Sidebar -->
+        <aside class="flex w-64 flex-col border-r border-[#2d2d2d] bg-[#252526]">
+          <div id="searchWrapper" class="hidden border-b border-[#2d2d2d] p-2">
+            <input
+              type="text"
+              id="search"
+              placeholder="Search snippets..."
+              class="w-full rounded border border-[#3e3e3e] bg-[#1e1e1e] px-3 py-1.5 text-xs text-gray-300 outline-none placeholder:text-gray-600 focus:border-[#007acc]"
+            />
+          </div>
+          <div class="flex-1 overflow-y-auto">
+            <ul id="list" class=""></ul>
+            <div id="empty" class="flex flex-col items-center justify-center px-4 py-12">
+              <svg class="mb-3 h-12 w-12 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <p class="text-center text-xs text-gray-600">No snippets</p>
+            </div>
+          </div>
+          <div class="border-t border-[#2d2d2d] p-2">
+            <!-- Sidebar bottom area intentionally left blank -->
+          </div>
+        </aside>
+        <!-- Main Editor -->
+        <main class="flex flex-1 flex-col">
+          <div class="flex-1 overflow-hidden relative">
+            <textarea
+              id="content"
+              placeholder="Start typing..."
+              class="h-full w-full resize-none bg-[#1e1e1e] px-6 py-4 text-gray-300 outline-none placeholder:text-gray-700"
+            ></textarea>
+            <div id="firstLineOverlay" class="absolute top-0 left-0 w-full px-6 py-4 font-bold text-gray-200 pointer-events-none whitespace-pre"></div>
+          </div>
+        </main>
+      </div>
+      <!-- Full-width status bar -->
+      <div class="flex items-center justify-between border-t border-[#2d2d2d] bg-[#232323] px-4 py-2 text-xs text-gray-500">
+        <div class="flex items-center gap-3">
+          <span id="status">Editing</span>
+          <span class="text-gray-700">|</span>
+          <span id="charCount">0 characters</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-1">
+            <button id="decreaseFont" class="px-2 py-1 rounded hover:bg-[#2d2d2d] text-gray-400 hover:text-gray-300" title="Decrease font size">A-</button>
+            <button id="increaseFont" class="px-2 py-1 rounded hover:bg-[#2d2d2d] text-gray-400 hover:text-gray-300" title="Increase font size">A+</button>
+          </div>
+          <span class="text-gray-700">|</span>
+          <select id="fontFamily" class="bg-[#1e1e1e] border border-[#3e3e3e] rounded px-2 py-1 text-xs text-gray-300 outline-none focus:border-[#007acc]">
+            <option value="'JetBrains Mono', 'Fira Code', Menlo, Monaco, 'Courier New', monospace">JetBrains Mono</option>
+            <option value="'Fira Code', Menlo, Monaco, 'Courier New', monospace">Fira Code</option>
+            <option value="Menlo, Monaco, 'Courier New', monospace">Menlo</option>
+            <option value="'SF Mono', Monaco, 'Courier New', monospace">SF Mono</option>
+            <option value="'Consolas', 'Courier New', monospace">Consolas</option>
+            <option value="'Source Code Pro', monospace">Source Code Pro</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
