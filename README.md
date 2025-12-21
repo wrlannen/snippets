@@ -1,4 +1,5 @@
-# Snippets 📝
+# Snippets: Minimal, Fast, Local
+![Screenshot of Snippets app](assets/screenshot.png)
 
 A lightweight, privacy-focused Node.js application for managing your personal text snippets. Built with a modern, minimal UI inspired by developer tools, it stores all your data directly in your browser's `localStorage` — no databases or external services required.
 
@@ -10,13 +11,20 @@ A lightweight, privacy-focused Node.js application for managing your personal te
   - Real-time autosave as you type.
   - Title overlay for the first line of your snippet.
   - Character count tracking.
-  - Adjustable font sizes and customizable typography (JetBrains Mono, Fira Code, etc.).
+  - Adjustable font sizes and customizable typography (Source Code Pro, Roboto Mono, etc.).
+  - Line numbers with current line highlighting (toggleable).
+  - One-click copy to clipboard functionality.
 - **Smart Management**:
   - Sidebar for quick navigation.
   - Instant search (<kbd>⌘</kbd> <kbd>F</kbd>).
   - One-click deletion and creation.
+- **Customizable Settings**:
+  - Font family selection from multiple monospace fonts.
+  - A+ / A- buttons for quick font size adjustment.
+  - Toggle line numbers on/off.
+  - All preferences persist across sessions.
 - **Keyboard Optimized**:
-  - <kbd>⌘</kbd> <kbd>.</kbd> to create a new snippet.
+  - <kbd>⌘</kbd> <kbd>K</kbd> to create a new snippet.
   - <kbd>⌘</kbd> <kbd>F</kbd> to search.
   - <kbd>Esc</kbd> to close search.
 
