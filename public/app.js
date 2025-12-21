@@ -5,8 +5,10 @@ const DEFAULT_FONT_SIZE = 15;
 const MIN_FONT_SIZE = 10;
 const MAX_FONT_SIZE = 24;
 const DEFAULT_FONT_FAMILY = "'Source Code Pro', monospace";
+const DEFAULT_LINE_NUMBERS = true;
 
 let els;
+let lineNumbersEl;
 let activeId = null;
 let lastRenderIds = [];
 let pendingDeleteId = null;
@@ -66,7 +68,8 @@ function loadSettings() {
   const parsed = safeJsonParse(raw, {});
   return {
     fontSize: parsed.fontSize ?? DEFAULT_FONT_SIZE,
-    fontFamily: parsed.fontFamily ?? DEFAULT_FONT_FAMILY
+    fontFamily: parsed.fontFamily ?? DEFAULT_FONT_FAMILY,
+    lineNumbers: typeof parsed.lineNumbers === 'boolean' ? parsed.lineNumbers : DEFAULT_LINE_NUMBERS
   };
 }
 
@@ -84,6 +87,17 @@ function applyFontSettings(settings) {
     els.content.style.fontSize = fontSize + "px";
     els.content.style.fontFamily = fontFamily;
     els.content.style.lineHeight = '1.4';
+    updateLineNumbers();
+  }
+  // Show/hide line numbers
+  if (lineNumbersEl) {
+    lineNumbersEl.style.display = settings.lineNumbers ? '' : 'none';
+    // Also update toggle button state if present
+    const toggleLineNumbersBtn = document.getElementById("toggleLineNumbers");
+    if (toggleLineNumbersBtn) {
+      toggleLineNumbersBtn.classList.toggle('text-gray-300', settings.lineNumbers);
+      toggleLineNumbersBtn.classList.toggle('text-gray-400', !settings.lineNumbers);
+    }
   }
 }
 
@@ -160,6 +174,39 @@ function updateCharCount() {
   els.charCount.textContent = len.toLocaleString() + " " + word;
 }
 
+function updateLineNumbers() {
+  if (!lineNumbersEl || !els?.content) return;
+  const settings = loadSettings();
+  if (!settings.lineNumbers) {
+    lineNumbersEl.innerHTML = '';
+    return;
+  }
+  const value = els.content.value || "";
+  const lines = value.split(/\r?\n/);
+  // Get computed style for line height and padding
+  const style = window.getComputedStyle(els.content);
+  const lineHeight = style.lineHeight;
+  const paddingTop = style.paddingTop;
+  lineNumbersEl.style.lineHeight = lineHeight;
+  lineNumbersEl.style.paddingTop = paddingTop;
+  // Match gutter font size to editor font size for alignment
+  lineNumbersEl.style.fontSize = style.fontSize;
+  // Highlight current line
+  let currentLine = 0;
+  if (typeof els.content.selectionStart === 'number') {
+    const before = els.content.value.slice(0, els.content.selectionStart);
+    currentLine = before.split(/\r?\n/).length - 1;
+  }
+  let html = "";
+  for (let i = 0; i < lines.length; i++) {
+    const cls = i === currentLine ? 'current-line' : '';
+    html += `<div class="${cls}" style="display:flex;align-items:center;justify-content:flex-end;height:1.4em;padding-right:2px;">${i + 1}</div>`;
+  }
+  lineNumbersEl.innerHTML = html;
+  // Sync scroll
+  lineNumbersEl.scrollTop = els.content.scrollTop;
+}
+
 
 function clearEditor() {
   activeId = null;
@@ -170,6 +217,7 @@ function clearEditor() {
 
   setStatus("Ready");
   updateCharCount();
+  updateLineNumbers();
 }
 
 function getEditorValue() {
@@ -240,6 +288,7 @@ function loadIntoEditor(id) {
   activeId = found.id;
   if (els && els.content) {
     els.content.value = found.content ?? "";
+    updateLineNumbers();
   }
 
   setStatus("Editing");
@@ -376,6 +425,20 @@ function initializeApp() {
     status: document.getElementById("status"),
     charCount: document.getElementById("charCount"),
   };
+  lineNumbersEl = document.getElementById("lineNumbers");
+
+  const toggleLineNumbersBtn = document.getElementById("toggleLineNumbers");
+  if (toggleLineNumbersBtn) {
+    toggleLineNumbersBtn.addEventListener("click", () => {
+      const settings = loadSettings();
+      const newSettings = { ...settings, lineNumbers: !settings.lineNumbers };
+      saveSettings(newSettings);
+      applyFontSettings(newSettings);
+      updateLineNumbers();
+    });
+    // Set initial state
+    applyFontSettings(loadSettings());
+  }
 
   if (!els.list || !els.content || !els.empty) {
     console.error("Critical DOM elements not found");
@@ -384,10 +447,19 @@ function initializeApp() {
 
   els.content.addEventListener("input", () => {
     updateCharCount();
-
+    updateLineNumbers();
     scheduleAutosave();
     debouncedRenderList();
   });
+  els.content.addEventListener("scroll", () => {
+    if (lineNumbersEl) lineNumbersEl.scrollTop = els.content.scrollTop;
+  });
+  els.content.addEventListener("click", updateLineNumbers);
+  els.content.addEventListener("keyup", updateLineNumbers);
+  els.content.addEventListener("select", updateLineNumbers);
+  // Initial render
+  applyFontSettings(loadSettings());
+  updateLineNumbers();
 
   els.search.addEventListener("input", () => {
     renderList();
