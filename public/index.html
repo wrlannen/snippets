@@ -115,7 +115,15 @@
         <div class="flex-1 overflow-hidden relative flex">
           <div id="lineNumbers" aria-hidden="true" class="select-none text-right pr-1 pt-0 pb-6 bg-[#1e1e1e] text-[#555] font-mono text-sm leading-[1.4] min-w-[2.2em]" style="user-select:none; pointer-events:none; position:relative;"></div>
           <textarea id="content" placeholder="Start typing to create a snippet..."
-            class="h-full w-full resize-none bg-[#1e1e1e] pl-4 pr-8 pt-0 pb-6 text-gray-300 outline-none placeholder:text-[#6b6b6b] placeholder:text-sm font-medium" style="z-index:1;"></textarea>
+            class="h-full w-full resize-none bg-[#1e1e1e] pl-4 pr-8 pt-0 pb-6 text-gray-300 outline-none placeholder:text-[#6b6b6b] font-medium" style="z-index:1;"></textarea>
+          <style>
+            #content::placeholder {
+              color: #6b6b6b;
+              font-size: inherit;
+              font-family: inherit;
+              opacity: 1;
+            }
+          </style>
         <style>
           #lineNumbers .current-line {
             background: #252526;
