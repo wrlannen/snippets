@@ -501,7 +501,7 @@ function buildSnippetItemHtml(snippet, isActive) {
     ? "bg-[#37373d] border-l-2 border-[#007acc]" 
     : "hover:bg-[#2d2d2d] border-l-2 border-transparent";
   
-  const titleClasses = isActive ? "text-white" : "text-gray-300";
+  const titleClasses = isActive ? "text-white" : "text-gray-200";
   const dateClasses = isActive ? "text-gray-400" : "text-gray-500";
   
   // Trash icon SVG (Heroicons)
@@ -512,9 +512,9 @@ function buildSnippetItemHtml(snippet, isActive) {
   return `
     <div class="group relative flex items-stretch ${containerClasses}">
       <button type="button" data-action="open" 
-        class="min-w-0 flex-1 px-3 py-3.5 text-left transition-colors flex flex-col justify-center gap-0.5">
+        class="min-w-0 flex-1 px-3 py-3.5 text-left transition-colors flex flex-col justify-center gap-1">
         <div class="truncate text-[16px] leading-none font-medium ${titleClasses}">${escapeHtml(firstLine)}</div>
-        <div class="text-[11px] leading-none ${dateClasses}">${timestamp}</div>
+        <div class="text-xs leading-none ${dateClasses}">${timestamp}</div>
       </button>
       <div class="flex items-center ml-auto pr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" 
         style="position: absolute; right: 0; top: 0; height: 100%;">
@@ -1000,6 +1000,14 @@ function initializeApp() {
       const ok = await copyTextToClipboard(text);
       flashStatus(ok ? 'Copied to clipboard' : 'Copy failed', 1200, { highlightClass: ok ? 'text-white' : undefined });
       flashCopyButton(ok);
+    });
+  }
+
+  // Set up new snippet button
+  const newSnippetBtn = document.getElementById('newSnippetBtn');
+  if (newSnippetBtn) {
+    newSnippetBtn.addEventListener('click', () => {
+      createNewSnippet();
     });
   }
 
