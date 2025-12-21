@@ -31,6 +31,11 @@ const DEFAULT_FONT_FAMILY = "'Source Code Pro', monospace";
 /** Whether line numbers are shown by default */
 const DEFAULT_LINE_NUMBERS = true;
 
+/** Sidebar width constraints and defaults (in pixels) */
+const DEFAULT_SIDEBAR_WIDTH = 192; // 12rem = w-48
+const MIN_SIDEBAR_WIDTH = 120;
+const MAX_SIDEBAR_WIDTH = 500;
+
 /** Autosave delay in milliseconds after user stops typing */
 const AUTOSAVE_DELAY_MS = 800;
 
@@ -153,7 +158,7 @@ function saveSnippets(snippets) {
 /**
  * Loads user settings from localStorage.
  * Returns defaults for any missing properties.
- * @returns {Object} Settings object with fontSize, fontFamily, lineNumbers
+ * @returns {Object} Settings object with fontSize, fontFamily, lineNumbers, sidebarWidth
  */
 function loadSettings() {
   const raw = localStorage.getItem(SETTINGS_KEY);
@@ -162,7 +167,8 @@ function loadSettings() {
   return {
     fontSize: parsed.fontSize ?? DEFAULT_FONT_SIZE,
     fontFamily: parsed.fontFamily ?? DEFAULT_FONT_FAMILY,
-    lineNumbers: typeof parsed.lineNumbers === 'boolean' ? parsed.lineNumbers : DEFAULT_LINE_NUMBERS
+    lineNumbers: typeof parsed.lineNumbers === 'boolean' ? parsed.lineNumbers : DEFAULT_LINE_NUMBERS,
+    sidebarWidth: parsed.sidebarWidth ?? DEFAULT_SIDEBAR_WIDTH
   };
 }
 
@@ -507,7 +513,7 @@ function buildSnippetItemHtml(snippet, isActive) {
     <div class="group relative flex items-stretch ${containerClasses}">
       <button type="button" data-action="open" 
         class="min-w-0 flex-1 px-3 py-3.5 text-left transition-colors flex flex-col justify-center gap-0.5">
-        <div class="truncate text-[15px] leading-none font-medium ${titleClasses}">${escapeHtml(firstLine)}</div>
+        <div class="truncate text-[16px] leading-none font-medium ${titleClasses}">${escapeHtml(firstLine)}</div>
         <div class="text-[11px] leading-none ${dateClasses}">${timestamp}</div>
       </button>
       <div class="flex items-center ml-auto pr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" 
@@ -817,6 +823,81 @@ function importFromJson(file) {
 }
 
 // =============================================================================
+// Sidebar Resize
+// =============================================================================
+
+/**
+ * Applies sidebar width to the sidebar element.
+ * @param {number} width - Width in pixels
+ */
+function applySidebarWidth(width) {
+  const sidebar = document.querySelector('aside');
+  if (sidebar) {
+    sidebar.style.width = width + 'px';
+  }
+}
+
+/**
+ * Initializes the sidebar resize handle with drag functionality.
+ * Allows users to drag the handle to resize the sidebar.
+ * Persists the width to settings.
+ */
+function initializeSidebarResize() {
+  const handle = document.getElementById('sidebarResizeHandle');
+  const sidebar = document.querySelector('aside');
+  
+  if (!handle || !sidebar) return;
+  
+  let isResizing = false;
+  let startX = 0;
+  let startWidth = 0;
+  
+  // Apply saved width on initialization
+  const settings = loadSettings();
+  applySidebarWidth(settings.sidebarWidth);
+  
+  handle.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    startX = e.clientX;
+    startWidth = sidebar.getBoundingClientRect().width;
+    
+    // Add visual feedback
+    handle.classList.add('resizing');
+    document.body.classList.add('resizing-sidebar');
+    
+    e.preventDefault();
+  });
+  
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    
+    const deltaX = e.clientX - startX;
+    let newWidth = startWidth + deltaX;
+    
+    // Clamp width to min/max
+    newWidth = Math.max(MIN_SIDEBAR_WIDTH, Math.min(MAX_SIDEBAR_WIDTH, newWidth));
+    
+    applySidebarWidth(newWidth);
+  });
+  
+  document.addEventListener('mouseup', () => {
+    if (!isResizing) return;
+    
+    isResizing = false;
+    
+    // Remove visual feedback
+    handle.classList.remove('resizing');
+    document.body.classList.remove('resizing-sidebar');
+    
+    // Save the new width
+    const currentWidth = sidebar.getBoundingClientRect().width;
+    const settings = loadSettings();
+    const newSettings = { ...settings, sidebarWidth: Math.round(currentWidth) };
+    saveSettings(newSettings);
+  });
+}
+
+// =============================================================================
 // Initialization
 // =============================================================================
 
@@ -1018,6 +1099,7 @@ function initializeApp() {
   }
 
   initializeFontControls();
+  initializeSidebarResize();
 
   // --- Platform-specific UI ---
   
