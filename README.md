@@ -63,6 +63,8 @@ docker build -t snippets-app .
 docker run -p 3000:3000 snippets-app
 ```
 
+Uses Google's distroless Node image for minimal size (~80-90MB) and improved security.
+
 ## Tech Stack
 
 - **Backend**: [Node.js](https://nodejs.org/) + [Express](https://expressjs.com/) (static serving + headers)

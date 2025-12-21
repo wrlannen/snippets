@@ -4,3 +4,13 @@ npm-debug.log*
 .git
 .gitignore
 README.md
+Dockerfile*
+.dockerignore
+test-results
+playwright-report
+playwright/.cache
+tests
+playwright.config.js
+*.spec.js
+.github
+assets
