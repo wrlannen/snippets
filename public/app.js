@@ -414,13 +414,15 @@ function initializeApp() {
       }
     }
 
-    if (e.metaKey && e.key === ".") {
+    const isMod = e.metaKey || e.ctrlKey; // Support both ⌘ (Mac) and Ctrl (Windows/Linux)
+
+    if (isMod && e.key === "k") {
       e.preventDefault();
       createNewSnippet();
       return;
     }
 
-    if (e.metaKey && e.key === "f") {
+    if (isMod && e.key === "f") {
       e.preventDefault();
       document.getElementById("searchWrapper").classList.remove("hidden");
       els.search.focus();
@@ -437,6 +439,14 @@ function initializeApp() {
   }
 
   initializeFontControls();
+
+  // Update modifier key display based on platform
+  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  const modKeySymbol = isMac ? '⌘' : 'Ctrl';
+  document.getElementById('modKey').textContent = modKeySymbol;
+  document.getElementById('modKeySearch').textContent = modKeySymbol;
+  document.getElementById('modalModKey1').textContent = modKeySymbol;
+  document.getElementById('modalModKey2').textContent = modKeySymbol;
 
   // About modal
   const aboutBtn = document.getElementById('aboutBtn');

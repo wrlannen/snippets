@@ -38,13 +38,18 @@ app.use(compression());
 
 // Serve static files with cache control and efficient streaming
 app.use(express.static(publicDir, {
-  maxAge: '30d', // Cache static assets for 30 days
   etag: true,
   lastModified: true,
   setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.html')) {
-      // No cache for HTML files
+    if (filePath.endsWith('.html') || filePath.endsWith('.json')) {
+      // No cache for HTML and manifest files - always check for updates
       res.setHeader('Cache-Control', 'no-cache');
+    } else if (filePath.endsWith('.js') || filePath.endsWith('.css')) {
+      // Short cache for JS/CSS - revalidate after 1 hour
+      res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
+    } else {
+      // Longer cache for images/fonts (7 days)
+      res.setHeader('Cache-Control', 'public, max-age=604800');
     }
   }
 }));

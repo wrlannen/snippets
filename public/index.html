@@ -7,6 +7,18 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Snippets</title>
   <meta name="description" content="A lightweight in-browser snippet keeper." />
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Apple-specific meta tags for PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Snippets">
+
+  <!-- Theme color for browser chrome -->
+  <meta name="theme-color" content="#232323">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="icon" type="image/svg+xml"
     href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23232323'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-size='18' fill='white' font-family='monospace'%3ES%3C/text%3E%3C/svg%3E" />
@@ -54,23 +66,25 @@
         </div>
         <div class="flex-1 overflow-y-auto">
           <ul id="list" class=""></ul>
-          <div id="empty" class="flex flex-col items-center justify-center px-4 py-12">
-            <svg class="mb-3 h-12 w-12 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          <div id="empty" class="flex flex-col items-center justify-center px-6 py-16 opacity-50">
+            <svg class="mb-4 h-16 w-16 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              stroke-width="1">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
             </svg>
-            <p class="text-center text-xs text-gray-600">No snippets</p>
+            <p class="text-center text-sm text-gray-500 font-medium mb-1">No snippets yet</p>
+            <p class="text-center text-xs text-gray-600">Start typing to create your first snippet</p>
           </div>
         </div>
-        <div class="border-t border-[#2d2d2d] p-2">
+        <div class="border-t border-[#2b2b2b] p-2">
           <!-- Sidebar bottom area intentionally left blank -->
         </div>
       </aside>
       <!-- Main Editor -->
-      <main class="flex flex-1 flex-col">
+      <main class="flex flex-1 flex-col bg-[#1e1e1e]">
         <div class="flex-1 overflow-hidden relative">
-          <textarea id="content" placeholder="Start typing..."
-            class="h-full w-full resize-none bg-[#1e1e1e] px-8 py-6 text-gray-300 outline-none placeholder:text-gray-600 font-medium"></textarea>
+          <textarea id="content" placeholder="Start typing to create a snippet..."
+            class="h-full w-full resize-none bg-[#1e1e1e] px-8 py-6 text-gray-300 outline-none placeholder:text-[#6b6b6b] placeholder:text-sm font-medium"></textarea>
         </div>
       </main>
     </div>
@@ -82,8 +96,8 @@
         <span class="text-gray-700">|</span>
         <span id="charCount">0 characters</span>
         <span class="text-gray-700">|</span>
-        <span class="text-gray-600">⌘. New</span>
-        <span class="text-gray-600">⌘F Search</span>
+        <span class="text-gray-600"><span id="modKey">⌘</span>K New</span>
+        <span class="text-gray-600"><span id="modKeySearch">⌘</span>F Search</span>
       </div>
       <div class="flex items-center gap-3">
         <div class="flex items-center gap-1">
@@ -117,40 +131,101 @@
   </div>
 
   <!-- About Modal -->
-  <div id="aboutModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-    <div class="bg-[#252526] border border-[#3e3e3e] rounded-lg shadow-2xl max-w-md w-full mx-4 p-6">
-      <div class="flex items-start justify-between mb-4">
-        <h2 class="text-lg font-semibold text-gray-200">About Snippets</h2>
-        <button id="closeAboutModal" class="text-gray-500 hover:text-gray-300 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-            <path
-              d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-          </svg>
-        </button>
+  <div id="aboutModal"
+    class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 backdrop-blur-sm">
+    <div class="bg-[#252526] border border-[#3e3e3e] rounded-xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden">
+      <!-- Header with gradient -->
+      <div class="bg-gradient-to-br from-[#2d2d2d] to-[#1e1e1e] px-6 py-5 border-b border-[#3e3e3e]">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-[#232323] rounded-lg flex items-center justify-center border border-[#3e3e3e]">
+              <span class="text-white font-bold text-lg font-mono">S</span>
+            </div>
+            <div>
+              <h2 class="text-xl font-semibold text-gray-100">Snippets</h2>
+              <p class="text-xs text-gray-500">Privacy-focused snippet manager</p>
+            </div>
+          </div>
+          <button id="closeAboutModal"
+            class="text-gray-500 hover:text-gray-300 transition-colors p-1 hover:bg-[#3e3e3e] rounded">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+              <path
+                d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+            </svg>
+          </button>
+        </div>
       </div>
-      <div class="space-y-3 text-sm text-gray-400">
-        <p>A lightweight, privacy-focused snippet manager built for developers.</p>
-        <div class="bg-[#1e1e1e] border border-[#2d2d2d] rounded p-3">
-          <p class="text-gray-300 font-medium mb-2">🔒 Privacy First</p>
-          <p class="text-xs">All your snippets are stored locally in your browser's <code
-              class="text-[#4ec9b0]">localStorage</code>. No server, no database, no tracking.</p>
+
+      <!-- Content -->
+      <div class="px-6 py-5 space-y-5">
+        <!-- Privacy Section -->
+        <div class="bg-gradient-to-br from-[#1e3a1e] to-[#1e1e1e] border border-[#2d4a2d] rounded-lg p-4">
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-8 h-8 bg-[#2d4a2d] rounded-lg flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                class="w-5 h-5 text-green-400">
+                <path fill-rule="evenodd"
+                  d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
+                  clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="flex-1">
+              <p class="text-green-300 font-semibold text-sm mb-1">100% Private & Local</p>
+              <p class="text-xs text-gray-400 leading-relaxed">All your snippets are stored in your browser's <code
+                  class="text-green-400 bg-[#1e1e1e] px-1 py-0.5 rounded text-[11px]">localStorage</code>. No servers,
+                no databases, no tracking. Your data never leaves your device.</p>
+            </div>
+          </div>
         </div>
-        <div class="space-y-1">
-          <p class="text-gray-300 font-medium">Keyboard Shortcuts:</p>
-          <ul class="text-xs space-y-1 ml-2">
-            <li><kbd class="px-1.5 py-0.5 bg-[#1e1e1e] border border-[#3e3e3e] rounded text-gray-300">⌘</kbd> + <kbd
-                class="px-1.5 py-0.5 bg-[#1e1e1e] border border-[#3e3e3e] rounded text-gray-300">.</kbd> New snippet
-            </li>
-            <li><kbd class="px-1.5 py-0.5 bg-[#1e1e1e] border border-[#3e3e3e] rounded text-gray-300">⌘</kbd> + <kbd
-                class="px-1.5 py-0.5 bg-[#1e1e1e] border border-[#3e3e3e] rounded text-gray-300">F</kbd> Search snippets
-            </li>
-            <li><kbd class="px-1.5 py-0.5 bg-[#1e1e1e] border border-[#3e3e3e] rounded text-gray-300">Esc</kbd> Close
-              search</li>
-          </ul>
+
+        <!-- Keyboard Shortcuts -->
+        <div>
+          <h3 class="text-gray-300 font-semibold text-sm mb-3 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+              class="w-4 h-4 text-gray-500">
+              <path fill-rule="evenodd"
+                d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10zm0 5.25a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z"
+                clip-rule="evenodd" />
+            </svg>
+            Keyboard Shortcuts
+          </h3>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between py-2 px-3 bg-[#1e1e1e] rounded-lg border border-[#2d2d2d]">
+              <span class="text-xs text-gray-400">Create new snippet</span>
+              <div class="flex items-center gap-1">
+                <kbd id="modalModKey1"
+                  class="px-2 py-1 bg-[#2d2d2d] border border-[#3e3e3e] rounded text-gray-300 text-xs font-mono">⌘</kbd>
+                <span class="text-gray-600">+</span>
+                <kbd
+                  class="px-2 py-1 bg-[#2d2d2d] border border-[#3e3e3e] rounded text-gray-300 text-xs font-mono">K</kbd>
+              </div>
+            </div>
+            <div class="flex items-center justify-between py-2 px-3 bg-[#1e1e1e] rounded-lg border border-[#2d2d2d]">
+              <span class="text-xs text-gray-400">Search snippets</span>
+              <div class="flex items-center gap-1">
+                <kbd id="modalModKey2"
+                  class="px-2 py-1 bg-[#2d2d2d] border border-[#3e3e3e] rounded text-gray-300 text-xs font-mono">⌘</kbd>
+                <span class="text-gray-600">+</span>
+                <kbd
+                  class="px-2 py-1 bg-[#2d2d2d] border border-[#3e3e3e] rounded text-gray-300 text-xs font-mono">F</kbd>
+              </div>
+            </div>
+            <div class="flex items-center justify-between py-2 px-3 bg-[#1e1e1e] rounded-lg border border-[#2d2d2d]">
+              <span class="text-xs text-gray-400">Close search</span>
+              <kbd
+                class="px-2 py-1 bg-[#2d2d2d] border border-[#3e3e3e] rounded text-gray-300 text-xs font-mono">Esc</kbd>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="px-6 py-3 bg-[#1e1e1e] border-t border-[#2d2d2d] text-center">
+        <p class="text-[10px] text-gray-600">Built for developers who value simplicity and privacy</p>
       </div>
     </div>
   </div>
+
 
   <script type="module" src="/app.js"></script>
 </body>

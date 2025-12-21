@@ -11,14 +11,14 @@ test.describe('Snippets App', () => {
   test('loads app with empty state', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('#empty')).toBeVisible();
-    await expect(page.locator('text=No snippets')).toBeVisible();
+    await expect(page.locator('text=No snippets yet')).toBeVisible();
   });
 
-  test('creates a new snippet with CMD+.', async ({ page }) => {
+  test('creates a new snippet with CMD+K', async ({ page }) => {
     await page.goto('/');
 
-    // Press CMD+. to create new snippet
-    await page.keyboard.press('Meta+Period');
+    // Press CMD+K to create new snippet
+    await page.keyboard.press('Meta+k');
 
     // Type content
     await page.locator('#content').fill('Test Snippet Title\nThis is the content');
@@ -35,7 +35,7 @@ test.describe('Snippets App', () => {
     await page.goto('/');
 
     // Create snippet
-    await page.keyboard.press('Meta+Period');
+    await page.keyboard.press('Meta+k');
     await page.locator('#content').fill('Original Title\nOriginal content');
     await page.waitForTimeout(1000);
 
@@ -51,7 +51,7 @@ test.describe('Snippets App', () => {
     await page.goto('/');
 
     // Create snippet
-    await page.keyboard.press('Meta+Period');
+    await page.keyboard.press('Meta+k');
     await page.locator('#content').fill('To Delete\nContent');
     await page.waitForTimeout(1000);
 
@@ -64,20 +64,19 @@ test.describe('Snippets App', () => {
   });
 
 
-
   test('searches snippets with CMD+F', async ({ page }) => {
     await page.goto('/');
 
     // Create multiple snippets
-    await page.keyboard.press('Meta+Period');
+    await page.keyboard.press('Meta+k');
     await page.locator('#content').fill('Apple\nFruit content');
     await page.waitForTimeout(1000);
 
-    await page.keyboard.press('Meta+Period');
+    await page.keyboard.press('Meta+k');
     await page.locator('#content').fill('Banana\nYellow fruit');
     await page.waitForTimeout(1000);
 
-    await page.keyboard.press('Meta+Period');
+    await page.keyboard.press('Meta+k');
     await page.locator('#content').fill('Carrot\nVegetable content');
     await page.waitForTimeout(1000);
 
@@ -111,12 +110,12 @@ test.describe('Snippets App', () => {
     await page.goto('/');
 
     // Create first snippet
-    await page.keyboard.press('Meta+Period');
+    await page.keyboard.press('Meta+k');
     await page.locator('#content').fill('First\nFirst content');
     await page.waitForTimeout(1000);
 
     // Create second snippet
-    await page.keyboard.press('Meta+Period');
+    await page.keyboard.press('Meta+k');
     await page.locator('#content').fill('Second\nSecond content');
     await page.waitForTimeout(1000);
 
@@ -131,7 +130,7 @@ test.describe('Snippets App', () => {
     await page.goto('/');
 
     // Create snippet
-    await page.keyboard.press('Meta+Period');
+    await page.keyboard.press('Meta+k');
     await page.locator('#content').fill('Autosave Test\nContent');
 
     // Wait for autosave
@@ -149,7 +148,7 @@ test.describe('Snippets App', () => {
   test('shows character count', async ({ page }) => {
     await page.goto('/');
 
-    await page.keyboard.press('Meta+Period');
+    await page.keyboard.press('Meta+k');
     await page.locator('#content').fill('Test');
 
     await expect(page.locator('#charCount')).toContainText('4 characters');
@@ -158,7 +157,7 @@ test.describe('Snippets App', () => {
   test('displays first line as snippet title', async ({ page }) => {
     await page.goto('/');
 
-    await page.keyboard.press('Meta+Period');
+    await page.keyboard.press('Meta+k');
     await page.locator('#content').fill('My Title\nLine 2\nLine 3');
     await page.waitForTimeout(1000);
 
@@ -171,7 +170,7 @@ test.describe('Snippets App', () => {
   test('shows Untitled for empty snippets', async ({ page }) => {
     await page.goto('/');
 
-    await page.keyboard.press('Meta+Period');
+    await page.keyboard.press('Meta+k');
     // Leave empty
     await page.waitForTimeout(1000);
 
