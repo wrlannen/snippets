@@ -507,7 +507,7 @@ function buildSnippetItemHtml(snippet, isActive) {
     <div class="group relative flex items-stretch ${containerClasses}">
       <button type="button" data-action="open" 
         class="min-w-0 flex-1 px-3 py-3.5 text-left transition-colors flex flex-col justify-center gap-0.5">
-        <div class="truncate text-[15px] leading-none font-mono ${titleClasses}">${escapeHtml(firstLine)}</div>
+        <div class="truncate text-[15px] leading-none font-medium ${titleClasses}">${escapeHtml(firstLine)}</div>
         <div class="text-[11px] leading-none ${dateClasses}">${timestamp}</div>
       </button>
       <div class="flex items-center ml-auto pr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" 
@@ -694,6 +694,126 @@ function createNewSnippet() {
   if (els && els.content) {
     els.content.focus();
   }
+}
+
+/**
+ * Exports all snippets and settings to a JSON file and triggers download.
+ */
+function exportToJson() {
+  const snippets = loadSnippets();
+  const settings = loadSettings();
+  const exportData = {
+    version: 1,
+    exportedAt: nowIso(),
+    snippets: snippets,
+    settings: settings
+  };
+  const data = JSON.stringify(exportData, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `snippets-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  setStatus(`Exported ${snippets.length} snippet${snippets.length !== 1 ? 's' : ''} and settings`);
+}
+
+/**
+ * Imports snippets and settings from a JSON file.
+ * Supports both old format (array) and new format (object with snippets and settings).
+ * Validates the format and merges with existing snippets (avoiding duplicates by ID).
+ * @param {File} file - The JSON file to import
+ */
+function importFromJson(file) {
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      
+      // Support both old format (array) and new format (object with snippets/settings)
+      let snippetsToImport;
+      let settingsToImport = null;
+      
+      if (Array.isArray(imported)) {
+        // Old format: just an array of snippets
+        snippetsToImport = imported;
+      } else if (imported && typeof imported === 'object' && Array.isArray(imported.snippets)) {
+        // New format: object with snippets and settings
+        snippetsToImport = imported.snippets;
+        settingsToImport = imported.settings;
+      } else {
+        setStatus('Error: Invalid JSON format');
+        return;
+      }
+      
+      // Validate each snippet has required fields
+      for (const snippet of snippetsToImport) {
+        if (!snippet.id || typeof snippet.content !== 'string') {
+          setStatus('Error: Invalid snippet format');
+          return;
+        }
+      }
+      
+      // Merge with existing snippets
+      const existing = loadSnippets();
+      const existingIds = new Set(existing.map(s => s.id));
+      
+      let imported_count = 0;
+      let skipped_count = 0;
+      
+      for (const snippet of snippetsToImport) {
+        if (existingIds.has(snippet.id)) {
+          skipped_count++;
+        } else {
+          existing.push(snippet);
+          imported_count++;
+        }
+      }
+      
+      saveSnippets(existing);
+      
+      // Import settings if provided
+      if (settingsToImport && typeof settingsToImport === 'object') {
+        saveSettings(settingsToImport);
+        applyFontSettings(settingsToImport);
+        updateLineNumbers();
+        
+        // Update font dropdown if available
+        const fontFamilySelect = document.getElementById('fontFamily');
+        if (fontFamilySelect && settingsToImport.fontFamily) {
+          fontFamilySelect.value = settingsToImport.fontFamily;
+        }
+      }
+      
+      renderList();
+      
+      const statusParts = [];
+      if (imported_count > 0) {
+        statusParts.push(`${imported_count} snippet${imported_count !== 1 ? 's' : ''}`);
+      }
+      if (skipped_count > 0) {
+        statusParts.push(`${skipped_count} duplicate${skipped_count !== 1 ? 's' : ''} skipped`);
+      }
+      if (settingsToImport) {
+        statusParts.push('settings');
+      }
+      
+      if (imported_count > 0 || settingsToImport) {
+        setStatus(`Imported ${statusParts.join(', ')}`);
+      } else {
+        setStatus(`No new snippets imported (${skipped_count} duplicate${skipped_count !== 1 ? 's' : ''} skipped)`);
+      }
+    } catch (err) {
+      setStatus('Error: Failed to parse JSON file');
+      console.error('Import error:', err);
+    }
+  };
+  reader.readAsText(file);
 }
 
 // =============================================================================
@@ -909,6 +1029,29 @@ function initializeApp() {
   document.getElementById('modKeySearch').textContent = modKeySymbol;
   document.getElementById('modalModKey1').textContent = modKeySymbol;
   document.getElementById('modalModKey2').textContent = modKeySymbol;
+
+  // --- Export/Import ---
+  
+  const exportBtn = document.getElementById('exportBtn');
+  const importBtn = document.getElementById('importBtn');
+  const importFileInput = document.getElementById('importFileInput');
+
+  exportBtn?.addEventListener('click', () => {
+    exportToJson();
+  });
+
+  importBtn?.addEventListener('click', () => {
+    importFileInput?.click();
+  });
+
+  importFileInput?.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      importFromJson(file);
+      // Reset file input so the same file can be imported again
+      e.target.value = '';
+    }
+  });
 
   // --- About Modal ---
   

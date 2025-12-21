@@ -9,6 +9,7 @@ Installable as a Progressive Web App (PWA), so you can add it to your desktop/mo
 
 - **Installable PWA**: Offline-capable and installable on desktop/mobile.
 - **Local-first storage**: Snippets live in browser `localStorage`.
+- **Export/Import**: Backup and restore your snippets and settings as JSON files.
 - **Fast editing**: Debounced autosave and a clean editor experience.
 - **Quick navigation**: Sidebar list + instant search.
 - **Quality-of-life tools**: Copy to clipboard, line numbers, and editor preferences (font family/size).
@@ -40,6 +41,20 @@ Installable as a Progressive Web App (PWA), so you can add it to your desktop/mo
    ```
 
 4. Open http://localhost:3000
+
+## Usage
+
+### Export & Import
+
+**Export**: Click the Export button in the sidebar to download all your snippets and settings as a JSON file (named `snippets-YYYY-MM-DD.json`). This is useful for:
+- Creating backups
+- Moving snippets between browsers or devices
+- Sharing snippet collections with others
+
+**Import**: Click the Import button to restore snippets and settings from a previously exported JSON file. The import:
+- Merges with existing snippets (skips duplicates by ID)
+- Restores your editor preferences (font size, font family, line numbers)
+- Supports both the current format and older array-only format for backward compatibility
 
 ## Docker
 
