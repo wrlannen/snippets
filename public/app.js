@@ -303,6 +303,78 @@ function setStatus(text) {
 }
 
 /**
+ * Temporarily sets a status message, then restores the previous one.
+ * @param {string} text
+ * @param {number} ms
+ */
+function flashStatus(text, ms = 1200, options = {}) {
+  if (!els?.status) return;
+  const previousText = els.status.textContent;
+  const highlightClass = options?.highlightClass;
+  const hadHighlight = highlightClass ? els.status.classList.contains(highlightClass) : false;
+
+  setStatus(text);
+  if (highlightClass && !hadHighlight) els.status.classList.add(highlightClass);
+
+  window.setTimeout(() => {
+    // Only restore if nothing else has updated the status since.
+    if (els?.status?.textContent === text) {
+      setStatus(previousText);
+      if (highlightClass && !hadHighlight) els.status.classList.remove(highlightClass);
+    }
+  }, ms);
+}
+
+function flashCopyButton(ok) {
+  if (!els?.copyBtn) return;
+
+  const btn = els.copyBtn;
+  const originalTitle = btn.getAttribute('title') || '';
+
+  btn.classList.add('bg-[#2d2d2d]', 'text-gray-200');
+  btn.setAttribute('title', ok ? 'Copied' : 'Copy failed');
+
+  window.setTimeout(() => {
+    btn.classList.remove('bg-[#2d2d2d]', 'text-gray-200');
+    btn.setAttribute('title', originalTitle || 'Copy to clipboard');
+  }, 900);
+}
+
+/**
+ * Copies text to the clipboard.
+ * Uses the async Clipboard API when available; falls back to execCommand.
+ * @param {string} text
+ * @returns {Promise<boolean>} whether the copy succeeded
+ */
+async function copyTextToClipboard(text) {
+  try {
+    if (navigator?.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {
+    // fall through to legacy path
+  }
+
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Updates the character count display in the footer.
  * Shows count with proper singular/plural form.
  */
@@ -698,6 +770,7 @@ function initializeApp() {
     empty: document.getElementById("empty"),
     status: document.getElementById("status"),
     charCount: document.getElementById("charCount"),
+    copyBtn: document.getElementById("copyBtn"),
   };
   lineNumbersEl = document.getElementById("lineNumbers");
 
@@ -712,6 +785,21 @@ function initializeApp() {
       updateLineNumbers();
     });
     applyFontSettings(loadSettings());
+  }
+
+  // Set up copy-to-clipboard button
+  if (els.copyBtn) {
+    els.copyBtn.addEventListener('click', async () => {
+      const text = els?.content?.value ?? '';
+      if (!text.trim()) {
+        flashStatus('Nothing to copy');
+        flashCopyButton(false);
+        return;
+      }
+      const ok = await copyTextToClipboard(text);
+      flashStatus(ok ? 'Copied to clipboard' : 'Copy failed', 1200, { highlightClass: ok ? 'text-white' : undefined });
+      flashCopyButton(ok);
+    });
   }
 
   // Validate critical DOM elements exist
