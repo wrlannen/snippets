@@ -435,7 +435,7 @@ function buildSnippetItemHtml(snippet, isActive) {
     <div class="group relative flex items-stretch ${containerClasses}">
       <button type="button" data-action="open" 
         class="min-w-0 flex-1 px-3 py-3.5 text-left transition-colors flex flex-col justify-center gap-0.5">
-        <div class="truncate text-[14px] leading-none font-mono ${titleClasses}">${escapeHtml(firstLine)}</div>
+        <div class="truncate text-[15px] leading-none font-mono ${titleClasses}">${escapeHtml(firstLine)}</div>
         <div class="text-[11px] leading-none ${dateClasses}">${timestamp}</div>
       </button>
       <div class="flex items-center ml-auto pr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" 
