@@ -4,7 +4,7 @@ const SETTINGS_KEY = "snippets.settings.v1";
 const DEFAULT_FONT_SIZE = 15;
 const MIN_FONT_SIZE = 10;
 const MAX_FONT_SIZE = 24;
-const DEFAULT_FONT_FAMILY = "'JetBrains Mono', 'Fira Code', Menlo, Monaco, 'Courier New', monospace";
+const DEFAULT_FONT_FAMILY = "'Source Code Pro', monospace";
 
 let els;
 let activeId = null;
@@ -85,7 +85,7 @@ function applyFontSettings(settings) {
     els.content.style.fontFamily = fontFamily;
     els.content.style.lineHeight = '1.6';
   }
-  
+
   const overlay = document.getElementById('firstLineOverlay');
   if (overlay) {
     overlay.style.fontSize = fontSize + "px";
@@ -142,12 +142,12 @@ function formatDate(iso) {
     const now = new Date();
     const diffMs = now - date;
     const diffMins = Math.floor(diffMs / 60000);
-    
+
     if (diffMins < 1) return "now";
     if (diffMins < 60) return diffMins + "m ago";
     if (diffMins < 1440) return Math.floor(diffMins / 60) + "h ago";
     if (diffMins < 10080) return Math.floor(diffMins / 1440) + "d ago";
-    
+
     return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
   } catch {
     return "";
@@ -170,10 +170,10 @@ function updateCharCount() {
 function updateFirstLineOverlay() {
   const overlay = document.getElementById('firstLineOverlay');
   if (!overlay || !els || !els.content) return;
-  
+
   const content = els.content.value || '';
   const firstLine = content.split(/\r?\n/)[0] || '';
-  
+
   if (firstLine) {
     overlay.textContent = firstLine;
     overlay.style.display = 'block';
@@ -210,33 +210,33 @@ function escapeHtml(s) {
 
 function renderList() {
   if (!els || !els.list || !els.empty) return;
-  
+
   const snippets = loadSnippets();
-  
+
   const query = (els.search?.value || "").toLowerCase().trim();
   const filtered = query ? snippets.filter(s => {
     const content = (s.content || "").toLowerCase();
     return content.includes(query);
   }) : snippets;
-  
+
   els.empty.style.display = filtered.length === 0 ? "flex" : "none";
   els.list.innerHTML = "";
   lastRenderIds = filtered.map((s) => s.id);
-  
+
   for (const s of filtered) {
     const li = document.createElement("li");
     const isActive = s.id === activeId;
     const firstLine = (s.content ?? "").split(/\r?\n/)[0];
     li.innerHTML = '<div class="group relative flex items-stretch ' + (isActive ? "bg-[#37373d] border-l-2 border-[#007acc]" : "hover:bg-[#2d2d2d] border-l-2 border-transparent") + '">' +
-        '<button type="button" data-action="open" class="min-w-0 flex-1 px-3 py-2 text-left transition-colors">' +
-          '<div class="truncate text-xs font-bold ' + (isActive ? "text-gray-200" : "text-gray-400") + '">' + escapeHtml(firstLine || "Untitled") + '</div>' +
-          '<div class="mt-0.5 text-[10px] ' + (isActive ? "text-gray-500" : "text-gray-600") + '">' + escapeHtml(formatDate(s.updatedAt)) + '</div>' +
-        '</button>' +
-        '<div class="flex items-center ml-auto pr-2" style="position: absolute; right: 0; top: 0; height: 100%;">' +
-          '<button type="button" data-action="delete" class="h-6 w-6 shrink-0 rounded text-[14px] leading-none text-gray-700 hover:text-gray-400 focus:text-gray-400 flex items-center justify-center" aria-label="Delete snippet" title="Delete">' +
-            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 pointer-events-none"><path fill-rule="evenodd" d="M7.5 3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V4h3.25a.75.75 0 0 1 0 1.5h-.305l-.548 9.32A2.75 2.75 0 0 1 12.156 17H7.844a2.75 2.75 0 0 1-2.741-2.18l-.548-9.32H4.25a.75.75 0 0 1 0-1.5H7.5V3Zm1 .5V4h3v-.5h-3ZM5.75 5.5l.54 9.18a1.25 1.25 0 0 0 1.246 1.07h4.312a1.25 1.25 0 0 0 1.246-1.07l.54-9.18H5.75Z" clip-rule="evenodd" /></svg>' +
-          '</button>' +
-        '</div>' +
+      '<button type="button" data-action="open" class="min-w-0 flex-1 px-3 py-3.5 text-left transition-colors flex flex-col justify-center gap-0.5">' +
+      '<div class="truncate text-[13px] font-bold leading-none ' + (isActive ? "text-white" : "text-gray-300") + '">' + escapeHtml(firstLine || "Untitled") + '</div>' +
+      '<div class="text-[11px] leading-none ' + (isActive ? "text-gray-400" : "text-gray-500") + '">' + escapeHtml(formatDate(s.updatedAt)) + '</div>' +
+      '</button>' +
+      '<div class="flex items-center ml-auto pr-2" style="position: absolute; right: 0; top: 0; height: 100%;">' +
+      '<button type="button" data-action="delete" class="h-6 w-6 shrink-0 rounded text-[14px] leading-none text-gray-700 hover:text-gray-400 focus:text-gray-400 flex items-center justify-center" aria-label="Delete snippet" title="Delete">' +
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 pointer-events-none"><path fill-rule="evenodd" d="M7.5 3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V4h3.25a.75.75 0 0 1 0 1.5h-.305l-.548 9.32A2.75 2.75 0 0 1 12.156 17H7.844a2.75 2.75 0 0 1-2.741-2.18l-.548-9.32H4.25a.75.75 0 0 1 0-1.5H7.5V3Zm1 .5V4h3v-.5h-3ZM5.75 5.5l.54 9.18a1.25 1.25 0 0 0 1.246 1.07h4.312a1.25 1.25 0 0 0 1.246-1.07l.54-9.18H5.75Z" clip-rule="evenodd" /></svg>' +
+      '</button>' +
+      '</div>' +
       '</div>';
 
     li.querySelector('[data-action="open"]')?.addEventListener("click", () => {
@@ -248,7 +248,7 @@ function renderList() {
       e.stopPropagation();
       deleteSnippet(s.id);
     });
-    
+
     els.list.appendChild(li);
   }
 }
@@ -341,38 +341,28 @@ function createNewSnippet() {
 
 function initializeFontControls() {
   const settings = loadSettings();
-  applyFontSettings(settings);
-
   const fontFamilySelect = document.getElementById('fontFamily');
-  if (!fontFamilySelect) return;
 
-  // Build list of available options by checking primary font name
-  const options = Array.from(fontFamilySelect.querySelectorAll('option'));
-  const available = [];
-  for (const opt of options) {
-    const primary = extractPrimaryFontName(opt.value);
-    if (isFontAvailable(primary)) {
-      available.push(opt);
-    }
+  if (!fontFamilySelect) {
+    applyFontSettings(settings);
+    return;
   }
 
-  // If no available fonts detected, keep all options (fallback case)
-  if (available.length > 0) {
-    // remove all, then re-add only available options
-    fontFamilySelect.innerHTML = '';
-    for (const opt of available) fontFamilySelect.appendChild(opt);
+  // Try to set the dropdown to the saved setting
+  fontFamilySelect.value = settings.fontFamily;
+
+  // If the saved value didn't match any option (e.g. old data), the browser ignores the assignment.
+  // We detect this mismatch and force-update the settings to the valid default (first option).
+  if (fontFamilySelect.value !== settings.fontFamily) {
+    const validDefault = fontFamilySelect.options[0].value;
+    fontFamilySelect.value = validDefault;
+    const newSettings = { ...settings, fontFamily: validDefault };
+    saveSettings(newSettings);
+    applyFontSettings(newSettings);
+  } else {
+    applyFontSettings(settings);
   }
 
-  // Ensure the select reflects saved settings or pick first available
-  const effectiveValue = (Array.from(fontFamilySelect.options).some(o => o.value === settings.fontFamily))
-    ? settings.fontFamily
-    : fontFamilySelect.options[0]?.value ?? settings.fontFamily;
-
-  fontFamilySelect.value = effectiveValue;
-  if (effectiveValue !== settings.fontFamily) {
-    saveSettings({ ...settings, fontFamily: effectiveValue });
-    applyFontSettings({ ...settings, fontFamily: effectiveValue });
-  }
 
   document.getElementById('increaseFont')?.addEventListener('click', () => {
     const settings = loadSettings();
@@ -444,13 +434,13 @@ function initializeApp() {
         return;
       }
     }
-    
+
     if (e.metaKey && e.key === ".") {
       e.preventDefault();
       createNewSnippet();
       return;
     }
-    
+
     if (e.metaKey && e.key === "f") {
       e.preventDefault();
       document.getElementById("searchWrapper").classList.remove("hidden");
@@ -466,7 +456,7 @@ function initializeApp() {
     renderList();
     clearEditor();
   }
-  
+
   initializeFontControls();
 }
 
