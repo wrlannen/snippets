@@ -1,56 +1,143 @@
+/**
+ * Snippets - A minimal, client-side snippet manager
+ * 
+ * All data is stored in browser localStorage with no backend.
+ * The first line of each snippet is used as its title in the sidebar.
+ * 
+ * Keyboard shortcuts:
+ *   - Cmd/Ctrl+K: Create new snippet
+ *   - Cmd/Ctrl+F: Focus search
+ *   - Escape: Close search / dismiss modals
+ */
+
+// =============================================================================
+// Configuration Constants
+// =============================================================================
+
+/** localStorage key for snippet data */
 const STORAGE_KEY = "snippets.v1";
+
+/** localStorage key for user preferences */
 const SETTINGS_KEY = "snippets.settings.v1";
 
+/** Editor font size constraints and defaults */
 const DEFAULT_FONT_SIZE = 15;
 const MIN_FONT_SIZE = 10;
 const MAX_FONT_SIZE = 24;
+
+/** Default font stack for the editor */
 const DEFAULT_FONT_FAMILY = "'Source Code Pro', monospace";
+
+/** Whether line numbers are shown by default */
 const DEFAULT_LINE_NUMBERS = true;
 
+/** Autosave delay in milliseconds after user stops typing */
+const AUTOSAVE_DELAY_MS = 800;
+
+/** Debounce delay for sidebar re-renders during typing */
+const RENDER_DEBOUNCE_MS = 150;
+
+/** Warning threshold for localStorage usage (5MB) */
+const STORAGE_WARNING_BYTES = 5 * 1024 * 1024;
+
+// =============================================================================
+// Application State
+// =============================================================================
+
+/** Cached references to frequently-accessed DOM elements */
 let els;
+
+/** Reference to the line numbers gutter element */
 let lineNumbersEl;
+
+/** ID of the currently active/editing snippet (null if none) */
 let activeId = null;
+
+/** IDs from the last sidebar render, used for optimization */
 let lastRenderIds = [];
+
+/** ID of snippet pending deletion confirmation (unused, kept for future) */
 let pendingDeleteId = null;
+
+/** Timer handle for debounced autosave */
 let autosaveTimer = null;
+
+/** Timer handle for debounced sidebar renders */
 let renderDebounceTimer = null;
 
+// =============================================================================
+// Utility Functions
+// =============================================================================
+
+/**
+ * Returns the current time as an ISO 8601 string.
+ * Used for createdAt/updatedAt timestamps.
+ */
 function nowIso() {
   return new Date().toISOString();
 }
 
+/**
+ * Generates a unique identifier for snippets.
+ * Prefers crypto.randomUUID() for security, falls back to a combination
+ * of Math.random() and timestamp for older browsers.
+ * @returns {string} A unique identifier
+ */
 function uid() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  return Math.random().toString(16).slice(2) + Math.random().toString(16).slice(2) + Date.now().toString(16);
+  // Fallback for environments without crypto.randomUUID
+  return Math.random().toString(16).slice(2) + 
+         Math.random().toString(16).slice(2) + 
+         Date.now().toString(16);
 }
 
+/**
+ * Safely parses JSON with a fallback value.
+ * Returns the fallback if parsing fails or result is null/undefined.
+ * @param {string} value - The JSON string to parse
+ * @param {*} fallback - Value to return if parsing fails
+ * @returns {*} Parsed value or fallback
+ */
 function safeJsonParse(value, fallback) {
   try {
     const parsed = JSON.parse(value);
-    if (parsed === null || parsed === undefined) {
-      return fallback;
-    }
-    return parsed;
+    return (parsed === null || parsed === undefined) ? fallback : parsed;
   } catch {
     return fallback;
   }
 }
 
+// =============================================================================
+// Storage Functions (localStorage persistence)
+// =============================================================================
+
+/**
+ * Loads all snippets from localStorage.
+ * @returns {Array} Array of snippet objects, empty array if none exist
+ */
 function loadSnippets() {
   const raw = localStorage.getItem(STORAGE_KEY);
   const parsed = safeJsonParse(raw, []);
   return Array.isArray(parsed) ? parsed : [];
 }
 
+/**
+ * Saves snippets array to localStorage.
+ * Warns if approaching storage limits, handles quota exceeded errors.
+ * @param {Array} snippets - Array of snippet objects to save
+ */
 function saveSnippets(snippets) {
   try {
     const data = JSON.stringify(snippets);
-    if (data.length > 5 * 1024 * 1024) {
+    
+    // Warn user if approaching localStorage limit
+    if (data.length > STORAGE_WARNING_BYTES) {
       console.warn('Data size approaching localStorage limit');
       setStatus('Warning: Storage nearly full');
     }
+    
     localStorage.setItem(STORAGE_KEY, data);
   } catch (e) {
     if (e.name === 'QuotaExceededError') {
@@ -63,9 +150,15 @@ function saveSnippets(snippets) {
   }
 }
 
+/**
+ * Loads user settings from localStorage.
+ * Returns defaults for any missing properties.
+ * @returns {Object} Settings object with fontSize, fontFamily, lineNumbers
+ */
 function loadSettings() {
   const raw = localStorage.getItem(SETTINGS_KEY);
   const parsed = safeJsonParse(raw, {});
+  
   return {
     fontSize: parsed.fontSize ?? DEFAULT_FONT_SIZE,
     fontFamily: parsed.fontFamily ?? DEFAULT_FONT_FAMILY,
@@ -73,6 +166,10 @@ function loadSettings() {
   };
 }
 
+/**
+ * Persists user settings to localStorage.
+ * @param {Object} settings - Settings object to save
+ */
 function saveSettings(settings) {
   try {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
@@ -81,18 +178,31 @@ function saveSettings(settings) {
   }
 }
 
+// =============================================================================
+// UI Update Functions
+// =============================================================================
+
+/**
+ * Applies font settings to the editor and updates line numbers visibility.
+ * Also updates the toggle button visual state.
+ * @param {Object} settings - Settings object with fontSize, fontFamily, lineNumbers
+ */
 function applyFontSettings(settings) {
   const { fontSize, fontFamily } = settings;
+  
+  // Apply font styles to editor
   if (els && els.content) {
     els.content.style.fontSize = fontSize + "px";
     els.content.style.fontFamily = fontFamily;
     els.content.style.lineHeight = '1.4';
     updateLineNumbers();
   }
-  // Show/hide line numbers
+  
+  // Show/hide line numbers gutter
   if (lineNumbersEl) {
     lineNumbersEl.style.display = settings.lineNumbers ? '' : 'none';
-    // Also update toggle button state if present
+    
+    // Update toggle button visual state (brighter when active)
     const toggleLineNumbersBtn = document.getElementById("toggleLineNumbers");
     if (toggleLineNumbersBtn) {
       toggleLineNumbersBtn.classList.toggle('text-gray-300', settings.lineNumbers);
@@ -101,24 +211,36 @@ function applyFontSettings(settings) {
   }
 }
 
+/**
+ * Extracts the primary font name from a CSS font-family value.
+ * @param {string} fontValue - CSS font-family value (e.g., "'Source Code Pro', monospace")
+ * @returns {string} Primary font name without quotes
+ */
 function extractPrimaryFontName(fontValue) {
   if (!fontValue) return "";
   const first = fontValue.split(',')[0].trim();
   return first.replace(/^['"]|['"]$/g, "");
 }
 
+/**
+ * Checks if a font is available in the browser.
+ * Uses FontFaceSet API when available, falls back to width measurement.
+ * @param {string} fontName - Name of the font to check
+ * @returns {boolean} True if font is available
+ */
 function isFontAvailable(fontName) {
   if (!fontName) return false;
+  
+  // Prefer modern FontFaceSet API
   try {
-    // Prefer FontFaceSet.check when available
     if (document.fonts && typeof document.fonts.check === 'function') {
       return document.fonts.check(`12px "${fontName.replace(/"/g, '')}"`);
     }
   } catch (e) {
-    // fall through to measurement method
+    // Fall through to measurement method
   }
 
-  // Fallback measurement: compare widths against a generic monospace
+  // Fallback: compare rendered widths against generic monospace
   try {
     const span = document.createElement('span');
     span.style.position = 'absolute';
@@ -127,22 +249,29 @@ function isFontAvailable(fontName) {
     span.style.fontSize = '72px';
     span.textContent = 'mmmmmmmmmmlllllll';
 
-    // baseline with monospace
+    // Measure baseline with monospace
     span.style.fontFamily = 'monospace';
     document.body.appendChild(span);
     const monoWidth = span.getBoundingClientRect().width;
 
-    // test with target font first, then fallback to monospace
+    // Measure with target font (falls back to monospace if unavailable)
     span.style.fontFamily = `"${fontName.replace(/"/g, '')}", monospace`;
     const testWidth = span.getBoundingClientRect().width;
     document.body.removeChild(span);
 
+    // If widths differ, the font rendered differently than fallback
     return Math.abs(testWidth - monoWidth) > 0.1;
   } catch (e) {
     return false;
   }
 }
 
+/**
+ * Formats an ISO date string as a human-readable relative time.
+ * Examples: "now", "5m ago", "2h ago", "3d ago", "Dec 15"
+ * @param {string} iso - ISO 8601 date string
+ * @returns {string} Formatted relative time or date
+ */
 function formatDate(iso) {
   try {
     const date = new Date(iso);
@@ -150,66 +279,96 @@ function formatDate(iso) {
     const diffMs = now - date;
     const diffMins = Math.floor(diffMs / 60000);
 
+    // Show relative time for recent items
     if (diffMins < 1) return "now";
     if (diffMins < 60) return diffMins + "m ago";
-    if (diffMins < 1440) return Math.floor(diffMins / 60) + "h ago";
-    if (diffMins < 10080) return Math.floor(diffMins / 1440) + "d ago";
+    if (diffMins < 1440) return Math.floor(diffMins / 60) + "h ago";      // < 24 hours
+    if (diffMins < 10080) return Math.floor(diffMins / 1440) + "d ago";   // < 7 days
 
+    // Show date for older items
     return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
   } catch {
     return "";
   }
 }
 
+/**
+ * Updates the status text in the footer.
+ * @param {string} text - Status message to display
+ */
 function setStatus(text) {
   if (els && els.status) {
     els.status.textContent = text;
   }
 }
 
+/**
+ * Updates the character count display in the footer.
+ * Shows count with proper singular/plural form.
+ */
 function updateCharCount() {
   if (!els || !els.content || !els.charCount) return;
+  
   const len = (els.content.value ?? "").length;
   const word = len === 1 ? "character" : "characters";
   els.charCount.textContent = len.toLocaleString() + " " + word;
 }
 
+/**
+ * Updates the line numbers gutter to match the editor content.
+ * Highlights the current line based on cursor position.
+ * Syncs scroll position with the editor.
+ */
 function updateLineNumbers() {
   if (!lineNumbersEl || !els?.content) return;
+  
   const settings = loadSettings();
+  
+  // Clear line numbers if disabled
   if (!settings.lineNumbers) {
     lineNumbersEl.innerHTML = '';
     return;
   }
+  
   const value = els.content.value || "";
   const lines = value.split(/\r?\n/);
-  // Get computed style for line height and padding
+  
+  // Match line numbers styling to editor
   const style = window.getComputedStyle(els.content);
-  const lineHeight = style.lineHeight;
-  const paddingTop = style.paddingTop;
-  lineNumbersEl.style.lineHeight = lineHeight;
-  lineNumbersEl.style.paddingTop = paddingTop;
-  // Match gutter font size to editor font size for alignment
+  lineNumbersEl.style.lineHeight = style.lineHeight;
+  lineNumbersEl.style.paddingTop = style.paddingTop;
   lineNumbersEl.style.fontSize = style.fontSize;
-  // Highlight current line
+  
+  // Determine which line the cursor is on
   let currentLine = 0;
   if (typeof els.content.selectionStart === 'number') {
-    const before = els.content.value.slice(0, els.content.selectionStart);
-    currentLine = before.split(/\r?\n/).length - 1;
+    const textBeforeCursor = els.content.value.slice(0, els.content.selectionStart);
+    currentLine = textBeforeCursor.split(/\r?\n/).length - 1;
   }
-  let html = "";
-  for (let i = 0; i < lines.length; i++) {
+  
+  // Build line numbers HTML with current line highlight
+  const lineNumberHtml = lines.map((_, i) => {
     const cls = i === currentLine ? 'current-line' : '';
-    html += `<div class="${cls}" style="display:flex;align-items:center;justify-content:flex-end;height:1.4em;padding-right:2px;">${i + 1}</div>`;
-  }
-  lineNumbersEl.innerHTML = html;
-  // Sync scroll
+    return `<div class="${cls}" style="display:flex;align-items:center;justify-content:flex-end;height:1.4em;padding-right:2px;">${i + 1}</div>`;
+  }).join('');
+  
+  lineNumbersEl.innerHTML = lineNumberHtml;
+  
+  // Keep line numbers scroll in sync with editor
   lineNumbersEl.scrollTop = els.content.scrollTop;
 }
 
+// =============================================================================
+// Editor Functions
+// =============================================================================
 
+/**
+ * Clears the editor and resets to empty state.
+ * Used when no snippet is selected or after deleting the last snippet.
+ */
 function clearEditor() {
   activeId = null;
+  
   if (els && els.content) {
     els.content.value = "";
     els.content.focus();
@@ -220,12 +379,22 @@ function clearEditor() {
   updateLineNumbers();
 }
 
+/**
+ * Gets the current editor content.
+ * @returns {Object} Object containing the content string
+ */
 function getEditorValue() {
   return {
     content: els?.content?.value ?? "",
   };
 }
 
+/**
+ * Escapes HTML special characters to prevent XSS.
+ * Must be used when inserting user content into innerHTML.
+ * @param {string} s - String to escape
+ * @returns {string} HTML-safe string
+ */
 function escapeHtml(s) {
   return String(s)
     .replaceAll("&", "&amp;")
@@ -235,57 +404,115 @@ function escapeHtml(s) {
     .replaceAll("'", "&#039;");
 }
 
+// =============================================================================
+// Sidebar / List Rendering
+// =============================================================================
+
+/**
+ * Builds the HTML for a single snippet item in the sidebar.
+ * @param {Object} snippet - Snippet object with id, content, updatedAt
+ * @param {boolean} isActive - Whether this snippet is currently selected
+ * @returns {string} HTML string for the list item
+ */
+function buildSnippetItemHtml(snippet, isActive) {
+  const firstLine = (snippet.content ?? "").split(/\r?\n/)[0] || "Untitled";
+  const timestamp = escapeHtml(formatDate(snippet.updatedAt));
+  
+  // Container classes change based on active state
+  const containerClasses = isActive 
+    ? "bg-[#37373d] border-l-2 border-[#007acc]" 
+    : "hover:bg-[#2d2d2d] border-l-2 border-transparent";
+  
+  const titleClasses = isActive ? "text-white" : "text-gray-300";
+  const dateClasses = isActive ? "text-gray-400" : "text-gray-500";
+  
+  // Trash icon SVG (Heroicons)
+  const trashIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 pointer-events-none">
+    <path fill-rule="evenodd" d="M7.5 3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V4h3.25a.75.75 0 0 1 0 1.5h-.305l-.548 9.32A2.75 2.75 0 0 1 12.156 17H7.844a2.75 2.75 0 0 1-2.741-2.18l-.548-9.32H4.25a.75.75 0 0 1 0-1.5H7.5V3Zm1 .5V4h3v-.5h-3ZM5.75 5.5l.54 9.18a1.25 1.25 0 0 0 1.246 1.07h4.312a1.25 1.25 0 0 0 1.246-1.07l.54-9.18H5.75Z" clip-rule="evenodd" />
+  </svg>`;
+
+  return `
+    <div class="group relative flex items-stretch ${containerClasses}">
+      <button type="button" data-action="open" 
+        class="min-w-0 flex-1 px-3 py-3.5 text-left transition-colors flex flex-col justify-center gap-0.5">
+        <div class="truncate text-[13px] font-bold leading-none ${titleClasses}">${escapeHtml(firstLine)}</div>
+        <div class="text-[11px] leading-none ${dateClasses}">${timestamp}</div>
+      </button>
+      <div class="flex items-center ml-auto pr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" 
+        style="position: absolute; right: 0; top: 0; height: 100%;">
+        <button type="button" data-action="delete" 
+          class="h-6 w-6 shrink-0 rounded text-[14px] leading-none text-gray-500 hover:text-gray-200 focus:text-gray-200 flex items-center justify-center" 
+          aria-label="Delete snippet" title="Delete">
+          ${trashIcon}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Renders the snippet list in the sidebar.
+ * Filters by search query if present.
+ * Updates the empty state visibility.
+ */
 function renderList() {
   if (!els || !els.list || !els.empty) return;
 
   const snippets = loadSnippets();
-
+  
+  // Filter by search query if present
   const query = (els.search?.value || "").toLowerCase().trim();
-  const filtered = query ? snippets.filter(s => {
-    const content = (s.content || "").toLowerCase();
-    return content.includes(query);
-  }) : snippets;
+  const filtered = query 
+    ? snippets.filter(s => (s.content || "").toLowerCase().includes(query))
+    : snippets;
 
+  // Show/hide empty state
   els.empty.style.display = filtered.length === 0 ? "flex" : "none";
+  
+  // Track rendered IDs for potential future optimization
+  lastRenderIds = filtered.map(s => s.id);
+  
+  // Build and insert list items
   els.list.innerHTML = "";
-  lastRenderIds = filtered.map((s) => s.id);
-
-  for (const s of filtered) {
+  
+  for (const snippet of filtered) {
     const li = document.createElement("li");
-    const isActive = s.id === activeId;
-    const firstLine = (s.content ?? "").split(/\r?\n/)[0];
-    li.innerHTML = '<div class="group relative flex items-stretch ' + (isActive ? "bg-[#37373d] border-l-2 border-[#007acc]" : "hover:bg-[#2d2d2d] border-l-2 border-transparent") + '">' +
-      '<button type="button" data-action="open" class="min-w-0 flex-1 px-3 py-3.5 text-left transition-colors flex flex-col justify-center gap-0.5">' +
-      '<div class="truncate text-[13px] font-bold leading-none ' + (isActive ? "text-white" : "text-gray-300") + '">' + escapeHtml(firstLine || "Untitled") + '</div>' +
-      '<div class="text-[11px] leading-none ' + (isActive ? "text-gray-400" : "text-gray-500") + '">' + escapeHtml(formatDate(s.updatedAt)) + '</div>' +
-      '</button>' +
-      '<div class="flex items-center ml-auto pr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="position: absolute; right: 0; top: 0; height: 100%;">' +
-      '<button type="button" data-action="delete" class="h-6 w-6 shrink-0 rounded text-[14px] leading-none text-gray-500 hover:text-gray-200 focus:text-gray-200 flex items-center justify-center" aria-label="Delete snippet" title="Delete">' +
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 pointer-events-none"><path fill-rule="evenodd" d="M7.5 3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V4h3.25a.75.75 0 0 1 0 1.5h-.305l-.548 9.32A2.75 2.75 0 0 1 12.156 17H7.844a2.75 2.75 0 0 1-2.741-2.18l-.548-9.32H4.25a.75.75 0 0 1 0-1.5H7.5V3Zm1 .5V4h3v-.5h-3ZM5.75 5.5l.54 9.18a1.25 1.25 0 0 0 1.246 1.07h4.312a1.25 1.25 0 0 0 1.246-1.07l.54-9.18H5.75Z" clip-rule="evenodd" /></svg>' +
-      '</button>' +
-      '</div>' +
-      '</div>';
+    const isActive = snippet.id === activeId;
+    
+    li.innerHTML = buildSnippetItemHtml(snippet, isActive);
 
+    // Attach event listeners
     li.querySelector('[data-action="open"]')?.addEventListener("click", () => {
-      loadIntoEditor(s.id);
+      loadIntoEditor(snippet.id);
     });
 
     li.querySelector('[data-action="delete"]')?.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      deleteSnippet(s.id);
+      deleteSnippet(snippet.id);
     });
 
     els.list.appendChild(li);
   }
 }
 
+// =============================================================================
+// Snippet CRUD Operations
+// =============================================================================
+
+/**
+ * Loads a snippet into the editor by ID.
+ * Updates the active state and refreshes the sidebar.
+ * @param {string} id - Snippet ID to load
+ */
 function loadIntoEditor(id) {
   const snippets = loadSnippets();
-  const found = snippets.find((s) => s.id === id);
+  const found = snippets.find(s => s.id === id);
+  
   if (!found) return;
 
   activeId = found.id;
+  
   if (els && els.content) {
     els.content.value = found.content ?? "";
     updateLineNumbers();
@@ -296,14 +523,20 @@ function loadIntoEditor(id) {
   renderList();
 }
 
+/**
+ * Deletes a snippet by ID.
+ * If deleting the active snippet, loads the next available or clears editor.
+ * @param {string} id - Snippet ID to delete
+ */
 function deleteSnippet(id) {
   const snippets = loadSnippets();
-  const next = snippets.filter((s) => s.id !== id);
-  saveSnippets(next);
+  const remaining = snippets.filter(s => s.id !== id);
+  saveSnippets(remaining);
 
+  // If we deleted the active snippet, select another or clear
   if (activeId === id) {
-    if (next.length > 0) {
-      loadIntoEditor(next[0].id);
+    if (remaining.length > 0) {
+      loadIntoEditor(remaining[0].id);
     } else {
       renderList();
       clearEditor();
@@ -316,12 +549,21 @@ function deleteSnippet(id) {
   setStatus("Deleted");
 }
 
+/**
+ * Schedules an autosave after the debounce delay.
+ * Creates a new snippet if none is active, otherwise updates the existing one.
+ * Skips save if content is empty/whitespace only.
+ */
 function scheduleAutosave() {
   if (autosaveTimer) clearTimeout(autosaveTimer);
+  
   autosaveTimer = setTimeout(() => {
     const { content } = getEditorValue();
+    
+    // Don't save empty snippets
     if (!content.trim()) return;
 
+    // Create new snippet if none is active
     if (!activeId) {
       activeId = uid();
       const ts = nowIso();
@@ -333,8 +575,10 @@ function scheduleAutosave() {
       return;
     }
 
+    // Update existing snippet
     const snippets = loadSnippets();
-    const idx = snippets.findIndex((s) => s.id === activeId);
+    const idx = snippets.findIndex(s => s.id === activeId);
+    
     if (idx === -1) return;
 
     snippets[idx] = {
@@ -342,31 +586,53 @@ function scheduleAutosave() {
       content,
       updatedAt: nowIso(),
     };
+    
     saveSnippets(snippets);
     setStatus("Autosaved");
     renderList();
-  }, 800);
+  }, AUTOSAVE_DELAY_MS);
 }
 
+/**
+ * Debounces sidebar re-renders during rapid typing.
+ * Prevents UI jank while still keeping sidebar updated.
+ */
 function debouncedRenderList() {
   if (renderDebounceTimer) clearTimeout(renderDebounceTimer);
+  
   renderDebounceTimer = setTimeout(() => {
     renderList();
-  }, 150);
+  }, RENDER_DEBOUNCE_MS);
 }
 
+/**
+ * Creates a new empty snippet and loads it into the editor.
+ * The snippet is added to the top of the list.
+ */
 function createNewSnippet() {
   activeId = uid();
   const ts = nowIso();
+  
   const snippets = loadSnippets();
   snippets.unshift({ id: activeId, content: "", createdAt: ts, updatedAt: ts });
   saveSnippets(snippets);
+  
   loadIntoEditor(activeId);
+  
   if (els && els.content) {
     els.content.focus();
   }
 }
 
+// =============================================================================
+// Initialization
+// =============================================================================
+
+/**
+ * Initializes the font control buttons and dropdown.
+ * Handles A+/A- buttons for font size and font family selector.
+ * Validates saved settings against available options.
+ */
 function initializeFontControls() {
   const settings = loadSettings();
   const fontFamilySelect = document.getElementById('fontFamily');
@@ -379,8 +645,8 @@ function initializeFontControls() {
   // Try to set the dropdown to the saved setting
   fontFamilySelect.value = settings.fontFamily;
 
-  // If the saved value didn't match any option (e.g. old data), the browser ignores the assignment.
-  // We detect this mismatch and force-update the settings to the valid default (first option).
+  // If saved value doesn't match any option (e.g., corrupted data), 
+  // reset to the first available option
   if (fontFamilySelect.value !== settings.fontFamily) {
     const validDefault = fontFamilySelect.options[0].value;
     fontFamilySelect.value = validDefault;
@@ -391,7 +657,7 @@ function initializeFontControls() {
     applyFontSettings(settings);
   }
 
-
+  // Font size increase button (A+)
   document.getElementById('increaseFont')?.addEventListener('click', () => {
     const settings = loadSettings();
     const newSize = Math.min(MAX_FONT_SIZE, settings.fontSize + 1);
@@ -400,6 +666,7 @@ function initializeFontControls() {
     applyFontSettings(newSettings);
   });
 
+  // Font size decrease button (A-)
   document.getElementById('decreaseFont')?.addEventListener('click', () => {
     const settings = loadSettings();
     const newSize = Math.max(MIN_FONT_SIZE, settings.fontSize - 1);
@@ -408,6 +675,7 @@ function initializeFontControls() {
     applyFontSettings(newSettings);
   });
 
+  // Font family dropdown
   fontFamilySelect?.addEventListener('change', (e) => {
     const settings = loadSettings();
     const newSettings = { ...settings, fontFamily: e.target.value };
@@ -416,7 +684,13 @@ function initializeFontControls() {
   });
 }
 
+/**
+ * Main application initialization.
+ * Sets up DOM references, event listeners, and loads initial data.
+ * Called when DOM is ready.
+ */
 function initializeApp() {
+  // Cache DOM element references
   els = {
     search: document.getElementById("search"),
     content: document.getElementById("content"),
@@ -427,6 +701,7 @@ function initializeApp() {
   };
   lineNumbersEl = document.getElementById("lineNumbers");
 
+  // Set up line numbers toggle button
   const toggleLineNumbersBtn = document.getElementById("toggleLineNumbers");
   if (toggleLineNumbersBtn) {
     toggleLineNumbersBtn.addEventListener("click", () => {
@@ -436,45 +711,64 @@ function initializeApp() {
       applyFontSettings(newSettings);
       updateLineNumbers();
     });
-    // Set initial state
     applyFontSettings(loadSettings());
   }
 
+  // Validate critical DOM elements exist
   if (!els.list || !els.content || !els.empty) {
     console.error("Critical DOM elements not found");
     return;
   }
 
+  // --- Editor Event Listeners ---
+  
+  // Handle content changes: update UI and schedule save
   els.content.addEventListener("input", () => {
     updateCharCount();
     updateLineNumbers();
     scheduleAutosave();
     debouncedRenderList();
   });
+  
+  // Sync line numbers scroll position with editor
   els.content.addEventListener("scroll", () => {
-    if (lineNumbersEl) lineNumbersEl.scrollTop = els.content.scrollTop;
+    if (lineNumbersEl) {
+      lineNumbersEl.scrollTop = els.content.scrollTop;
+    }
   });
+  
+  // Update current line highlight on cursor movement
   els.content.addEventListener("click", updateLineNumbers);
   els.content.addEventListener("keyup", updateLineNumbers);
   els.content.addEventListener("select", updateLineNumbers);
-  // Initial render
+  
+  // Apply initial settings
   applyFontSettings(loadSettings());
   updateLineNumbers();
 
+  // --- Search Event Listeners ---
+  
   els.search.addEventListener("input", () => {
     renderList();
   });
 
+  // Close search when clicking outside
   document.addEventListener("click", (e) => {
     const searchWrapper = document.getElementById("searchWrapper");
-    if (searchWrapper && !searchWrapper.classList.contains("hidden") && !searchWrapper.contains(e.target)) {
+    const isSearchOpen = searchWrapper && !searchWrapper.classList.contains("hidden");
+    const clickedOutside = searchWrapper && !searchWrapper.contains(e.target);
+    
+    if (isSearchOpen && clickedOutside) {
       els.search.value = "";
       searchWrapper.classList.add("hidden");
       renderList();
     }
   });
 
+  // --- Global Keyboard Shortcuts ---
+  
   window.addEventListener("keydown", (e) => {
+    // Escape: Close search and return focus to editor
     if (e.key === "Escape") {
       const searchWrapper = document.getElementById("searchWrapper");
       if (searchWrapper && !searchWrapper.classList.contains("hidden")) {
@@ -486,14 +780,17 @@ function initializeApp() {
       }
     }
 
-    const isMod = e.metaKey || e.ctrlKey; // Support both ⌘ (Mac) and Ctrl (Windows/Linux)
+    // Modifier key (Cmd on Mac, Ctrl on Windows/Linux)
+    const isMod = e.metaKey || e.ctrlKey;
 
+    // Cmd/Ctrl+K: Create new snippet
     if (isMod && e.key === "k") {
       e.preventDefault();
       createNewSnippet();
       return;
     }
 
+    // Cmd/Ctrl+F: Open search
     if (isMod && e.key === "f") {
       e.preventDefault();
       document.getElementById("searchWrapper").classList.remove("hidden");
@@ -502,6 +799,8 @@ function initializeApp() {
     }
   });
 
+  // --- Initial Data Load ---
+  
   const initial = loadSnippets();
   if (initial.length > 0) {
     loadIntoEditor(initial[0].id);
@@ -512,15 +811,19 @@ function initializeApp() {
 
   initializeFontControls();
 
-  // Update modifier key display based on platform
+  // --- Platform-specific UI ---
+  
+  // Show correct modifier key symbol based on OS
   const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
   const modKeySymbol = isMac ? '⌘' : 'Ctrl';
+  
   document.getElementById('modKey').textContent = modKeySymbol;
   document.getElementById('modKeySearch').textContent = modKeySymbol;
   document.getElementById('modalModKey1').textContent = modKeySymbol;
   document.getElementById('modalModKey2').textContent = modKeySymbol;
 
-  // About modal
+  // --- About Modal ---
+  
   const aboutBtn = document.getElementById('aboutBtn');
   const aboutModal = document.getElementById('aboutModal');
   const closeAboutModal = document.getElementById('closeAboutModal');
@@ -533,6 +836,7 @@ function initializeApp() {
     aboutModal?.classList.add('hidden');
   });
 
+  // Close modal when clicking backdrop
   aboutModal?.addEventListener('click', (e) => {
     if (e.target === aboutModal) {
       aboutModal.classList.add('hidden');
@@ -540,6 +844,11 @@ function initializeApp() {
   });
 }
 
+// =============================================================================
+// Application Entry Point
+// =============================================================================
+
+// Initialize when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeApp);
 } else {
