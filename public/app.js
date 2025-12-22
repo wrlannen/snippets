@@ -28,9 +28,6 @@ const MAX_FONT_SIZE = 24;
 /** Default font stack for the editor */
 const DEFAULT_FONT_FAMILY = "'Source Code Pro', monospace";
 
-/** Whether line numbers are shown by default */
-const DEFAULT_LINE_NUMBERS = true;
-
 /** Sidebar width constraints and defaults (in pixels) */
 const DEFAULT_SIDEBAR_WIDTH = 192; // 12rem = w-48
 const MIN_SIDEBAR_WIDTH = 120;
@@ -51,9 +48,6 @@ const STORAGE_WARNING_BYTES = 5 * 1024 * 1024;
 
 /** Cached references to frequently-accessed DOM elements */
 let els;
-
-/** Reference to the line numbers gutter element */
-let lineNumbersEl;
 
 /** ID of the currently active/editing snippet (null if none) */
 let activeId = null;
@@ -158,7 +152,7 @@ function saveSnippets(snippets) {
 /**
  * Loads user settings from localStorage.
  * Returns defaults for any missing properties.
- * @returns {Object} Settings object with fontSize, fontFamily, lineNumbers, sidebarWidth
+ * @returns {Object} Settings object with fontSize, fontFamily, sidebarWidth
  */
 function loadSettings() {
   const raw = localStorage.getItem(SETTINGS_KEY);
@@ -167,7 +161,6 @@ function loadSettings() {
   return {
     fontSize: parsed.fontSize ?? DEFAULT_FONT_SIZE,
     fontFamily: parsed.fontFamily ?? DEFAULT_FONT_FAMILY,
-    lineNumbers: typeof parsed.lineNumbers === 'boolean' ? parsed.lineNumbers : DEFAULT_LINE_NUMBERS,
     sidebarWidth: parsed.sidebarWidth ?? DEFAULT_SIDEBAR_WIDTH
   };
 }
@@ -189,9 +182,8 @@ function saveSettings(settings) {
 // =============================================================================
 
 /**
- * Applies font settings to the editor and updates line numbers visibility.
- * Also updates the toggle button visual state.
- * @param {Object} settings - Settings object with fontSize, fontFamily, lineNumbers
+ * Applies font settings to the editor.
+ * @param {Object} settings - Settings object with fontSize, fontFamily
  */
 function applyFontSettings(settings) {
   const { fontSize, fontFamily } = settings;
@@ -201,19 +193,6 @@ function applyFontSettings(settings) {
     els.content.style.fontSize = fontSize + "px";
     els.content.style.fontFamily = fontFamily;
     els.content.style.lineHeight = '1.4';
-    updateLineNumbers();
-  }
-  
-  // Show/hide line numbers gutter
-  if (lineNumbersEl) {
-    lineNumbersEl.style.display = settings.lineNumbers ? '' : 'none';
-    
-    // Update toggle button visual state (brighter when active)
-    const toggleLineNumbersBtn = document.getElementById("toggleLineNumbers");
-    if (toggleLineNumbersBtn) {
-      toggleLineNumbersBtn.classList.toggle('text-gray-300', settings.lineNumbers);
-      toggleLineNumbersBtn.classList.toggle('text-gray-400', !settings.lineNumbers);
-    }
   }
 }
 
@@ -392,50 +371,6 @@ function updateCharCount() {
   els.charCount.textContent = len.toLocaleString() + " " + word;
 }
 
-/**
- * Updates the line numbers gutter to match the editor content.
- * Highlights the current line based on cursor position.
- * Syncs scroll position with the editor.
- */
-function updateLineNumbers() {
-  if (!lineNumbersEl || !els?.content) return;
-  
-  const settings = loadSettings();
-  
-  // Clear line numbers if disabled
-  if (!settings.lineNumbers) {
-    lineNumbersEl.innerHTML = '';
-    return;
-  }
-  
-  const value = els.content.value || "";
-  const lines = value.split(/\r?\n/);
-  
-  // Match line numbers styling to editor
-  const style = window.getComputedStyle(els.content);
-  lineNumbersEl.style.lineHeight = style.lineHeight;
-  lineNumbersEl.style.paddingTop = style.paddingTop;
-  lineNumbersEl.style.fontSize = style.fontSize;
-  
-  // Determine which line the cursor is on
-  let currentLine = 0;
-  if (typeof els.content.selectionStart === 'number') {
-    const textBeforeCursor = els.content.value.slice(0, els.content.selectionStart);
-    currentLine = textBeforeCursor.split(/\r?\n/).length - 1;
-  }
-  
-  // Build line numbers HTML with current line highlight
-  const lineNumberHtml = lines.map((_, i) => {
-    const cls = i === currentLine ? 'current-line' : '';
-    return `<div class="${cls}" style="display:flex;align-items:center;justify-content:flex-end;height:1.4em;padding-right:2px;">${i + 1}</div>`;
-  }).join('');
-  
-  lineNumbersEl.innerHTML = lineNumberHtml;
-  
-  // Keep line numbers scroll in sync with editor
-  lineNumbersEl.scrollTop = els.content.scrollTop;
-}
-
 // =============================================================================
 // Editor Functions
 // =============================================================================
@@ -454,7 +389,6 @@ function clearEditor() {
 
   setStatus("Ready");
   updateCharCount();
-  updateLineNumbers();
 }
 
 /**
@@ -593,7 +527,6 @@ function loadIntoEditor(id) {
   
   if (els && els.content) {
     els.content.value = found.content ?? "";
-    updateLineNumbers();
   }
 
   setStatus("Editing");
@@ -785,14 +718,15 @@ function importFromJson(file) {
       
       // Import settings if provided
       if (settingsToImport && typeof settingsToImport === 'object') {
-        saveSettings(settingsToImport);
-        applyFontSettings(settingsToImport);
-        updateLineNumbers();
+        const { lineNumbers: _ignored, ...restSettings } = settingsToImport;
+        const mergedSettings = { ...loadSettings(), ...restSettings };
+        saveSettings(mergedSettings);
+        applyFontSettings(mergedSettings);
         
         // Update font dropdown if available
         const fontFamilySelect = document.getElementById('fontFamily');
-        if (fontFamilySelect && settingsToImport.fontFamily) {
-          fontFamilySelect.value = settingsToImport.fontFamily;
+        if (fontFamilySelect && mergedSettings.fontFamily) {
+          fontFamilySelect.value = mergedSettings.fontFamily;
         }
       }
       
@@ -973,20 +907,7 @@ function initializeApp() {
     charCount: document.getElementById("charCount"),
     copyBtn: document.getElementById("copyBtn"),
   };
-  lineNumbersEl = document.getElementById("lineNumbers");
 
-  // Set up line numbers toggle button
-  const toggleLineNumbersBtn = document.getElementById("toggleLineNumbers");
-  if (toggleLineNumbersBtn) {
-    toggleLineNumbersBtn.addEventListener("click", () => {
-      const settings = loadSettings();
-      const newSettings = { ...settings, lineNumbers: !settings.lineNumbers };
-      saveSettings(newSettings);
-      applyFontSettings(newSettings);
-      updateLineNumbers();
-    });
-    applyFontSettings(loadSettings());
-  }
 
   // Set up copy-to-clipboard button
   if (els.copyBtn) {
@@ -1022,26 +943,12 @@ function initializeApp() {
   // Handle content changes: update UI and schedule save
   els.content.addEventListener("input", () => {
     updateCharCount();
-    updateLineNumbers();
     scheduleAutosave();
     debouncedRenderList();
   });
-  
-  // Sync line numbers scroll position with editor
-  els.content.addEventListener("scroll", () => {
-    if (lineNumbersEl) {
-      lineNumbersEl.scrollTop = els.content.scrollTop;
-    }
-  });
-  
-  // Update current line highlight on cursor movement
-  els.content.addEventListener("click", updateLineNumbers);
-  els.content.addEventListener("keyup", updateLineNumbers);
-  els.content.addEventListener("select", updateLineNumbers);
-  
+
   // Apply initial settings
   applyFontSettings(loadSettings());
-  updateLineNumbers();
 
   // --- Search Event Listeners ---
   

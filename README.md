@@ -12,7 +12,7 @@ Installable as a Progressive Web App (PWA), so you can add it to your desktop/mo
 - **Export/Import**: Backup and restore your snippets and settings as JSON files.
 - **Fast editing**: Debounced autosave and a clean editor experience.
 - **Quick navigation**: Sidebar list + instant search.
-- **Quality-of-life tools**: Copy to clipboard, line numbers, and editor preferences (font family/size).
+- **Quality-of-life tools**: Copy to clipboard and editor preferences (font family/size).
 - **Keyboard-first**: <kbd>⌘</kbd>/<kbd>Ctrl</kbd>+<kbd>K</kbd> (new), <kbd>⌘</kbd>/<kbd>Ctrl</kbd>+<kbd>F</kbd> (search), <kbd>Esc</kbd> (dismiss).
 
 ## Getting Started
@@ -53,7 +53,7 @@ Installable as a Progressive Web App (PWA), so you can add it to your desktop/mo
 
 **Import**: Click the Import button to restore snippets and settings from a previously exported JSON file. The import:
 - Merges with existing snippets (skips duplicates by ID)
-- Restores your editor preferences (font size, font family, line numbers)
+- Restores your editor preferences (font size, font family)
 - Supports both the current format and older array-only format for backward compatibility
 
 ## Docker

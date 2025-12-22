@@ -67,7 +67,7 @@ test.describe('Export/Import Functionality', () => {
     // Check settings
     expect(exportData.settings).toHaveProperty('fontSize');
     expect(exportData.settings).toHaveProperty('fontFamily');
-    expect(exportData.settings).toHaveProperty('lineNumbers');
+    expect(exportData.settings).toHaveProperty('sidebarWidth');
 
     // Verify status message
     await expect(page.locator('#status')).toContainText('Exported 2 snippets and settings');
@@ -96,8 +96,7 @@ test.describe('Export/Import Functionality', () => {
       ],
       settings: {
         fontSize: 18,
-        fontFamily: "'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace",
-        lineNumbers: false
+        fontFamily: "'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace"
       }
     };
 
@@ -203,8 +202,7 @@ test.describe('Export/Import Functionality', () => {
       ],
       settings: {
         fontSize: 15,
-        fontFamily: "'Source Code Pro', monospace",
-        lineNumbers: true
+        fontFamily: "'Source Code Pro', monospace"
       }
     };
 

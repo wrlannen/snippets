@@ -121,7 +121,6 @@
       <!-- Main Editor -->
       <main class="flex flex-1 flex-col bg-[#1e1e1e]">
         <div class="flex-1 overflow-hidden relative flex">
-          <div id="lineNumbers" aria-hidden="true" class="select-none text-right pr-1 pt-0 pb-6 bg-[#1e1e1e] text-[#555] font-mono text-sm leading-[1.4] min-w-[2.2em]" style="user-select:none; pointer-events:none; position:relative;"></div>
           <textarea id="content" placeholder="Start typing to create a snippet..."
             class="h-full w-full resize-none bg-[#1e1e1e] pl-4 pr-8 pt-0 pb-6 text-gray-300 outline-none placeholder:text-[#6b6b6b] font-medium" style="z-index:1;"></textarea>
           <style>
@@ -132,11 +131,6 @@
               opacity: 1;
             }
           </style>
-        <style>
-          #lineNumbers .current-line {
-            background: #252526;
-          }
-        </style>
         </div>
       </main>
     </div>
@@ -164,12 +158,6 @@
             title="Decrease font size">A-</button>
           <button id="increaseFont" class="px-2 py-1 rounded hover:bg-[#2d2d2d] text-gray-400 hover:text-gray-300"
             title="Increase font size">A+</button>
-          <button id="toggleLineNumbers" class="px-2 py-1 rounded hover:bg-[#2d2d2d] text-gray-400 hover:text-gray-300 flex items-center justify-center"
-            title="Toggle line numbers">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
-              <path d="M4.75 4.75a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Zm0 5a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Zm0 5a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Z" />
-            </svg>
-          </button>
         </div>
         <span class="text-gray-700">|</span>
         <select id="fontFamily"
@@ -277,9 +265,6 @@
             </div>
             <div class="bg-[#1e1e1e] rounded-lg border border-[#2d2d2d] px-3 py-2">
               <p class="text-xs text-gray-400">✓ Instant Search</p>
-            </div>
-            <div class="bg-[#1e1e1e] rounded-lg border border-[#2d2d2d] px-3 py-2">
-              <p class="text-xs text-gray-400">✓ Line Numbers</p>
             </div>
             <div class="bg-[#1e1e1e] rounded-lg border border-[#2d2d2d] px-3 py-2">
               <p class="text-xs text-gray-400">✓ Copy to Clipboard</p>
