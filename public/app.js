@@ -192,7 +192,8 @@ function applyFontSettings(settings) {
   if (els && els.content) {
     els.content.style.fontSize = fontSize + "px";
     els.content.style.fontFamily = fontFamily;
-    els.content.style.lineHeight = '1.4';
+    // Slightly tighter line-height to align caret with text
+    els.content.style.lineHeight = '1.3';
   }
 }
 
