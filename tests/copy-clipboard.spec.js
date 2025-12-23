@@ -8,13 +8,7 @@ test.describe('Copy to Clipboard', () => {
     await page.reload();
   });
 
-  test('copy button exists and is visible', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.locator('#copyBtn')).toBeVisible();
-    await expect(page.locator('#copyBtn')).toHaveAttribute('title', 'Copy to clipboard');
-  });
-
-  test('copies snippet content to clipboard', async ({ context, page }) => {
+  test('copy shortcut works', async ({ context, page }) => {
     await page.goto('/');
 
     // Grant clipboard permissions
@@ -26,8 +20,8 @@ test.describe('Copy to Clipboard', () => {
     await page.locator('#content').fill(testContent);
     await page.waitForTimeout(1000);
 
-    // Click copy button
-    await page.locator('#copyBtn').click();
+    // Use copy shortcut (Cmd+Shift+C)
+    await page.keyboard.press('Meta+Shift+c');
 
     // Verify status message appears
     await expect(page.locator('#status')).toHaveText('Copied to clipboard');
@@ -46,8 +40,8 @@ test.describe('Copy to Clipboard', () => {
     await page.locator('#content').fill('Sample content for copy test');
     await page.waitForTimeout(1000);
 
-    // Click copy button
-    await page.locator('#copyBtn').click();
+    // Use copy shortcut
+    await page.keyboard.press('Meta+Shift+c');
 
     // Check status message is white (highlighting)
     await expect(page.locator('#status')).toHaveClass(/text-white/);
@@ -58,36 +52,6 @@ test.describe('Copy to Clipboard', () => {
     await expect(page.locator('#status')).not.toHaveClass(/text-white/);
   });
 
-  test('shows visual feedback on copy button', async ({ context, page }) => {
-    await page.goto('/');
-    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-
-    // Create a snippet
-    await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('Content to copy');
-    await page.waitForTimeout(1000);
-
-    const copyBtn = page.locator('#copyBtn');
-    
-    // Click copy button
-    await copyBtn.click();
-
-    // Check button has visual feedback - wait a moment for classes to be applied
-    await page.waitForTimeout(100);
-    const classAttr = await copyBtn.getAttribute('class');
-    expect(classAttr).toContain('bg-[#2d2d2d]');
-    // Note: text-gray-200 should be dynamically added but might be overridden by hover state
-
-    // Verify title changed
-    const title = await copyBtn.getAttribute('title');
-    expect(title).toBe('Copied');
-
-    // Wait for feedback to disappear (flashCopyButton uses 900ms timeout)
-    await page.waitForTimeout(1000);
-    const titleAfter = await copyBtn.getAttribute('title');
-    expect(titleAfter).toBe('Copy to clipboard');
-  });
-
   test('handles empty content gracefully', async ({ page }) => {
     await page.goto('/');
 
@@ -95,8 +59,8 @@ test.describe('Copy to Clipboard', () => {
     await page.keyboard.press('Meta+k');
     await page.waitForTimeout(500);
 
-    // Click copy button with no content
-    await page.locator('#copyBtn').click();
+    // Use copy shortcut with no content
+    await page.keyboard.press('Meta+Shift+c');
 
     // Verify appropriate message
     await expect(page.locator('#status')).toHaveText('Nothing to copy');
@@ -110,8 +74,8 @@ test.describe('Copy to Clipboard', () => {
     await page.locator('#content').fill('   \n   \n   ');
     await page.waitForTimeout(500);
 
-    // Click copy button
-    await page.locator('#copyBtn').click();
+    // Use copy shortcut
+    await page.keyboard.press('Meta+Shift+c');
 
     // Should treat whitespace-only as empty
     await expect(page.locator('#status')).toHaveText('Nothing to copy');
@@ -130,8 +94,8 @@ test.describe('Copy to Clipboard', () => {
     await page.locator('#content').fill(multiLineContent);
     await page.waitForTimeout(1000);
 
-    // Copy and verify
-    await page.locator('#copyBtn').click();
+    // Use copy shortcut
+    await page.keyboard.press('Meta+Shift+c');
     const clipboardContent = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboardContent).toBe(multiLineContent);
   });
@@ -146,8 +110,8 @@ test.describe('Copy to Clipboard', () => {
     await page.locator('#content').fill(specialContent);
     await page.waitForTimeout(1000);
 
-    // Copy and verify
-    await page.locator('#copyBtn').click();
+    // Use copy shortcut
+    await page.keyboard.press('Meta+Shift+c');
     const clipboardContent = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboardContent).toBe(specialContent);
   });
@@ -163,7 +127,7 @@ test.describe('Copy to Clipboard', () => {
     await page.waitForTimeout(1000);
 
     // Copy first
-    await page.locator('#copyBtn').click();
+    await page.keyboard.press('Meta+Shift+c');
     let clipboardContent = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboardContent).toBe(content1);
 
@@ -174,7 +138,7 @@ test.describe('Copy to Clipboard', () => {
     await page.waitForTimeout(1000);
 
     // Copy second
-    await page.locator('#copyBtn').click();
+    await page.keyboard.press('Meta+Shift+c');
     clipboardContent = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboardContent).toBe(content2);
   });

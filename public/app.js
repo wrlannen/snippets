@@ -316,21 +316,6 @@ function flashStatus(text, ms = 1200, options = {}) {
   }, ms);
 }
 
-function flashCopyButton(ok) {
-  if (!els?.copyBtn) return;
-
-  const btn = els.copyBtn;
-  const originalTitle = btn.getAttribute('title') || '';
-
-  btn.classList.add('bg-[#2d2d2d]', 'text-gray-200');
-  btn.setAttribute('title', ok ? 'Copied' : 'Copy failed');
-
-  window.setTimeout(() => {
-    btn.classList.remove('bg-[#2d2d2d]', 'text-gray-200');
-    btn.setAttribute('title', originalTitle || 'Copy to clipboard');
-  }, 900);
-}
-
 /**
  * Copies text to the clipboard.
  * Uses the async Clipboard API when available; falls back to execCommand.
@@ -971,24 +956,8 @@ function initializeApp() {
     empty: document.getElementById("empty"),
     status: document.getElementById("status"),
     charCount: document.getElementById("charCount"),
-    copyBtn: document.getElementById("copyBtn"),
   };
 
-
-  // Set up copy-to-clipboard button
-  if (els.copyBtn) {
-    els.copyBtn.addEventListener('click', async () => {
-      const text = els?.content?.value ?? '';
-      if (!text.trim()) {
-        flashStatus('Nothing to copy');
-        flashCopyButton(false);
-        return;
-      }
-      const ok = await copyTextToClipboard(text);
-      flashStatus(ok ? 'Copied to clipboard' : 'Copy failed', 1200, { highlightClass: ok ? 'text-white' : undefined });
-      flashCopyButton(ok);
-    });
-  }
 
   // Set up new snippet button
   const newSnippetBtn = document.getElementById('newSnippetBtn');
@@ -1066,6 +1035,20 @@ function initializeApp() {
       document.getElementById("searchWrapper").classList.remove("hidden");
       els.search.focus();
       els.search.select();
+      return;
+    }
+
+    // Cmd/Ctrl+Shift+C: Copy snippet to clipboard
+    if (isMod && e.shiftKey && e.key.toLowerCase() === "c") {
+      e.preventDefault();
+      const text = els?.content?.value ?? '';
+      if (!text.trim()) {
+        flashStatus('Nothing to copy');
+        return;
+      }
+      copyTextToClipboard(text).then(ok => {
+        flashStatus(ok ? 'Copied to clipboard' : 'Copy failed', 1200, { highlightClass: ok ? 'text-white' : undefined });
+      });
     }
   });
 
@@ -1091,7 +1074,10 @@ function initializeApp() {
   
   document.getElementById('modKey').textContent = modKeySymbol;
   document.getElementById('modKeySearch').textContent = modKeySymbol;
+  document.getElementById('modKeyCopy').textContent = modKeySymbol;
   document.getElementById('modalModKey1').textContent = modKeySymbol;
+  document.getElementById('modalModKey2').textContent = modKeySymbol;
+  document.getElementById('modalModKey3').textContent = modKeySymbol;
   document.getElementById('modalModKey2').textContent = modKeySymbol;
 
   // --- Export/Import ---
