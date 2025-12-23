@@ -93,7 +93,7 @@
                 d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
             </svg>
             <p class="text-center text-sm text-gray-500 font-medium mb-1">No snippets yet</p>
-            <p class="text-center text-xs text-gray-600">Start typing to create your first snippet</p>
+            <p class="text-center text-xs text-gray-600">Press ⌘K/Ctrl+K to create your first snippet</p>
           </div>
         </div>
         <div class="border-t border-[#2b2b2b] p-2">
@@ -121,16 +121,8 @@
       <!-- Main Editor -->
       <main class="flex flex-1 flex-col bg-[#1e1e1e]">
         <div class="flex-1 overflow-hidden relative flex">
-          <textarea id="content" placeholder="Start typing to create a snippet..."
-            class="h-full w-full resize-none bg-[#1e1e1e] pl-4 pr-8 pt-0 pb-6 text-gray-300 outline-none placeholder:text-[#6b6b6b] font-medium" style="z-index:1;"></textarea>
-          <style>
-            #content::placeholder {
-              color: #6b6b6b;
-              font-size: inherit;
-              font-family: inherit;
-              opacity: 1;
-            }
-          </style>
+          <textarea id="content"
+            class="h-full w-full resize-none bg-[#1e1e1e] pl-4 pr-8 pt-0 pb-6 text-gray-300 outline-none font-medium" style="z-index:1;"></textarea>
         </div>
       </main>
     </div>

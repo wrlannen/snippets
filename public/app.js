@@ -34,7 +34,7 @@ const MIN_SIDEBAR_WIDTH = 120;
 const MAX_SIDEBAR_WIDTH = 500;
 
 /** Autosave delay in milliseconds after user stops typing */
-const AUTOSAVE_DELAY_MS = 800;
+const AUTOSAVE_DELAY_MS = 400;
 
 /** Debounce delay for sidebar re-renders during typing */
 const RENDER_DEBOUNCE_MS = 150;
@@ -428,7 +428,8 @@ function escapeHtml(s) {
  * @returns {string} HTML string for the list item
  */
 function buildSnippetItemHtml(snippet, isActive) {
-  const firstLine = (snippet.content ?? "").split(/\r?\n/)[0] || "Untitled";
+  const firstLineRaw = (snippet.content ?? "").split(/\r?\n/)[0] ?? "";
+  const firstLine = firstLineRaw.trim() ? firstLineRaw : "Untitled snippet";
   const timestamp = escapeHtml(formatDate(snippet.updatedAt));
   
   // Container classes change based on active state
@@ -472,6 +473,14 @@ function renderList() {
   if (!els || !els.list || !els.empty) return;
 
   const snippets = loadSnippets();
+
+  // Keep the active snippet title in sync with unsaved editor text so the sidebar updates instantly
+  if (activeId && typeof els?.content?.value === "string") {
+    const liveIdx = snippets.findIndex(s => s.id === activeId);
+    if (liveIdx !== -1) {
+      snippets[liveIdx] = { ...snippets[liveIdx], content: els.content.value };
+    }
+  }
   
   // Filter by search query if present
   const query = (els.search?.value || "").toLowerCase().trim();

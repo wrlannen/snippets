@@ -167,13 +167,13 @@ test.describe('Snippets App', () => {
     await expect(listItem).not.toContainText('Line 2');
   });
 
-  test('shows Untitled for empty snippets', async ({ page }) => {
+  test('shows "Untitled snippet" for empty snippets', async ({ page }) => {
     await page.goto('/');
 
     await page.keyboard.press('Meta+k');
     // Leave empty
     await page.waitForTimeout(1000);
 
-    await expect(page.locator('#list li').first()).toContainText('Untitled');
+    await expect(page.locator('#list li').first()).toContainText('Untitled snippet');
   });
 });
