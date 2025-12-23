@@ -28,6 +28,9 @@ const MAX_FONT_SIZE = 24;
 /** Default font stack for the editor */
 const DEFAULT_FONT_FAMILY = "'Source Code Pro', monospace";
 
+/** Default font color for the editor */
+const DEFAULT_FONT_COLOR = "#ffffff";
+
 /** Sidebar width constraints and defaults (in pixels) */
 const DEFAULT_SIDEBAR_WIDTH = 192; // 12rem = w-48
 const MIN_SIDEBAR_WIDTH = 120;
@@ -161,7 +164,8 @@ function loadSettings() {
   return {
     fontSize: parsed.fontSize ?? DEFAULT_FONT_SIZE,
     fontFamily: parsed.fontFamily ?? DEFAULT_FONT_FAMILY,
-    sidebarWidth: parsed.sidebarWidth ?? DEFAULT_SIDEBAR_WIDTH
+    sidebarWidth: parsed.sidebarWidth ?? DEFAULT_SIDEBAR_WIDTH,
+    fontColor: parsed.fontColor ?? DEFAULT_FONT_COLOR
   };
 }
 
@@ -186,12 +190,13 @@ function saveSettings(settings) {
  * @param {Object} settings - Settings object with fontSize, fontFamily
  */
 function applyFontSettings(settings) {
-  const { fontSize, fontFamily } = settings;
+  const { fontSize, fontFamily, fontColor } = settings;
   
   // Apply font styles to editor
   if (els && els.content) {
     els.content.style.fontSize = fontSize + "px";
     els.content.style.fontFamily = fontFamily;
+    els.content.style.color = fontColor || DEFAULT_FONT_COLOR;
     // Slightly tighter line-height to align caret with text
     els.content.style.lineHeight = '1.3';
   }
@@ -902,6 +907,57 @@ function initializeFontControls() {
 }
 
 /**
+ * Initializes the color picker button and dropdown.
+ * Handles color selection and persists to settings.
+ */
+function initializeColorPicker() {
+  const colorPickerBtn = document.getElementById('colorPickerBtn');
+  const colorPickerDropdown = document.getElementById('colorPickerDropdown');
+  const colorOptions = document.querySelectorAll('.color-option');
+
+  if (!colorPickerBtn || !colorPickerDropdown) return;
+
+  const settings = loadSettings();
+  
+  // Set initial color on button
+  colorPickerBtn.style.backgroundColor = settings.fontColor;
+
+  // Toggle dropdown on button click
+  colorPickerBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    colorPickerDropdown.classList.toggle('hidden');
+  });
+
+  // Handle color selection
+  colorOptions.forEach(option => {
+    option.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const color = option.getAttribute('data-color');
+      if (!color) return;
+
+      // Update button color
+      colorPickerBtn.style.backgroundColor = color;
+
+      // Save and apply new color
+      const settings = loadSettings();
+      const newSettings = { ...settings, fontColor: color };
+      saveSettings(newSettings);
+      applyFontSettings(newSettings);
+
+      // Close dropdown
+      colorPickerDropdown.classList.add('hidden');
+    });
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!colorPickerBtn.contains(e.target) && !colorPickerDropdown.contains(e.target)) {
+      colorPickerDropdown.classList.add('hidden');
+    }
+  });
+}
+
+/**
  * Main application initialization.
  * Sets up DOM references, event listeners, and loads initial data.
  * Called when DOM is ready.
@@ -1025,6 +1081,7 @@ function initializeApp() {
 
   initializeFontControls();
   initializeSidebarResize();
+  initializeColorPicker();
 
   // --- Platform-specific UI ---
   

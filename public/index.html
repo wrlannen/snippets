@@ -137,23 +137,33 @@
         <span class="text-gray-600"><span id="modKey">⌘</span>K New</span>
         <span class="text-gray-600"><span id="modKeySearch">⌘</span>F Search</span>
       </div>
-      <div class="flex items-center gap-3">
-        <div class="flex items-center gap-1">
-          <button id="copyBtn" class="px-2 py-1 rounded hover:bg-[#2d2d2d] text-gray-400 hover:text-gray-300 flex items-center justify-center"
-            title="Copy to clipboard" aria-label="Copy to clipboard">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
-              <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
-              <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
-            </svg>
-          </button>
+      <div class="flex items-center gap-2">
+        <button id="copyBtn" class="px-2 py-1 rounded hover:bg-[#2d2d2d] text-gray-400 hover:text-gray-300 flex items-center justify-center"
+          title="Copy to clipboard" aria-label="Copy to clipboard">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+            <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
+            <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
+          </svg>
+        </button>
+        <span class="text-gray-700">|</span>
+        <div class="flex items-center">
           <button id="decreaseFont" class="px-2 py-1 rounded hover:bg-[#2d2d2d] text-gray-400 hover:text-gray-300"
             title="Decrease font size">A-</button>
           <button id="increaseFont" class="px-2 py-1 rounded hover:bg-[#2d2d2d] text-gray-400 hover:text-gray-300"
             title="Increase font size">A+</button>
+          <div class="relative flex items-center justify-center ml-1">
+            <button id="colorPickerBtn" class="w-4 h-4 rounded border border-[#3e3e3e] hover:border-[#007acc] transition-colors" title="Change text color" style="background-color: #ffffff;"></button>
+            <div id="colorPickerDropdown" class="hidden absolute bottom-full left-1/2 -translate-x-1/2 mb-4 bg-[#252526] border border-[#3e3e3e] rounded-lg p-2 shadow-xl z-50">
+              <div class="flex gap-2">
+                <button class="color-option w-8 h-8 rounded border-2 border-[#3e3e3e] hover:border-[#007acc] hover:scale-110 transition-all" data-color="#ffffff" style="background-color: #ffffff;" title="White"></button>
+                <button class="color-option w-8 h-8 rounded border-2 border-[#3e3e3e] hover:border-[#007acc] hover:scale-110 transition-all" data-color="#00ff00" style="background-color: #00ff00;" title="Terminal Green"></button>
+                <button class="color-option w-8 h-8 rounded border-2 border-[#3e3e3e] hover:border-[#007acc] hover:scale-110 transition-all" data-color="#cc7832" style="background-color: #cc7832;" title="Orange"></button>
+              </div>
+            </div>
+          </div>
         </div>
-        <span class="text-gray-700">|</span>
         <select id="fontFamily"
-          class="bg-[#1e1e1e] border border-[#3e3e3e] rounded px-2 py-1 text-xs text-gray-300 outline-none focus:border-[#007acc]">
+          class="bg-[#1e1e1e] border border-[#3e3e3e] rounded px-2 py-1 text-xs text-gray-300 outline-none focus:border-[#007acc] ml-2 mr-2">
           <option value="'Source Code Pro', monospace">Source Code Pro</option>
           <option value="'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace">JetBrains Mono</option>
           <option value="'Roboto Mono', monospace">Roboto Mono</option>
