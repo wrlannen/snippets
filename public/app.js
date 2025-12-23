@@ -89,10 +89,32 @@ function uid() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  // Fallback for environments without crypto.randomUUID
-  return Math.random().toString(16).slice(2) + 
-         Math.random().toString(16).slice(2) + 
-         Date.now().toString(16);
+
+  // Graceful fallback using crypto.getRandomValues when randomUUID is missing
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const buf = new Uint8Array(16);
+    crypto.getRandomValues(buf);
+    // Adapted minimal UUID v4 formatting without relying on Math.random
+    buf[6] = (buf[6] & 0x0f) | 0x40;
+    buf[8] = (buf[8] & 0x3f) | 0x80;
+    const hex = [...buf].map(b => b.toString(16).padStart(2, '0'));
+    return `${hex[0]}${hex[1]}${hex[2]}${hex[3]}-${hex[4]}${hex[5]}-${hex[6]}${hex[7]}-${hex[8]}${hex[9]}-${hex[10]}${hex[11]}${hex[12]}${hex[13]}${hex[14]}${hex[15]}`;
+  }
+
+  throw new Error('Secure ID generation is unavailable');
+}
+
+/**
+ * Safely reads from localStorage.
+ * Returns null on error to avoid crashing when storage is blocked.
+ */
+function safeLocalStorageGet(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch (e) {
+    console.error('localStorage read failed', e);
+    return null;
+  }
 }
 
 /**
@@ -120,7 +142,8 @@ function safeJsonParse(value, fallback) {
  * @returns {Array} Array of snippet objects, empty array if none exist
  */
 function loadSnippets() {
-  const raw = localStorage.getItem(STORAGE_KEY);
+  const raw = safeLocalStorageGet(STORAGE_KEY);
+  if (raw === null || raw === undefined) return [];
   const parsed = safeJsonParse(raw, []);
   return Array.isArray(parsed) ? parsed : [];
 }
@@ -158,7 +181,7 @@ function saveSnippets(snippets) {
  * @returns {Object} Settings object with fontSize, fontFamily, sidebarWidth
  */
 function loadSettings() {
-  const raw = localStorage.getItem(SETTINGS_KEY);
+  const raw = safeLocalStorageGet(SETTINGS_KEY);
   const parsed = safeJsonParse(raw, {});
   
   return {
@@ -576,7 +599,13 @@ function scheduleAutosave() {
 
     // Create new snippet if none is active
     if (!activeId) {
-      activeId = uid();
+      try {
+        activeId = uid();
+      } catch (err) {
+        setStatus('Error: Secure IDs unavailable');
+        console.error(err);
+        return;
+      }
       const ts = nowIso();
       const snippets = loadSnippets();
       snippets.unshift({ id: activeId, content, createdAt: ts, updatedAt: ts });
@@ -621,7 +650,13 @@ function debouncedRenderList() {
  * The snippet is added to the top of the list.
  */
 function createNewSnippet() {
-  activeId = uid();
+  try {
+    activeId = uid();
+  } catch (err) {
+    setStatus('Error: Secure IDs unavailable');
+    console.error(err);
+    return;
+  }
   const ts = nowIso();
   
   const snippets = loadSnippets();
@@ -767,7 +802,8 @@ function importFromJson(file) {
 function applySidebarWidth(width) {
   const sidebar = document.querySelector('aside');
   if (sidebar) {
-    sidebar.style.width = width + 'px';
+    const clamped = Math.max(MIN_SIDEBAR_WIDTH, Math.min(MAX_SIDEBAR_WIDTH, width));
+    sidebar.style.width = clamped + 'px';
   }
 }
 
@@ -1078,7 +1114,6 @@ function initializeApp() {
   document.getElementById('modalModKey1').textContent = modKeySymbol;
   document.getElementById('modalModKey2').textContent = modKeySymbol;
   document.getElementById('modalModKey3').textContent = modKeySymbol;
-  document.getElementById('modalModKey2').textContent = modKeySymbol;
 
   // --- Export/Import ---
   
