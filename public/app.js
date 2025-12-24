@@ -1,3 +1,79 @@
+// =============================================================================
+// PWA Install Prompt Handling
+// =============================================================================
+
+let deferredPwaPrompt = null;
+
+// Listen for the install prompt (Chrome/Edge/Android)
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent the mini-infobar from appearing on mobile
+  e.preventDefault();
+  deferredPwaPrompt = e;
+  
+  // If the prompt fires, we know we can install via button
+  const installSection = document.getElementById('installSection');
+  const pwaInstallable = document.getElementById('pwaInstallable');
+  const pwaSafari = document.getElementById('pwaSafari');
+  
+  if (installSection && pwaInstallable) {
+    installSection.classList.remove('hidden');
+    pwaInstallable.classList.remove('hidden');
+    // Ensure Safari view is hidden if we have a direct install prompt
+    if (pwaSafari) pwaSafari.classList.add('hidden');
+  }
+});
+
+function setupPwaInstallUI() {
+  const installSection = document.getElementById('installSection');
+  const pwaInstallable = document.getElementById('pwaInstallable');
+  const pwaSafari = document.getElementById('pwaSafari');
+  const installBtn = document.getElementById('installPwaBtn');
+
+  if (!installSection || !pwaInstallable || !pwaSafari) return;
+
+  // 1. Check for Safari (which doesn't fire beforeinstallprompt)
+  const ua = navigator.userAgent;
+  const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+  
+  // If Safari, show instructions immediately (unless beforeinstallprompt fired already)
+  if (isSafari && !deferredPwaPrompt) {
+    installSection.classList.remove('hidden');
+    pwaSafari.classList.remove('hidden');
+    pwaInstallable.classList.add('hidden');
+  }
+
+  // 2. Button Handler for Chrome/Edge
+  if (installBtn) {
+    const originalContent = installBtn.innerHTML;
+    
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPwaPrompt) return;
+      installBtn.disabled = true;
+      try {
+        deferredPwaPrompt.prompt();
+        const { outcome } = await deferredPwaPrompt.userChoice;
+        if (outcome === 'accepted') {
+          installBtn.textContent = 'Installed!';
+          installBtn.classList.remove('bg-[#007acc]', 'hover:bg-[#0063a5]');
+          installBtn.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white');
+          setTimeout(() => {
+            installSection.classList.add('hidden');
+          }, 2000);
+        } else {
+          // Restore original state
+          installBtn.innerHTML = originalContent;
+          installBtn.disabled = false;
+        }
+      } catch (err) {
+        installBtn.textContent = 'Failed';
+        installBtn.disabled = false;
+        setTimeout(() => {
+          installBtn.innerHTML = originalContent;
+        }, 2000);
+      }
+    });
+  }
+}
 /**
  * Snippets - A minimal, client-side snippet manager
  * 
@@ -994,6 +1070,9 @@ function initializeApp() {
     charCount: document.getElementById("charCount"),
   };
 
+  // Setup PWA install UI
+  setupPwaInstallUI();
+
 
   // Set up new snippet button
   const newSnippetBtn = document.getElementById('newSnippetBtn');
@@ -1146,6 +1225,18 @@ function initializeApp() {
 
   aboutBtn?.addEventListener('click', () => {
     aboutModal?.classList.remove('hidden');
+    // If install prompt is available, ensure UI is updated
+    if (deferredPwaPrompt) {
+      const installSection = document.getElementById('installSection');
+      const pwaInstallable = document.getElementById('pwaInstallable');
+      const pwaSafari = document.getElementById('pwaSafari');
+      
+      if (installSection && pwaInstallable) {
+        installSection.classList.remove('hidden');
+        pwaInstallable.classList.remove('hidden');
+        if (pwaSafari) pwaSafari.classList.add('hidden');
+      }
+    }
   });
 
   closeAboutModal?.addEventListener('click', () => {

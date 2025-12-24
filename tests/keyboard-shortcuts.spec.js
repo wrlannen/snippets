@@ -176,18 +176,19 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
 
     test('About modal shows all keyboard shortcuts', async ({ page }) => {
         await page.locator('#aboutBtn').click();
+        const modal = page.locator('#aboutModal');
 
         // Check shortcuts are documented
-        await expect(page.locator('text=Create new snippet')).toBeVisible();
-        await expect(page.locator('text=Search snippets')).toBeVisible();
-        await expect(page.locator('text=Copy snippet to clipboard')).toBeVisible();
+        await expect(modal.locator('text=New snippet')).toBeVisible();
+        await expect(modal.locator('text=Search')).toBeVisible();
+        await expect(modal.locator('text=Copy snippet')).toBeVisible();
     });
 
     test('About modal shows privacy information', async ({ page }) => {
         await page.locator('#aboutBtn').click();
 
         // Check privacy and backup section
-        await expect(page.locator('text=Private, Local & Backed Up')).toBeVisible();
+        await expect(page.locator('text=offline-first tool')).toBeVisible();
         await expect(page.locator('text=localStorage')).toBeVisible();
     });
 });
