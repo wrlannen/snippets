@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { fillEditor } from './test-utils';
 
 test.describe('Copy to Clipboard', () => {
   test.beforeEach(async ({ page }) => {
@@ -17,7 +18,7 @@ test.describe('Copy to Clipboard', () => {
     // Create a snippet
     await page.keyboard.press('Meta+k');
     const testContent = 'Test Snippet\nLine 2\nLine 3';
-    await page.locator('#content').fill(testContent);
+    await fillEditor(page, testContent);
     await page.waitForTimeout(1000);
 
     // Use copy shortcut (Cmd+Shift+C)
@@ -37,7 +38,7 @@ test.describe('Copy to Clipboard', () => {
 
     // Create a snippet
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('Sample content for copy test');
+    await fillEditor(page, 'Sample content for copy test');
     await page.waitForTimeout(1000);
 
     // Use copy shortcut
@@ -71,7 +72,7 @@ test.describe('Copy to Clipboard', () => {
 
     // Create snippet with only whitespace
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('   \n   \n   ');
+    await fillEditor(page, '   \n   \n   ');
     await page.waitForTimeout(500);
 
     // Use copy shortcut
@@ -91,7 +92,7 @@ test.describe('Copy to Clipboard', () => {
   console.log("Hello");
   return 42;
 }`;
-    await page.locator('#content').fill(multiLineContent);
+    await fillEditor(page, multiLineContent);
     await page.waitForTimeout(1000);
 
     // Use copy shortcut
@@ -107,7 +108,7 @@ test.describe('Copy to Clipboard', () => {
     // Create snippet with special characters
     await page.keyboard.press('Meta+k');
     const specialContent = 'Special chars: <>&"\'`\n${}[]()';
-    await page.locator('#content').fill(specialContent);
+    await fillEditor(page, specialContent);
     await page.waitForTimeout(1000);
 
     // Use copy shortcut
@@ -123,7 +124,7 @@ test.describe('Copy to Clipboard', () => {
     // Create first snippet
     await page.keyboard.press('Meta+k');
     const content1 = 'First snippet';
-    await page.locator('#content').fill(content1);
+    await fillEditor(page, content1);
     await page.waitForTimeout(1000);
 
     // Copy first
@@ -134,7 +135,7 @@ test.describe('Copy to Clipboard', () => {
     // Create second snippet
     await page.keyboard.press('Meta+k');
     const content2 = 'Second snippet';
-    await page.locator('#content').fill(content2);
+    await fillEditor(page, content2);
     await page.waitForTimeout(1000);
 
     // Copy second

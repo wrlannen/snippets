@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { fillEditor, getEditorValue } from './test-utils';
 
 test.describe('Snippets App', () => {
   test.beforeEach(async ({ page }) => {
@@ -21,7 +22,7 @@ test.describe('Snippets App', () => {
     await page.keyboard.press('Meta+k');
 
     // Type content
-    await page.locator('#content').fill('Test Snippet Title\nThis is the content');
+    await fillEditor(page, 'Test Snippet Title\nThis is the content');
 
     // Wait for autosave
     await page.waitForTimeout(1000);
@@ -36,11 +37,11 @@ test.describe('Snippets App', () => {
 
     // Create snippet
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('Original Title\nOriginal content');
+    await fillEditor(page, 'Original Title\nOriginal content');
     await page.waitForTimeout(1000);
 
     // Edit the snippet
-    await page.locator('#content').fill('Updated Title\nUpdated content');
+    await fillEditor(page, 'Updated Title\nUpdated content');
     await page.waitForTimeout(1000);
 
     // Check sidebar updated
@@ -52,7 +53,7 @@ test.describe('Snippets App', () => {
 
     // Create snippet
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('To Delete\nContent');
+    await fillEditor(page, 'To Delete\nContent');
     await page.waitForTimeout(1000);
 
     // Click delete button (should delete immediately)
@@ -69,15 +70,15 @@ test.describe('Snippets App', () => {
 
     // Create multiple snippets
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('Apple\nFruit content');
+    await fillEditor(page, 'Apple\nFruit content');
     await page.waitForTimeout(1000);
 
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('Banana\nYellow fruit');
+    await fillEditor(page, 'Banana\nYellow fruit');
     await page.waitForTimeout(1000);
 
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('Carrot\nVegetable content');
+    await fillEditor(page, 'Carrot\nVegetable content');
     await page.waitForTimeout(1000);
 
     // Open search with CMD+F
@@ -111,19 +112,20 @@ test.describe('Snippets App', () => {
 
     // Create first snippet
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('First\nFirst content');
+    await fillEditor(page, 'First\nFirst content');
     await page.waitForTimeout(1000);
 
     // Create second snippet
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('Second\nSecond content');
+    await fillEditor(page, 'Second\nSecond content');
     await page.waitForTimeout(1000);
 
     // Click first snippet
     await page.locator('#list li').filter({ hasText: 'First' }).click();
 
     // Check editor loaded first snippet
-    await expect(page.locator('#content')).toHaveValue('First\nFirst content');
+    const value = await getEditorValue(page);
+    expect(value).toBe('First\nFirst content');
   });
 
   test('autosaves snippet', async ({ page }) => {
@@ -131,7 +133,7 @@ test.describe('Snippets App', () => {
 
     // Create snippet
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('Autosave Test\nContent');
+    await fillEditor(page, 'Autosave Test\nContent');
 
     // Wait for autosave
     await page.waitForTimeout(1000);
@@ -149,7 +151,7 @@ test.describe('Snippets App', () => {
     await page.goto('/');
 
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('Test');
+    await fillEditor(page, 'Test');
 
     await expect(page.locator('#charCount')).toContainText('4 characters');
   });
@@ -158,7 +160,7 @@ test.describe('Snippets App', () => {
     await page.goto('/');
 
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('My Title\nLine 2\nLine 3');
+    await fillEditor(page, 'My Title\nLine 2\nLine 3');
     await page.waitForTimeout(1000);
 
     // Sidebar should only show first line

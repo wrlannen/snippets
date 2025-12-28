@@ -9,12 +9,12 @@ window.addEventListener('beforeinstallprompt', (e) => {
   // Prevent the mini-infobar from appearing on mobile
   e.preventDefault();
   deferredPwaPrompt = e;
-  
+
   // If the prompt fires, we know we can install via button
   const installSection = document.getElementById('installSection');
   const pwaInstallable = document.getElementById('pwaInstallable');
   const pwaSafari = document.getElementById('pwaSafari');
-  
+
   if (installSection && pwaInstallable) {
     installSection.classList.remove('hidden');
     pwaInstallable.classList.remove('hidden');
@@ -34,7 +34,7 @@ function setupPwaInstallUI() {
   // 1. Check for Safari (which doesn't fire beforeinstallprompt)
   const ua = navigator.userAgent;
   const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
-  
+
   // If Safari, show instructions immediately (unless beforeinstallprompt fired already)
   if (isSafari && !deferredPwaPrompt) {
     installSection.classList.remove('hidden');
@@ -45,7 +45,7 @@ function setupPwaInstallUI() {
   // 2. Button Handler for Chrome/Edge
   if (installBtn) {
     const originalContent = installBtn.innerHTML;
-    
+
     installBtn.addEventListener('click', async () => {
       if (!deferredPwaPrompt) return;
       installBtn.disabled = true;
@@ -102,7 +102,7 @@ const MIN_FONT_SIZE = 10;
 const MAX_FONT_SIZE = 24;
 
 /** Default font stack for the editor */
-const DEFAULT_FONT_FAMILY = "'Source Code Pro', monospace";
+const DEFAULT_FONT_FAMILY = "'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace";
 
 /** Default font color for the editor */
 const DEFAULT_FONT_COLOR = "#ffffff";
@@ -142,6 +142,9 @@ let autosaveTimer = null;
 
 /** Timer handle for debounced sidebar renders */
 let renderDebounceTimer = null;
+
+let editor = null;
+
 
 // =============================================================================
 // Utility Functions
@@ -232,13 +235,13 @@ function loadSnippets() {
 function saveSnippets(snippets) {
   try {
     const data = JSON.stringify(snippets);
-    
+
     // Warn user if approaching localStorage limit
     if (data.length > STORAGE_WARNING_BYTES) {
       console.warn('Data size approaching localStorage limit');
       setStatus('Warning: Storage nearly full');
     }
-    
+
     localStorage.setItem(STORAGE_KEY, data);
   } catch (e) {
     if (e.name === 'QuotaExceededError') {
@@ -259,12 +262,11 @@ function saveSnippets(snippets) {
 function loadSettings() {
   const raw = safeLocalStorageGet(SETTINGS_KEY);
   const parsed = safeJsonParse(raw, {});
-  
+
   return {
     fontSize: parsed.fontSize ?? DEFAULT_FONT_SIZE,
     fontFamily: parsed.fontFamily ?? DEFAULT_FONT_FAMILY,
-    sidebarWidth: parsed.sidebarWidth ?? DEFAULT_SIDEBAR_WIDTH,
-    fontColor: parsed.fontColor ?? DEFAULT_FONT_COLOR
+    sidebarWidth: parsed.sidebarWidth ?? DEFAULT_SIDEBAR_WIDTH
   };
 }
 
@@ -289,15 +291,18 @@ function saveSettings(settings) {
  * @param {Object} settings - Settings object with fontSize, fontFamily
  */
 function applyFontSettings(settings) {
-  const { fontSize, fontFamily, fontColor } = settings;
-  
-  // Apply font styles to editor
-  if (els && els.content) {
-    els.content.style.fontSize = fontSize + "px";
-    els.content.style.fontFamily = fontFamily;
-    els.content.style.color = fontColor || DEFAULT_FONT_COLOR;
-    // Slightly tighter line-height to align caret with text
-    els.content.style.lineHeight = '1.3';
+  const { fontSize, fontFamily } = settings;
+
+  // Apply font styles to editor wrapper if it exists, or the textarea (fallback)
+  const target = document.querySelector('.CodeMirror') || els?.content;
+  if (target) {
+    target.style.fontSize = fontSize + "px";
+    target.style.fontFamily = fontFamily;
+    // target.style.color = fontColor || DEFAULT_FONT_COLOR; // CM controls color via theme mostly, but we can override
+  }
+
+  if (editor) {
+    editor.refresh();
   }
 }
 
@@ -320,7 +325,7 @@ function extractPrimaryFontName(fontValue) {
  */
 function isFontAvailable(fontName) {
   if (!fontName) return false;
-  
+
   // Prefer modern FontFaceSet API
   try {
     if (document.fonts && typeof document.fonts.check === 'function') {
@@ -453,10 +458,15 @@ async function copyTextToClipboard(text) {
  * Updates the character count display in the footer.
  * Shows count with proper singular/plural form.
  */
+/**
+ * Updates the character count display in the footer.
+ * Shows count with proper singular/plural form.
+ */
 function updateCharCount() {
-  if (!els || !els.content || !els.charCount) return;
-  
-  const len = (els.content.value ?? "").length;
+  const content = getEditorValue().content;
+  const len = content.length;
+  if (!els || !els.charCount) return;
+
   const word = len === 1 ? "character" : "characters";
   els.charCount.textContent = len.toLocaleString() + " " + word;
 }
@@ -471,8 +481,11 @@ function updateCharCount() {
  */
 function clearEditor() {
   activeId = null;
-  
-  if (els && els.content) {
+
+  if (editor) {
+    editor.setValue("");
+    editor.focus();
+  } else if (els && els.content) {
     els.content.value = "";
     els.content.focus();
   }
@@ -486,6 +499,9 @@ function clearEditor() {
  * @returns {Object} Object containing the content string
  */
 function getEditorValue() {
+  if (editor) {
+    return { content: editor.getValue() };
+  }
   return {
     content: els?.content?.value ?? "",
   };
@@ -520,15 +536,15 @@ function buildSnippetItemHtml(snippet, isActive) {
   const firstLineRaw = (snippet.content ?? "").split(/\r?\n/)[0] ?? "";
   const firstLine = firstLineRaw.trim() ? firstLineRaw : "Untitled snippet";
   const timestamp = escapeHtml(formatDate(snippet.updatedAt));
-  
+
   // Container classes change based on active state
-  const containerClasses = isActive 
-    ? "bg-[#37373d] border-l-2 border-[#007acc]" 
+  const containerClasses = isActive
+    ? "bg-[#37373d] border-l-2 border-[#007acc]"
     : "hover:bg-[#2d2d2d] border-l-2 border-transparent";
-  
+
   const titleClasses = isActive ? "text-white" : "text-gray-200";
   const dateClasses = isActive ? "text-gray-400" : "text-gray-500";
-  
+
   // Trash icon SVG (Heroicons)
   const trashIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 pointer-events-none">
     <path fill-rule="evenodd" d="M7.5 3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V4h3.25a.75.75 0 0 1 0 1.5h-.305l-.548 9.32A2.75 2.75 0 0 1 12.156 17H7.844a2.75 2.75 0 0 1-2.741-2.18l-.548-9.32H4.25a.75.75 0 0 1 0-1.5H7.5V3Zm1 .5V4h3v-.5h-3ZM5.75 5.5l.54 9.18a1.25 1.25 0 0 0 1.246 1.07h4.312a1.25 1.25 0 0 0 1.246-1.07l.54-9.18H5.75Z" clip-rule="evenodd" />
@@ -570,26 +586,26 @@ function renderList() {
       snippets[liveIdx] = { ...snippets[liveIdx], content: els.content.value };
     }
   }
-  
+
   // Filter by search query if present
   const query = (els.search?.value || "").toLowerCase().trim();
-  const filtered = query 
+  const filtered = query
     ? snippets.filter(s => (s.content || "").toLowerCase().includes(query))
     : snippets;
 
   // Show/hide empty state
   els.empty.style.display = filtered.length === 0 ? "flex" : "none";
-  
+
   // Track rendered IDs for potential future optimization
   lastRenderIds = filtered.map(s => s.id);
-  
+
   // Build and insert list items
   els.list.innerHTML = "";
-  
+
   for (const snippet of filtered) {
     const li = document.createElement("li");
     const isActive = snippet.id === activeId;
-    
+
     li.innerHTML = buildSnippetItemHtml(snippet, isActive);
 
     // Attach event listeners
@@ -619,12 +635,16 @@ function renderList() {
 function loadIntoEditor(id) {
   const snippets = loadSnippets();
   const found = snippets.find(s => s.id === id);
-  
+
   if (!found) return;
 
   activeId = found.id;
-  
-  if (els && els.content) {
+
+  if (editor) {
+    editor.setValue(found.content ?? "");
+    // Clear history to prevent undoing to empty state immediately
+    editor.clearHistory();
+  } else if (els && els.content) {
     els.content.value = found.content ?? "";
   }
 
@@ -666,10 +686,10 @@ function deleteSnippet(id) {
  */
 function scheduleAutosave() {
   if (autosaveTimer) clearTimeout(autosaveTimer);
-  
+
   autosaveTimer = setTimeout(() => {
     const { content } = getEditorValue();
-    
+
     // Don't save empty snippets
     if (!content.trim()) return;
 
@@ -694,7 +714,7 @@ function scheduleAutosave() {
     // Update existing snippet
     const snippets = loadSnippets();
     const idx = snippets.findIndex(s => s.id === activeId);
-    
+
     if (idx === -1) return;
 
     snippets[idx] = {
@@ -702,7 +722,7 @@ function scheduleAutosave() {
       content,
       updatedAt: nowIso(),
     };
-    
+
     saveSnippets(snippets);
     setStatus("Autosaved");
     renderList();
@@ -715,7 +735,7 @@ function scheduleAutosave() {
  */
 function debouncedRenderList() {
   if (renderDebounceTimer) clearTimeout(renderDebounceTimer);
-  
+
   renderDebounceTimer = setTimeout(() => {
     renderList();
   }, RENDER_DEBOUNCE_MS);
@@ -734,14 +754,16 @@ function createNewSnippet() {
     return;
   }
   const ts = nowIso();
-  
+
   const snippets = loadSnippets();
   snippets.unshift({ id: activeId, content: "", createdAt: ts, updatedAt: ts });
   saveSnippets(snippets);
-  
+
   loadIntoEditor(activeId);
-  
-  if (els && els.content) {
+
+  if (editor) {
+    editor.focus();
+  } else if (els && els.content) {
     els.content.focus();
   }
 }
@@ -779,16 +801,16 @@ function exportToJson() {
  */
 function importFromJson(file) {
   if (!file) return;
-  
+
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
       const imported = JSON.parse(e.target.result);
-      
+
       // Support both old format (array) and new format (object with snippets/settings)
       let snippetsToImport;
       let settingsToImport = null;
-      
+
       if (Array.isArray(imported)) {
         // Old format: just an array of snippets
         snippetsToImport = imported;
@@ -800,7 +822,7 @@ function importFromJson(file) {
         setStatus('Error: Invalid JSON format');
         return;
       }
-      
+
       // Validate each snippet has required fields
       for (const snippet of snippetsToImport) {
         if (!snippet.id || typeof snippet.content !== 'string') {
@@ -808,14 +830,14 @@ function importFromJson(file) {
           return;
         }
       }
-      
+
       // Merge with existing snippets
       const existing = loadSnippets();
       const existingIds = new Set(existing.map(s => s.id));
-      
+
       let imported_count = 0;
       let skipped_count = 0;
-      
+
       for (const snippet of snippetsToImport) {
         if (existingIds.has(snippet.id)) {
           skipped_count++;
@@ -824,25 +846,21 @@ function importFromJson(file) {
           imported_count++;
         }
       }
-      
+
       saveSnippets(existing);
-      
+
       // Import settings if provided
       if (settingsToImport && typeof settingsToImport === 'object') {
         const { lineNumbers: _ignored, ...restSettings } = settingsToImport;
         const mergedSettings = { ...loadSettings(), ...restSettings };
         saveSettings(mergedSettings);
         applyFontSettings(mergedSettings);
-        
-        // Update font dropdown if available
-        const fontFamilySelect = document.getElementById('fontFamily');
-        if (fontFamilySelect && mergedSettings.fontFamily) {
-          fontFamilySelect.value = mergedSettings.fontFamily;
-        }
+
+
       }
-      
+
       renderList();
-      
+
       const statusParts = [];
       if (imported_count > 0) {
         statusParts.push(`${imported_count} snippet${imported_count !== 1 ? 's' : ''}`);
@@ -853,7 +871,7 @@ function importFromJson(file) {
       if (settingsToImport) {
         statusParts.push('settings');
       }
-      
+
       if (imported_count > 0 || settingsToImport) {
         setStatus(`Imported ${statusParts.join(', ')}`);
       } else {
@@ -891,50 +909,50 @@ function applySidebarWidth(width) {
 function initializeSidebarResize() {
   const handle = document.getElementById('sidebarResizeHandle');
   const sidebar = document.querySelector('aside');
-  
+
   if (!handle || !sidebar) return;
-  
+
   let isResizing = false;
   let startX = 0;
   let startWidth = 0;
-  
+
   // Apply saved width on initialization
   const settings = loadSettings();
   applySidebarWidth(settings.sidebarWidth);
-  
+
   handle.addEventListener('mousedown', (e) => {
     isResizing = true;
     startX = e.clientX;
     startWidth = sidebar.getBoundingClientRect().width;
-    
+
     // Add visual feedback
     handle.classList.add('resizing');
     document.body.classList.add('resizing-sidebar');
-    
+
     e.preventDefault();
   });
-  
+
   document.addEventListener('mousemove', (e) => {
     if (!isResizing) return;
-    
+
     const deltaX = e.clientX - startX;
     let newWidth = startWidth + deltaX;
-    
+
     // Clamp width to min/max
     newWidth = Math.max(MIN_SIDEBAR_WIDTH, Math.min(MAX_SIDEBAR_WIDTH, newWidth));
-    
+
     applySidebarWidth(newWidth);
   });
-  
+
   document.addEventListener('mouseup', () => {
     if (!isResizing) return;
-    
+
     isResizing = false;
-    
+
     // Remove visual feedback
     handle.classList.remove('resizing');
     document.body.classList.remove('resizing-sidebar');
-    
+
     // Save the new width
     const currentWidth = sidebar.getBoundingClientRect().width;
     const settings = loadSettings();
@@ -948,33 +966,12 @@ function initializeSidebarResize() {
 // =============================================================================
 
 /**
- * Initializes the font control buttons and dropdown.
- * Handles A+/A- buttons for font size and font family selector.
- * Validates saved settings against available options.
+ * Initializes font size controls.
+ * Handles font size changes and persists to settings.
  */
 function initializeFontControls() {
   const settings = loadSettings();
-  const fontFamilySelect = document.getElementById('fontFamily');
-
-  if (!fontFamilySelect) {
-    applyFontSettings(settings);
-    return;
-  }
-
-  // Try to set the dropdown to the saved setting
-  fontFamilySelect.value = settings.fontFamily;
-
-  // If saved value doesn't match any option (e.g., corrupted data), 
-  // reset to the first available option
-  if (fontFamilySelect.value !== settings.fontFamily) {
-    const validDefault = fontFamilySelect.options[0].value;
-    fontFamilySelect.value = validDefault;
-    const newSettings = { ...settings, fontFamily: validDefault };
-    saveSettings(newSettings);
-    applyFontSettings(newSettings);
-  } else {
-    applyFontSettings(settings);
-  }
+  applyFontSettings(settings);
 
   // Font size increase button (A+)
   document.getElementById('increaseFont')?.addEventListener('click', () => {
@@ -993,66 +990,9 @@ function initializeFontControls() {
     saveSettings(newSettings);
     applyFontSettings(newSettings);
   });
-
-  // Font family dropdown
-  fontFamilySelect?.addEventListener('change', (e) => {
-    const settings = loadSettings();
-    const newSettings = { ...settings, fontFamily: e.target.value };
-    saveSettings(newSettings);
-    applyFontSettings(newSettings);
-  });
 }
 
-/**
- * Initializes the color picker button and dropdown.
- * Handles color selection and persists to settings.
- */
-function initializeColorPicker() {
-  const colorPickerBtn = document.getElementById('colorPickerBtn');
-  const colorPickerDropdown = document.getElementById('colorPickerDropdown');
-  const colorOptions = document.querySelectorAll('.color-option');
 
-  if (!colorPickerBtn || !colorPickerDropdown) return;
-
-  const settings = loadSettings();
-  
-  // Set initial color on button
-  colorPickerBtn.style.backgroundColor = settings.fontColor;
-
-  // Toggle dropdown on button click
-  colorPickerBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    colorPickerDropdown.classList.toggle('hidden');
-  });
-
-  // Handle color selection
-  colorOptions.forEach(option => {
-    option.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const color = option.getAttribute('data-color');
-      if (!color) return;
-
-      // Update button color
-      colorPickerBtn.style.backgroundColor = color;
-
-      // Save and apply new color
-      const settings = loadSettings();
-      const newSettings = { ...settings, fontColor: color };
-      saveSettings(newSettings);
-      applyFontSettings(newSettings);
-
-      // Close dropdown
-      colorPickerDropdown.classList.add('hidden');
-    });
-  });
-
-  // Close dropdown when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!colorPickerBtn.contains(e.target) && !colorPickerDropdown.contains(e.target)) {
-      colorPickerDropdown.classList.add('hidden');
-    }
-  });
-}
 
 /**
  * Main application initialization.
@@ -1089,7 +1029,7 @@ function initializeApp() {
   }
 
   // --- Editor Event Listeners ---
-  
+
   // Handle content changes: update UI and schedule save
   els.content.addEventListener("input", () => {
     updateCharCount();
@@ -1101,7 +1041,7 @@ function initializeApp() {
   applyFontSettings(loadSettings());
 
   // --- Search Event Listeners ---
-  
+
   els.search.addEventListener("input", () => {
     renderList();
   });
@@ -1111,7 +1051,7 @@ function initializeApp() {
     const searchWrapper = document.getElementById("searchWrapper");
     const isSearchOpen = searchWrapper && !searchWrapper.classList.contains("hidden");
     const clickedOutside = searchWrapper && !searchWrapper.contains(e.target);
-    
+
     if (isSearchOpen && clickedOutside) {
       els.search.value = "";
       searchWrapper.classList.add("hidden");
@@ -1120,7 +1060,7 @@ function initializeApp() {
   });
 
   // --- Global Keyboard Shortcuts ---
-  
+
   window.addEventListener("keydown", (e) => {
     // Escape: Close search and return focus to editor
     if (e.key === "Escape") {
@@ -1168,25 +1108,63 @@ function initializeApp() {
   });
 
   // --- Initial Data Load ---
-  
+
+  // --- Editor Initialization (CodeMirror) ---
+
+  if (CodeMirror && els.content) {
+    editor = CodeMirror.fromTextArea(els.content, {
+      lineNumbers: true,
+      mode: "javascript",
+      theme: "dracula",
+      lineWrapping: true,
+      tabSize: 2,
+      indentUnit: 2,
+      autoCloseBrackets: true,
+      matchBrackets: true,
+      viewportMargin: Infinity
+    });
+
+    editor.on("change", () => {
+      // Sync to textarea so form submissions/other logic works
+      els.content.value = editor.getValue();
+
+      updateCharCount();
+      scheduleAutosave();
+      debouncedRenderList();
+    });
+
+    // Handle custom key events if needed
+    editor.addKeyMap({
+      "Cmd-S": () => { /* Prevent default save if needed */ },
+      "Ctrl-S": () => { },
+    });
+  }
+
+  // --- Initial Data Load ---
+
+  renderList(); // Ensure list is rendered first
   const initial = loadSnippets();
+
   if (initial.length > 0) {
     loadIntoEditor(initial[0].id);
-  } else {
-    renderList();
     clearEditor();
+  }
+
+  // Refocus editor after load
+  if (editor) {
+    editor.refresh(); // Fix layout issues on load
   }
 
   initializeFontControls();
   initializeSidebarResize();
-  initializeColorPicker();
+
 
   // --- Platform-specific UI ---
-  
+
   // Show correct modifier key symbol based on OS
   const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
   const modKeySymbol = isMac ? '⌘' : 'Ctrl';
-  
+
   document.getElementById('modKey').textContent = modKeySymbol;
   document.getElementById('modKeySearch').textContent = modKeySymbol;
   document.getElementById('modKeyCopy').textContent = modKeySymbol;
@@ -1195,7 +1173,7 @@ function initializeApp() {
   document.getElementById('modalModKey3').textContent = modKeySymbol;
 
   // --- Export/Import ---
-  
+
   const exportBtn = document.getElementById('exportBtn');
   const importBtn = document.getElementById('importBtn');
   const importFileInput = document.getElementById('importFileInput');
@@ -1218,7 +1196,7 @@ function initializeApp() {
   });
 
   // --- About Modal ---
-  
+
   const aboutBtn = document.getElementById('aboutBtn');
   const aboutModal = document.getElementById('aboutModal');
   const closeAboutModal = document.getElementById('closeAboutModal');
@@ -1230,7 +1208,7 @@ function initializeApp() {
       const installSection = document.getElementById('installSection');
       const pwaInstallable = document.getElementById('pwaInstallable');
       const pwaSafari = document.getElementById('pwaSafari');
-      
+
       if (installSection && pwaInstallable) {
         installSection.classList.remove('hidden');
         pwaInstallable.classList.remove('hidden');

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { fillEditor } from './test-utils';
 import fs from 'fs';
 import path from 'path';
 
@@ -27,11 +28,11 @@ test.describe('Export/Import Functionality', () => {
 
     // Create some snippets
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('First Snippet\nFirst content');
+    await fillEditor(page, 'First Snippet\nFirst content');
     await page.waitForTimeout(1000);
 
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('Second Snippet\nSecond content');
+    await fillEditor(page, 'Second Snippet\nSecond content');
     await page.waitForTimeout(1000);
 
     // Change font size to test settings export
@@ -40,7 +41,7 @@ test.describe('Export/Import Functionality', () => {
 
     // Set up download listener
     const downloadPromise = page.waitForEvent('download');
-    
+
     // Click export button
     await page.locator('#exportBtn').click();
 
@@ -123,7 +124,7 @@ test.describe('Export/Import Functionality', () => {
     await expect(page.locator('#status')).toContainText('settings');
 
     // Verify settings were applied
-    const textarea = page.locator('#content');
+    const textarea = page.locator('.CodeMirror');
     const fontSize = await textarea.evaluate((el) => window.getComputedStyle(el).fontSize);
     expect(fontSize).toBe('18px');
 
@@ -173,7 +174,7 @@ test.describe('Export/Import Functionality', () => {
 
     // Create existing snippet
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('Existing\nExisting content');
+    await fillEditor(page, 'Existing\nExisting content');
     await page.waitForTimeout(1000);
 
     // Get the ID of the existing snippet
@@ -293,7 +294,7 @@ test.describe('Export/Import Functionality', () => {
 
     // Click import button should not throw error
     await page.locator('#importBtn').click();
-    
+
     // File input should be present (even if hidden)
     await expect(page.locator('#importFileInput')).toBeAttached();
   });
@@ -303,16 +304,15 @@ test.describe('Export/Import Functionality', () => {
 
     // Create snippets and change settings
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('Test 1\nContent 1');
+    await fillEditor(page, 'Test 1\nContent 1');
     await page.waitForTimeout(1000);
 
     await page.keyboard.press('Meta+k');
-    await page.locator('#content').fill('Test 2\nContent 2');
+    await fillEditor(page, 'Test 2\nContent 2');
     await page.waitForTimeout(1000);
 
     // Change font settings
     await page.locator('#increaseFont').click();
-    await page.locator('#fontFamily').selectOption("'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace");
     await page.waitForTimeout(500);
 
     // Export
@@ -335,9 +335,5 @@ test.describe('Export/Import Functionality', () => {
     await expect(page.locator('#list li')).toHaveCount(2);
     await expect(page.locator('#list')).toContainText('Test 1');
     await expect(page.locator('#list')).toContainText('Test 2');
-
-    // Verify settings preserved
-    const selectedFont = await page.locator('#fontFamily').inputValue();
-    expect(selectedFont).toBe("'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace");
   });
 });
