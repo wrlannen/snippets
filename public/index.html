@@ -28,83 +28,10 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Roboto+Mono:wght@400..700&family=JetBrains+Mono:wght@400..800&family=Source+Code+Pro:wght@400..900&display=swap"
     rel="stylesheet">
-  <style>
-    /* Modern minimalist scrollbars */
-    ::-webkit-scrollbar {
-      width: 10px;
-      height: 10px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #424242;
-      border-radius: 5px;
-      border: 2px solid #1e1e1e;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: #4f4f4f;
-    }
-
-    #content::-webkit-scrollbar-thumb {
-      border-color: #1e1e1e;
-    }
-
-    body.resizing-sidebar {
-      cursor: col-resize !important;
-      user-select: none;
-    }
-  </style>
   <link rel="stylesheet" href="vendor/codemirror.min.css">
   <link rel="stylesheet" href="vendor/dracula.min.css">
-  <style>
-    /* CodeMirror Overrides - stronger specificity for Dracula theme */
-    .CodeMirror,
-    .cm-s-dracula.CodeMirror {
-      height: 100% !important;
-      width: 100% !important;
-      font-family: 'Source Code Pro', monospace;
-      font-size: 15px;
-      padding-top: 5px;
-      background-color: #252526 !important;
-      color: #e2e8f0 !important;
-    }
-
-    .CodeMirror-gutters,
-    .cm-s-dracula .CodeMirror-gutters {
-      background-color: #252526 !important;
-      border-right: 1px solid #2d2d2d !important;
-    }
-
-    .CodeMirror-linenumber {
-      color: #6e7681 !important;
-      padding-right: 16px !important;
-      /* Space between number and border */
-      padding-left: 0px !important;
-      min-width: 0 !important;
-      text-align: right !important;
-    }
-
-    /* Padding between gutter line and code */
-    .CodeMirror-lines {
-      padding-left: 12px;
-    }
-
-    /* Ensure cursor visibility */
-    .cm-s-dracula .CodeMirror-cursor {
-      border-left: 2px solid #528bff !important;
-    }
-  </style>
 
   <script src="/dist/sidebar-state.js"></script>
-  <style>
-    .sidebar-hidden #sidebar {
-      display: none;
-    }
-  </style>
 </head>
 
 <body
@@ -112,7 +39,7 @@
   <div class="flex h-screen flex-col">
     <div class="flex flex-1 min-h-0">
       <!-- Sidebar -->
-      <aside id="sidebar" class="relative flex flex-col border-r border-[#252526] bg-[#1e1e1e]" style="width:300px;min-width:120px;max-width:500px;">
+      <aside id="sidebar" class="relative flex flex-col border-r border-[#252526] bg-[#1e1e1e] w-[300px] min-w-[120px] max-w-[500px]">
         <div id="searchWrapper" class="p-3 pt-4">
           <div class="relative">
             <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,8 +88,7 @@
       <main class="flex flex-1 flex-col bg-[#252526]">
         <div class="flex-1 overflow-hidden relative flex">
           <textarea id="content"
-            class="h-full w-full resize-none bg-[#252526] pl-4 pr-8 pt-1 pb-6 text-gray-300 outline-none font-medium"
-            style="z-index:1;"></textarea>
+            class="h-full w-full resize-none bg-[#252526] pl-4 pr-8 pt-1 pb-6 text-gray-300 outline-none font-medium z-[1]"></textarea>
         </div>
       </main>
     </div>
