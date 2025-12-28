@@ -350,6 +350,38 @@ function importFromJson(file) {
     try {
       const imported = JSON.parse(e.target.result);
 
+      const sanitizeSnippet = (snippet) => {
+        if (!snippet || typeof snippet !== 'object') return null;
+        if (typeof snippet.id !== 'string' || !snippet.id.trim()) return null;
+        if (typeof snippet.content !== 'string') return null;
+
+        const id = snippet.id.trim().slice(0, 200);
+        const content = snippet.content.slice(0, 1_000_000);
+        const createdAt = (typeof snippet.createdAt === 'string' && snippet.createdAt) ? snippet.createdAt : nowIso();
+        const updatedAt = (typeof snippet.updatedAt === 'string' && snippet.updatedAt) ? snippet.updatedAt : nowIso();
+
+        return { id, content, createdAt, updatedAt };
+      };
+
+      const sanitizeImportedSettings = (settings) => {
+        if (!settings || typeof settings !== 'object') return null;
+        const out = {};
+
+        if (typeof settings.fontSize === 'number' && Number.isFinite(settings.fontSize)) {
+          out.fontSize = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, settings.fontSize));
+        }
+
+        if (typeof settings.fontFamily === 'string' && settings.fontFamily.trim()) {
+          out.fontFamily = settings.fontFamily.trim().slice(0, 200);
+        }
+
+        if (typeof settings.sidebarWidth === 'number' && Number.isFinite(settings.sidebarWidth)) {
+          out.sidebarWidth = Math.max(MIN_SIDEBAR_WIDTH, Math.min(MAX_SIDEBAR_WIDTH, settings.sidebarWidth));
+        }
+
+        return out;
+      };
+
       // Support both old format (array) and new format (object with snippets/settings)
       let snippetsToImport;
       let settingsToImport = null;
@@ -367,11 +399,14 @@ function importFromJson(file) {
       }
 
       // Validate each snippet has required fields
+      const sanitizedSnippets = [];
       for (const snippet of snippetsToImport) {
-        if (!snippet.id || typeof snippet.content !== 'string') {
+        const s = sanitizeSnippet(snippet);
+        if (!s) {
           setStatus('Error: Invalid snippet format');
           return;
         }
+        sanitizedSnippets.push(s);
       }
 
       // Merge with existing snippets
@@ -381,7 +416,7 @@ function importFromJson(file) {
       let imported_count = 0;
       let skipped_count = 0;
 
-      for (const snippet of snippetsToImport) {
+      for (const snippet of sanitizedSnippets) {
         if (existingIds.has(snippet.id)) {
           skipped_count++;
         } else {
@@ -394,10 +429,12 @@ function importFromJson(file) {
 
       // Import settings if provided
       if (settingsToImport && typeof settingsToImport === 'object') {
-        const { lineNumbers: _ignored, ...restSettings } = settingsToImport;
-        const mergedSettings = { ...loadSettings(), ...restSettings };
-        saveSettings(mergedSettings);
-        applyFontSettings(mergedSettings);
+        const sanitizedSettings = sanitizeImportedSettings(settingsToImport);
+        if (sanitizedSettings) {
+          const mergedSettings = { ...loadSettings(), ...sanitizedSettings };
+          saveSettings(mergedSettings);
+          applyFontSettings(mergedSettings);
+        }
 
 
       }
