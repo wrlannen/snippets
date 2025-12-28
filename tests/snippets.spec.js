@@ -151,7 +151,6 @@ test.describe('Snippets App', () => {
     await page.goto('/');
 
     await page.keyboard.press('Meta+k');
-    await page.keyboard.press('Meta+k');
     await fillEditor(page, 'Test');
 
     await expect(page.locator('#charCount')).toContainText('4 characters');
@@ -160,7 +159,6 @@ test.describe('Snippets App', () => {
   test('displays first line as snippet title', async ({ page }) => {
     await page.goto('/');
 
-    await page.keyboard.press('Meta+k');
     await page.keyboard.press('Meta+k');
     await fillEditor(page, 'My Title\nLine 2\nLine 3');
     await page.waitForTimeout(1000);

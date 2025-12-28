@@ -761,8 +761,6 @@ function createNewSnippet() {
 
   loadIntoEditor(activeId);
 
-  loadIntoEditor(activeId);
-
   if (editor) {
     editor.focus();
   } else if (els && els.content) {
