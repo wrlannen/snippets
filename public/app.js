@@ -608,7 +608,7 @@ function buildSnippetItemHtml(snippet, isActive) {
   return `
     <div class="group relative ${containerClasses} transition-all duration-200 rounded-r-md mx-1 my-0.5">
       <button type="button" data-action="open" 
-        class="w-full px-3 py-3 text-left transition-colors flex flex-col">
+        class="w-full pl-3 pr-10 py-3 text-left transition-colors flex flex-col">
         <div class="truncate text-sm leading-tight ${titleClasses} mb-1">${escapeHtml(title)}</div>
         ${preview ? `<div class="truncate text-xs leading-tight ${previewClasses} mb-1 font-mono">${escapeHtml(preview)}</div>` : ''}
         <div class="text-xs leading-tight ${dateClasses}">${timestamp}</div>
