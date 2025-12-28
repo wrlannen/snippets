@@ -31,6 +31,19 @@ Minimal, privacy-first snippet manager. All data stays in your browser (`localSt
    # open http://localhost:3000
    ```
 
+### Tailwind CSS (Production)
+
+This app uses Tailwind via the CLI (not the CDN). The stylesheet is generated into `public/tailwind.output.css`.
+
+- One-time build:
+   ```bash
+   npm run build:css
+   ```
+- Watch mode (run in a second terminal while developing UI):
+   ```bash
+   npm run dev:css
+   ```
+
 
 ## Keyboard Shortcuts
 
@@ -93,7 +106,7 @@ docker run -p 3000:3000 snippets-app
 
 - **Backend:** Node.js + Express (static only)
 - **Frontend:** Vanilla JS, HTML, CodeMirror
-- **Styling:** Tailwind CSS (CDN)
+- **Styling:** Tailwind CSS (built + minified via CLI)
 - **Storage:** Browser localStorage
 - **Testing:** Playwright
 

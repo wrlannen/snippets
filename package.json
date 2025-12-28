@@ -4,9 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node server.js",
+    "build:css": "tailwindcss -c tailwind.config.cjs -i ./public/tailwind.css -o ./public/tailwind.output.css --minify",
+    "dev:css": "tailwindcss -c tailwind.config.cjs -i ./public/tailwind.css -o ./public/tailwind.output.css --watch",
+    "start": "npm run build:css && node server.js",
     "dev": "node --watch server.js",
-    "test": "playwright test",
+    "test": "npm run build:css && playwright test",
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed"
   },
@@ -15,6 +17,7 @@
     "express": "^4.19.2"
   },
   "devDependencies": {
-    "@playwright/test": "^1.57.0"
+    "@playwright/test": "^1.57.0",
+    "tailwindcss": "^3.4.19"
   }
 }

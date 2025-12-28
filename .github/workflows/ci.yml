@@ -5,10 +5,12 @@ on:
     branches: [ "main" ]
     paths:
       - '**.js'
+      - '**.cjs'
       - '**.json'
       - 'Dockerfile'
       - 'public/**'
       - 'server.js'
+      - 'tailwind.config.cjs'
       - 'tests/**'
       - 'playwright.config.js'
       - '.github/workflows/**'
@@ -16,10 +18,12 @@ on:
     branches: [ "main" ]
     paths:
       - '**.js'
+      - '**.cjs'
       - '**.json'
       - 'Dockerfile'
       - 'public/**'
       - 'server.js'
+      - 'tailwind.config.cjs'
       - 'tests/**'
       - 'playwright.config.js'
       - '.github/workflows/**'
