@@ -83,6 +83,7 @@ function setupPwaInstallUI() {
  * Keyboard shortcuts:
  *   - Cmd/Ctrl+K: Create new snippet
  *   - Cmd/Ctrl+F: Focus search
+ *   - Cmd/Ctrl+B: Toggle sidebar visibility
  *   - Escape: Close search / dismiss modals
  */
 
@@ -98,6 +99,9 @@ const SETTINGS_KEY = "snippets.settings.v1";
 
 /** Editor font size constraints and defaults */
 const DEFAULT_FONT_SIZE = 15;
+
+/** localStorage key for sidebar visibility state */
+const SIDEBAR_VISIBLE_KEY = "snippets.sidebar.visible";
 const MIN_FONT_SIZE = 10;
 const MAX_FONT_SIZE = 24;
 
@@ -1129,6 +1133,7 @@ function initializeApp() {
 
   // Apply initial settings
   applyFontSettings(loadSettings());
+  restoreSidebarState();
 
   // --- Search Event Listeners ---
 
@@ -1146,6 +1151,55 @@ function initializeApp() {
       renderList();
     }
   });
+
+  // --- Sidebar Toggle ---
+
+  /**
+   * Toggle sidebar visibility and save state
+   */
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+
+    const isHidden = sidebar.classList.contains('hidden');
+    
+    if (isHidden) {
+      sidebar.classList.remove('hidden');
+      try {
+        localStorage.setItem(SIDEBAR_VISIBLE_KEY, 'true');
+      } catch (err) {
+        console.warn('Failed to save sidebar state:', err);
+      }
+    } else {
+      sidebar.classList.add('hidden');
+      try {
+        localStorage.setItem(SIDEBAR_VISIBLE_KEY, 'false');
+      } catch (err) {
+        console.warn('Failed to save sidebar state:', err);
+      }
+    }
+  }
+
+  /**
+   * Restore sidebar visibility state from localStorage
+   */
+  function restoreSidebarState() {
+    try {
+      const sidebarVisible = localStorage.getItem(SIDEBAR_VISIBLE_KEY);
+      const sidebar = document.getElementById('sidebar');
+      
+      if (!sidebar) return;
+      
+      // Default to visible if no preference is saved
+      if (sidebarVisible === 'false') {
+        sidebar.classList.add('hidden');
+      } else {
+        sidebar.classList.remove('hidden');
+      }
+    } catch (err) {
+      console.warn('Failed to restore sidebar state:', err);
+    }
+  }
 
   // --- Global Keyboard Shortcuts ---
 
@@ -1175,6 +1229,13 @@ function initializeApp() {
       e.preventDefault();
       els.search.focus();
       els.search.select();
+      return;
+    }
+
+    // Cmd/Ctrl+B: Toggle sidebar visibility
+    if (isMod && e.key === "b") {
+      e.preventDefault();
+      toggleSidebar();
       return;
     }
 
@@ -1252,10 +1313,12 @@ function initializeApp() {
 
   document.getElementById('modKey').textContent = modKeySymbol;
   document.getElementById('modKeySearch').textContent = modKeySymbol;
+  document.getElementById('modKeySidebar').textContent = modKeySymbol;
   document.getElementById('modKeyCopy').textContent = modKeySymbol;
   document.getElementById('modalModKey1').textContent = modKeySymbol;
   document.getElementById('modalModKey2').textContent = modKeySymbol;
   document.getElementById('modalModKey3').textContent = modKeySymbol;
+  document.getElementById('modalModKey4').textContent = modKeySymbol;
 
   // --- Export/Import ---
 

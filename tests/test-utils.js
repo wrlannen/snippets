@@ -34,3 +34,41 @@ export async function getEditorValue(page) {
         return cm ? cm.getValue() : '';
     });
 }
+
+/**
+ * Resets localStorage to a clean state
+ * @param {import('@playwright/test').Page} page
+ */
+export async function resetStorage(page) {
+    await page.goto('http://localhost:3000');
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
+}
+
+/**
+ * Waits for the snippets app to load
+ * @param {import('@playwright/test').Page} page
+ */
+export async function waitForSnippetsToLoad(page) {
+    // Just wait for CodeMirror to be ready, list might be empty/hidden
+    await page.waitForSelector('.CodeMirror');
+}
+
+/**
+ * Creates a new snippet with the given content
+ * @param {import('@playwright/test').Page} page
+ * @param {string} content
+ */
+export async function createSnippet(page, content) {
+    // Press CMD+K or Ctrl+K to create new snippet
+    const isMac = process.platform === 'darwin';
+    if (isMac) {
+        await page.keyboard.press('Meta+KeyK');
+    } else {
+        await page.keyboard.press('Control+KeyK');
+    }
+    
+    await fillEditor(page, content);
+    // Wait for autosave to complete
+    await page.waitForTimeout(1000);
+}
