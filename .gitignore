@@ -138,5 +138,9 @@ playwright-report/
 blob-report/
 playwright/.cache/
 
+# Build artifacts (generated)
+public/tailwind.output.css
+public/dist/
+
 # Offline documentation
 offline-docs/

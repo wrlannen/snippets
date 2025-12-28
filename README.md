@@ -44,6 +44,18 @@ This app uses Tailwind via the CLI (not the CDN). The stylesheet is generated in
    npm run dev:css
    ```
 
+### JavaScript (Production)
+
+The app’s first-party JS is bundled + minified with esbuild into `public/dist/`:
+
+- `public/dist/app.js` (bundled from `public/app.js`)
+- `public/dist/sidebar-state.js` (minified early boot script)
+
+Build everything (CSS + JS):
+```bash
+npm run build
+```
+
 
 ## Keyboard Shortcuts
 

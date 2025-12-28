@@ -9,8 +9,8 @@ RUN npm ci
 COPY tailwind.config.cjs ./
 COPY public ./public
 
-# Build Tailwind CSS, then prune dev deps for production runtime
-RUN npm run build:css && npm prune --omit=dev && npm cache clean --force
+# Build CSS + minified JS, then prune dev deps for production runtime
+RUN npm run build && npm prune --omit=dev && npm cache clean --force
 
 # Final stage - distroless Node for minimal size (~80-90MB)
 FROM gcr.io/distroless/nodejs20-debian12:nonroot
