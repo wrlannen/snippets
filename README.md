@@ -1,20 +1,21 @@
 # Snippets: Minimal, Fast, Local
-![Screenshot of Snippets app](assets/demo_screenshot_new.png)
+![Snippets app screenshot](assets/demo_screenshot_3.png)
 
-A lightweight, privacy-focused snippet manager with a modern dark UI. All data stays in your browser via `localStorage` (no database, no accounts).
+A lightweight, privacy-first snippet manager with a modern dark UI. Everything is stored locally in your browser using `localStorage` — no accounts or remote servers required.
 
-Installable as a Progressive Web App (PWA), so you can add it to your desktop and keep using it offline.
+Installable as a Progressive Web App (PWA) for offline use and quick desktop install.
 
 ## Features
 
-- **Installable PWA**: Offline-capable and installable on desktop/mobile.
-- **Local-first storage**: Snippets live in browser `localStorage`.
-- **Comment-based titles**: Use `//`, `#`, `--`, `/* */`, or `<!-- -->` for snippet titles.
-- **Export/Import**: Backup and restore your snippets and settings.
-- **Autosave**: Edit without worry—changes save automatically.
-- **Quick navigation**: Sidebar list with instant search.
-- **Adjustable font size**: Use A+/A- buttons to change editor font size.
-- **Keyboard shortcuts**: <kbd>⌘</kbd>/<kbd>Ctrl</kbd>+<kbd>K</kbd> (new), <kbd>⌘</kbd>/<kbd>Ctrl</kbd>+<kbd>F</kbd> (search), <kbd>Esc</kbd> (dismiss).
+- **PWA installable**: Add to your desktop and keep using offline.
+- **Local-first storage**: All snippets are saved in `localStorage` (no backend).
+- **Comment-based titles**: First-line comment becomes the snippet title (`//`, `#`, `--`, `/* */`, `<!-- -->`).
+- **Export / Import**: Export your snippets/settings as JSON and re-import later.
+- **Autosave & live preview**: Edits save automatically and the sidebar updates instantly.
+- **Quick navigation**: Instant search and keyboard-first workflow.
+- **Adjustable editor**: Change font size; syntax highlighting via CodeMirror.
+- **Copy to clipboard**: Quickly copy the active snippet with `⌘/Ctrl+Shift+C`.
+- **Keyboard shortcuts**: `⌘/Ctrl+K` (new snippet), `⌘/Ctrl+F` (search), `⌘/Ctrl+Shift+C` (copy).
 
 ## Getting Started
 
@@ -23,25 +24,20 @@ Installable as a Progressive Web App (PWA), so you can add it to your desktop an
 - [Node.js](https://nodejs.org/) (v18+ recommended)
 - [npm](https://www.npmjs.com/)
 
-### Install & Run
+### Quick Start
 
-1. Clone the repository:
+1. Clone and install:
    ```bash
    git clone https://github.com/your-username/snippets.git
    cd snippets
-   ```
-
-2. Install dependencies:
-   ```bash
    npm install
    ```
 
-3. Start the server:
+2. Run locally:
    ```bash
    npm start
+   # open http://localhost:3000
    ```
-
-4. Open http://localhost:3000
 
 ## Usage
 
@@ -109,25 +105,11 @@ Uses Google's distroless Node image for minimal size (~80-90MB) and improved sec
 
 ## Comment-Based Titles
 
-Snippet titles are extracted from the first line using comment syntax patterns:
-
-```javascript
-const TITLE_PATTERNS = [
-  /^\/\/\s*(.+)$/m,      // // Title
-  /^#\s*(.+)$/m,         // # Title  
-  /^--\s*(.+)$/m,        // -- Title
-  /^\/\*+\s*(.+?)\s*\*+\/$/m,  // /* Title */
-  /^<!--\s*(.+?)\s*-->$/m     // <!-- Title -->
-];
-```
-
-This approach:
-- Prevents syntax highlighting from affecting titles
-- Works across multiple programming languages
-- Maintains clean visual separation between titles and code
-- Falls back to "Untitled Snippet" if no comment is found
+Snippet titles are taken from the first line when it matches common comment patterns (e.g. `// Title`, `# Title`, `-- Title`). This keeps titles readable and language-agnostic. If no title is detected the app uses "Untitled Snippet".
 
 ## Testing
+
+Run the Playwright tests:
 
 ```bash
 npm test
@@ -135,4 +117,6 @@ npm run test:ui
 ```
 
 ---
+Screenshot: `assets/demo_screenshot_3.png` (updated)
+
 Created for speed and simplicity.
