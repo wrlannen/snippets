@@ -1,5 +1,5 @@
 # Snippets: Minimal, Fast, Local
-![Screenshot of Snippets app](assets/demo_screenshot.png)
+![Screenshot of Snippets app](assets/demo_screenshot_new.png)
 
 A lightweight, privacy-focused snippet manager with a modern dark UI. All data stays in your browser via `localStorage` (no database, no accounts).
 
