@@ -4,7 +4,7 @@ export const STORAGE_KEY = "snippets.v1";
 export const SETTINGS_KEY = "snippets.settings.v1";
 export const DEFAULT_FONT_SIZE = 15;
 export const DEFAULT_FONT_FAMILY = "'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace";
-export const DEFAULT_SIDEBAR_WIDTH = 192;
+export const DEFAULT_SIDEBAR_WIDTH = 300;
 export const STORAGE_WARNING_BYTES = 5 * 1024 * 1024;
 
 export function loadSnippets() {

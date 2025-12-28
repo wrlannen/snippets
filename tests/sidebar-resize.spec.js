@@ -11,8 +11,8 @@ test.describe('Sidebar Resize', () => {
         const sidebar = page.locator('aside');
         const box = await sidebar.boundingBox();
 
-        // Default width is 192px (w-48 = 12rem = 192px)
-        expect(box.width).toBe(192);
+        // Default width is 300px
+        expect(box.width).toBe(300);
     });
 
     test('can drag sidebar edge to make sidebar wider', async ({ page }) => {
@@ -146,7 +146,7 @@ test.describe('Sidebar Resize', () => {
         });
         
         expect(settings.sidebarWidth).toBeDefined();
-        expect(settings.sidebarWidth).toBeCloseTo(192 + 60, -1);
+        expect(settings.sidebarWidth).toBeCloseTo(300 + 60, -1);
     });
 
     test('resize shows visual feedback while dragging', async ({ page }) => {
