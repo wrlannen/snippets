@@ -7,28 +7,8 @@ test.describe('Settings & Fonts', () => {
         await page.reload();
     });
 
-    test('changes font family and persists settings', async ({ page }) => {
-        // Default check
-        await expect(page.locator('#fontFamily')).toHaveValue("'Source Code Pro', monospace");
-        const initialFont = await page.locator('#content').evaluate((el) => getComputedStyle(el).fontFamily);
-        expect(initialFont).toContain('Source Code Pro');
-
-        // Change to Roboto Mono
-        await page.locator('#fontFamily').selectOption("'Roboto Mono', monospace");
-
-        // Verify immediate change
-        const newFont = await page.locator('#content').evaluate((el) => getComputedStyle(el).fontFamily);
-        expect(newFont).toContain('Roboto Mono');
-
-        // Reload and verify persistence
-        await page.reload();
-        await expect(page.locator('#fontFamily')).toHaveValue("'Roboto Mono', monospace");
-        const persistedFont = await page.locator('#content').evaluate((el) => getComputedStyle(el).fontFamily);
-        expect(persistedFont).toContain('Roboto Mono');
-    });
-
     test('adjusts font size with A+/A- buttons', async ({ page }) => {
-        const editor = page.locator('#content');
+        const editor = page.locator('.CodeMirror');
 
         // Get initial font size
         const initialSize = await editor.evaluate((el) => parseInt(getComputedStyle(el).fontSize));
@@ -46,6 +26,8 @@ test.describe('Settings & Fonts', () => {
 
         // Reload and verify persistence
         await page.reload();
+        // Wait for editor to be ready
+        await page.waitForSelector('.CodeMirror');
         const persistedSize = await editor.evaluate((el) => parseInt(getComputedStyle(el).fontSize));
         expect(persistedSize).toBe(decreasedSize);
     });

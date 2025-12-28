@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { fillEditor } from './test-utils';
 
 test.describe('Keyboard Shortcuts & Platform Detection', () => {
     test.beforeEach(async ({ page }) => {
@@ -20,10 +21,10 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
         await page.keyboard.press('Meta+k');
 
         // Should create a new snippet and focus editor
-        await expect(page.locator('#content')).toBeFocused();
+        await expect(page.locator('.CodeMirror')).toHaveClass(/CodeMirror-focused/);
 
         // Type some content
-        await page.locator('#content').fill('Test snippet from ⌘K');
+        await fillEditor(page, 'Test snippet from ⌘K');
         await page.waitForTimeout(1000);
 
         // Verify snippet was created
@@ -43,10 +44,10 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
         await page.keyboard.press('Control+k');
 
         // Should create a new snippet and focus editor
-        await expect(page.locator('#content')).toBeFocused();
+        await expect(page.locator('.CodeMirror')).toHaveClass(/CodeMirror-focused/);
 
         // Type some content
-        await page.locator('#content').fill('Test snippet from Ctrl+K');
+        await fillEditor(page, 'Test snippet from Ctrl+K');
         await page.waitForTimeout(1000);
 
         // Verify snippet was created
@@ -56,11 +57,11 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
     test('⌘F opens search on Mac', async ({ page }) => {
         // Create some snippets first
         await page.keyboard.press('Meta+k');
-        await page.locator('#content').fill('First snippet');
+        await fillEditor(page, 'First snippet');
         await page.waitForTimeout(1000);
 
         await page.keyboard.press('Meta+k');
-        await page.locator('#content').fill('Second snippet');
+        await fillEditor(page, 'Second snippet');
         await page.waitForTimeout(1000);
 
         // Press ⌘F
