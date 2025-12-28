@@ -462,10 +462,6 @@ async function copyTextToClipboard(text) {
  * Updates the character count display in the footer.
  * Shows count with proper singular/plural form.
  */
-/**
- * Updates the character count display in the footer.
- * Shows count with proper singular/plural form.
- */
 function updateCharCount() {
   const content = getEditorValue().content;
   const len = content.length;
@@ -1291,7 +1287,6 @@ function initializeApp() {
 
   if (initial.length > 0) {
     loadIntoEditor(initial[0].id);
-    clearEditor();
   }
 
   // Refocus editor after load
@@ -1309,15 +1304,21 @@ function initializeApp() {
   const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
   const modKeySymbol = isMac ? '⌘' : 'Ctrl';
 
-  document.getElementById('modKey').textContent = modKeySymbol;
-  document.getElementById('modKeySidebar').textContent = modKeySymbol;
-  document.getElementById('modKey').textContent = modKeySymbol;
-  document.getElementById('modKeySearch').textContent = modKeySymbol;
-  document.getElementById('modKeyCopy').textContent = modKeySymbol;
-  document.getElementById('modalModKey4').textContent = modKeySymbol;
-  document.getElementById('modalModKey1').textContent = modKeySymbol;
-  document.getElementById('modalModKey2').textContent = modKeySymbol;
-  document.getElementById('modalModKey3').textContent = modKeySymbol;
+  const modKeyTargets = [
+    'modKey',
+    'modKeySidebar',
+    'modKeySearch',
+    'modKeyCopy',
+    'modalModKey4',
+    'modalModKey1',
+    'modalModKey2',
+    'modalModKey3'
+  ];
+
+  modKeyTargets.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = modKeySymbol;
+  });
 
   // --- Export/Import ---
 

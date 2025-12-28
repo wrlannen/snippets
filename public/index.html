@@ -127,19 +127,7 @@
       outline-offset: -2px;
     }
   </style>
-  <!-- Restore sidebar state immediately to prevent flash -->
-  <script>
-    (function() {
-      try {
-        const sidebarVisible = localStorage.getItem('snippets.sidebar.visible');
-        if (sidebarVisible === 'false') {
-          document.documentElement.classList.add('sidebar-hidden');
-        }
-      } catch (e) {
-        // Ignore localStorage errors
-      }
-    })();
-  </script>
+  <script src="/sidebar-state.js"></script>
   <style>
     .sidebar-hidden #sidebar {
       display: none;
