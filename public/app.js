@@ -1158,20 +1158,18 @@ function initializeApp() {
    * Toggle sidebar visibility and save state
    */
   function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    if (!sidebar) return;
-
-    const isHidden = sidebar.classList.contains('hidden');
+    const html = document.documentElement;
+    const isHidden = html.classList.contains('sidebar-hidden');
     
     if (isHidden) {
-      sidebar.classList.remove('hidden');
+      html.classList.remove('sidebar-hidden');
       try {
         localStorage.setItem(SIDEBAR_VISIBLE_KEY, 'true');
       } catch (err) {
         console.warn('Failed to save sidebar state:', err);
       }
     } else {
-      sidebar.classList.add('hidden');
+      html.classList.add('sidebar-hidden');
       try {
         localStorage.setItem(SIDEBAR_VISIBLE_KEY, 'false');
       } catch (err) {
@@ -1186,15 +1184,15 @@ function initializeApp() {
   function restoreSidebarState() {
     try {
       const sidebarVisible = localStorage.getItem(SIDEBAR_VISIBLE_KEY);
-      const sidebar = document.getElementById('sidebar');
-      
-      if (!sidebar) return;
+      const html = document.documentElement;
       
       // Default to visible if no preference is saved
+      // Note: State is already applied by inline script in HTML head
+      // This function ensures the class is in sync
       if (sidebarVisible === 'false') {
-        sidebar.classList.add('hidden');
+        html.classList.add('sidebar-hidden');
       } else {
-        sidebar.classList.remove('hidden');
+        html.classList.remove('sidebar-hidden');
       }
     } catch (err) {
       console.warn('Failed to restore sidebar state:', err);
