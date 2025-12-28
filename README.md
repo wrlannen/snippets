@@ -3,7 +3,7 @@
 
 A lightweight, privacy-focused snippet manager with a modern dark UI. All data stays in your browser via `localStorage` (no database, no accounts).
 
-Installable as a Progressive Web App (PWA), so you can add it to your desktop/mobile home screen and keep using it offline.
+Installable as a Progressive Web App (PWA), so you can add it to your desktop and keep using it offline.
 
 ## Features
 
