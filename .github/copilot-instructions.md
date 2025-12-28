@@ -7,7 +7,7 @@ This is a minimal, modern snippet management app with a dark UI inspired by Subl
 - **Client-side only**: All data stored in localStorage, no server-side storage
 - **Node.js + Express**: Serves static files only (could be replaced with nginx)
 - **Tailwind CSS**: All styling via CDN, no build step
-- **First line as title**: The first line of each snippet is displayed bold in the editor and used as the title in the sidebar
+- **Comment-based titles**: The first line uses comment syntax (//, #, --, /* */, <!-- -->) for titles in the sidebar
 
 ## Code Style & Patterns
 - Use modern JavaScript (ES6+) with `const`/`let`
@@ -52,7 +52,7 @@ All PRs/commits must pass Playwright tests covering:
 - **Minimal**: No unnecessary buttons or controls
 - **Keyboard-first**: CMD+. (new), CMD+F (search), Escape (dismiss)
 - **Sublime-like**: Dark theme with subtle hover states
-- **First line bold**: The first line is always bold in the editor but remains fully editable
+- **Comment-based titles**: Use comment syntax (// Title, # Title, -- Title, /* Title */, <!-- Title -->) for snippet titles
 - **Autosave**: Debounced autosave after 800ms of inactivity
 - **Subtle delete**: Hover to reveal ×, click once for confirmation, click again to delete
 

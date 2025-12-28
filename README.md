@@ -9,6 +9,7 @@ Installable as a Progressive Web App (PWA), so you can add it to your desktop/mo
 
 - **Installable PWA**: Offline-capable and installable on desktop/mobile.
 - **Local-first storage**: Snippets live in browser `localStorage`.
+- **Comment-based titles**: Use `//`, `#`, `--`, `/* */`, or `<!-- -->` for snippet titles.
 - **Export/Import**: Backup and restore your snippets and settings.
 - **Autosave**: Edit without worry—changes save automatically.
 - **Quick navigation**: Sidebar list with instant search.
@@ -56,6 +57,39 @@ Installable as a Progressive Web App (PWA), so you can add it to your desktop/mo
 - Restores your editor preferences (font size, font family, font color)
 - Supports both the current format and older array-only format for backward compatibility
 
+## Creating Snippets
+
+Start typing in the editor—changes auto-save automatically. Use comment syntax on the first line to create titled snippets:
+
+```javascript
+// React useEffect Hook
+import { useEffect, useState } from 'react';
+
+function MyComponent() {
+  const [data, setData] = useState(null);
+  // ... rest of code
+}
+```
+
+```python
+# Python Data Processing
+import pandas as pd
+import numpy as np
+# ... rest of code
+```
+
+```sql
+-- PostgreSQL Query
+SELECT * FROM users WHERE active = true;
+```
+
+Supported title formats:
+- `// Title` (JavaScript, TypeScript, C++, etc.)
+- `# Title` (Python, Ruby, Bash, etc.)
+- `-- Title` (SQL)
+- `/* Title */` (CSS, JavaScript)
+- `<!-- Title -->` (HTML)
+
 ## Docker
 
 ```bash
@@ -68,10 +102,30 @@ Uses Google's distroless Node image for minimal size (~80-90MB) and improved sec
 ## Tech Stack
 
 - **Backend**: [Node.js](https://nodejs.org/) + [Express](https://expressjs.com/) (static serving + headers)
-- **Frontend**: Vanilla JavaScript + HTML
+- **Frontend**: Vanilla JavaScript + HTML + [CodeMirror](https://codemirror.net/) (code editor)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) (CDN)
 - **Storage**: Browser `localStorage`
 - **Testing**: [Playwright](https://playwright.dev/)
+
+## Comment-Based Titles
+
+Snippet titles are extracted from the first line using comment syntax patterns:
+
+```javascript
+const TITLE_PATTERNS = [
+  /^\/\/\s*(.+)$/m,      // // Title
+  /^#\s*(.+)$/m,         // # Title  
+  /^--\s*(.+)$/m,        // -- Title
+  /^\/\*+\s*(.+?)\s*\*+\/$/m,  // /* Title */
+  /^<!--\s*(.+?)\s*-->$/m     // <!-- Title -->
+];
+```
+
+This approach:
+- Prevents syntax highlighting from affecting titles
+- Works across multiple programming languages
+- Maintains clean visual separation between titles and code
+- Falls back to "Untitled Snippet" if no comment is found
 
 ## Testing
 
