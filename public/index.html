@@ -17,7 +17,7 @@
   <meta name="apple-mobile-web-app-title" content="Snippets">
 
   <!-- Theme color for browser chrome -->
-  <meta name="theme-color" content="#232323">
+  <meta name="theme-color" content="#1e1e1e">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="icon" type="image/svg+xml"
@@ -41,7 +41,7 @@
     ::-webkit-scrollbar-thumb {
       background: #424242;
       border-radius: 5px;
-      border: 2px solid #252526;
+      border: 2px solid #1e1e1e;
     }
 
     ::-webkit-scrollbar-thumb:hover {
@@ -50,11 +50,6 @@
 
     #content::-webkit-scrollbar-thumb {
       border-color: #1e1e1e;
-    }
-
-    /* Sidebar resize handle */
-    #sidebarResizeHandle.resizing {
-      background: #3a3a3a;
     }
 
     body.resizing-sidebar {
@@ -73,13 +68,13 @@
       font-family: 'Source Code Pro', monospace;
       font-size: 15px;
       padding-top: 5px;
-      background-color: #1e1e1e !important;
+      background-color: #252526 !important;
       color: #e2e8f0 !important;
     }
 
     .CodeMirror-gutters,
     .cm-s-dracula .CodeMirror-gutters {
-      background-color: #1e1e1e !important;
+      background-color: #252526 !important;
       border-right: 1px solid #2d2d2d !important;
     }
 
@@ -102,6 +97,36 @@
       border-left: 2px solid #528bff !important;
     }
   </style>
+
+  <style>
+    /* Enhanced sidebar styles */
+    .sidebar-item {
+      transition: all 0.2s ease;
+    }
+    
+    .sidebar-item:hover {
+      transform: translateX(1px);
+    }
+    
+    .sidebar-item button[data-action="open"] {
+      transition: all 0.15s ease;
+    }
+    
+    .sidebar-item:hover button[data-action="open"] {
+      transform: translateX(1px);
+    }
+    
+    /* Smooth transitions for delete button */
+    .sidebar-item .group:hover .opacity-0 {
+      opacity: 1;
+    }
+    
+    /* Better focus states */
+    .sidebar-item button:focus {
+      outline: 2px solid #007acc;
+      outline-offset: -2px;
+    }
+  </style>
 </head>
 
 <body
@@ -109,11 +134,14 @@
   <div class="flex h-screen flex-col">
     <div class="flex flex-1 min-h-0">
       <!-- Sidebar -->
-      <aside class="flex w-48 flex-col border-r border-[#2d2d2d] bg-[#252526]">
-        <div class="flex items-center justify-between pl-3 pr-1 py-2 border-b border-[#2d2d2d]">
-          <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider pl-1">Snippets</span>
+      <aside class="relative flex w-52 flex-col border-r border-[#252526] bg-[#1e1e1e]">
+        <div class="flex items-center justify-between pl-3 pr-1 py-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Snippets</span>
+            <span id="snippetCount" class="text-xs text-gray-600 bg-[#2a2a2a] px-2 py-0.5 rounded-full">0</span>
+          </div>
           <button id="newSnippetBtn"
-            class="p-1 text-gray-400 hover:text-white hover:bg-[#3e3e3e] rounded transition-colors"
+            class="p-1.5 text-gray-400 hover:text-white hover:bg-[#3a3a3a] rounded-md transition-colors"
             title="New Snippet (Cmd+K)">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
               <path
@@ -121,37 +149,31 @@
             </svg>
           </button>
         </div>
-        <div id="searchWrapper" class="hidden border-b border-[#2d2d2d] p-3">
-          <input type="text" id="search" placeholder="Search snippets..."
-            class="w-full rounded-sm border border-transparent bg-[#3c3c3c] px-3 py-1.5 text-xs text-gray-200 outline-none placeholder:text-gray-500 focus:border-[#007acc] focus:ring-1 focus:ring-[#007acc]" />
+        <div id="searchWrapper" class="p-3">
+          <div class="relative">
+            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <input type="text" id="search" placeholder="Search snippets..."
+              class="w-full pl-10 pr-4 py-2 bg-transparent border border-[#333] rounded-md text-sm text-gray-200 placeholder-gray-500 focus:border-[#007acc] focus:ring-1 focus:ring-[#007acc] transition-colors" />
+          </div>
         </div>
         <div class="flex-1 overflow-y-auto">
           <ul id="list" class=""></ul>
-          <div id="empty" class="flex flex-col items-center justify-center px-6 py-16 opacity-50">
-            <svg class="mb-4 h-16 w-16 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-              stroke-width="1">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
-            </svg>
-            <p class="text-center text-sm text-gray-500 font-medium mb-1">Start writing your first snippet</p>
-            <p class="text-center text-xs text-gray-600">Changes auto-save.</p>
+          <div id="empty" class="flex flex-col items-center justify-center px-8 py-20 text-center">
+            <div class="w-16 h-16 bg-gradient-to-br from-[#007acc] to-[#005999] rounded-full flex items-center justify-center mb-6 shadow-lg">
+              <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-200 mb-2">Ready to code?</h3>
+            <p class="text-sm text-gray-500 mb-6 max-w-xs">Start typing your first snippet. Everything saves automatically and works offline.</p>
           </div>
         </div>
-        <div class="border-t border-[#2b2b2b] p-2">
-          <div class="flex gap-1">
-            <button id="exportBtn"
-              class="flex-1 px-2 py-1.5 text-xs rounded hover:bg-[#2d2d2d] text-gray-400 hover:text-gray-300 flex items-center justify-center gap-1"
-              title="Export all snippets to JSON">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5">
-                <path
-                  d="M9.25 13.25a.75.75 0 001.5 0V4.636l2.955 3.129a.75.75 0 001.09-1.03l-4.25-4.5a.75.75 0 00-1.09 0l-4.25 4.5a.75.75 0 101.09 1.03L9.25 4.636v8.614z" />
-                <path
-                  d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
-              </svg>
-              Export
-            </button>
+        <div class="p-3">
+          <div class="flex gap-2">
             <button id="importBtn"
-              class="flex-1 px-2 py-1.5 text-xs rounded hover:bg-[#2d2d2d] text-gray-400 hover:text-gray-300 flex items-center justify-center gap-1"
+              class="flex-1 px-3 py-2 text-xs font-medium text-gray-400 hover:text-gray-200 flex items-center justify-center gap-2 transition-colors duration-200"
               title="Import snippets from JSON">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5">
                 <path
@@ -161,25 +183,33 @@
               </svg>
               Import
             </button>
+            <button id="exportBtn"
+              class="flex-1 px-3 py-2 text-xs font-medium text-gray-400 hover:text-gray-200 flex items-center justify-center gap-2 transition-colors duration-200"
+              title="Export all snippets to JSON">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                <path
+                  d="M9.25 13.25a.75.75 0 001.5 0V4.636l2.955 3.129a.75.75 0 001.09-1.03l-4.25-4.5a.75.75 0 00-1.09 0l-4.25 4.5a.75.75 0 101.09 1.03L9.25 4.636v8.614z" />
+                <path
+                  d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
+              </svg>
+              Export
+            </button>
           </div>
           <input type="file" id="importFileInput" accept=".json,application/json" class="hidden" />
         </div>
       </aside>
-      <!-- Sidebar Resize Handle -->
-      <div id="sidebarResizeHandle" class="w-1 cursor-col-resize bg-transparent transition-colors flex-shrink-0"
-        title="Drag to resize sidebar"></div>
       <!-- Main Editor -->
-      <main class="flex flex-1 flex-col bg-[#1e1e1e]">
+      <main class="flex flex-1 flex-col bg-[#252526]">
         <div class="flex-1 overflow-hidden relative flex">
           <textarea id="content"
-            class="h-full w-full resize-none bg-[#1e1e1e] pl-4 pr-8 pt-1 pb-6 text-gray-300 outline-none font-medium"
+            class="h-full w-full resize-none bg-[#252526] pl-4 pr-8 pt-1 pb-6 text-gray-300 outline-none font-medium"
             style="z-index:1;"></textarea>
         </div>
       </main>
     </div>
     <!-- Full-width status bar -->
     <div
-      class="flex items-center justify-between border-t border-[#2d2d2d] bg-[#232323] px-4 py-2 text-xs text-gray-500">
+      class="flex items-center justify-between border-t border-[#2d2d2d] bg-[#1e1e1e] px-4 py-2 text-xs text-gray-500">
       <div class="flex items-center gap-3">
         <span id="status">Editing</span>
         <span class="text-gray-700">|</span>
@@ -221,7 +251,7 @@
       <!-- Header -->
       <div class="px-6 pt-6 pb-2 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 bg-[#232323] rounded-lg flex items-center justify-center border border-[#333] shadow-sm">
+          <div class="w-8 h-8 bg-[#1e1e1e] rounded-lg flex items-center justify-center border border-[#333] shadow-sm">
             <span class="text-white font-bold font-mono text-lg">S</span>
           </div>
           <h2 class="text-lg font-medium text-white tracking-tight">Snippets</h2>

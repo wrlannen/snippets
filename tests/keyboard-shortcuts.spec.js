@@ -72,16 +72,17 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
         await expect(page.locator('#search')).toBeFocused();
     });
 
-    test('Escape closes search', async ({ page }) => {
-        // Open search
-        await page.keyboard.press('Meta+f');
-        await expect(page.locator('#searchWrapper')).not.toHaveClass(/hidden/);
+    test('Escape clears search', async ({ page }) => {
+        // Type in search
+        const searchInput = page.locator('#search');
+        await searchInput.fill('test query');
+        await expect(searchInput).toHaveValue('test query');
 
         // Press Escape
         await page.keyboard.press('Escape');
 
-        // Search should be hidden
-        await expect(page.locator('#searchWrapper')).toHaveClass(/hidden/);
+        // Search should be cleared
+        await expect(searchInput).toHaveValue('');
     });
 
     test('displays ⌘ symbol on Mac platform', async ({ page }) => {

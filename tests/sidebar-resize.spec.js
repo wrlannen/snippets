@@ -7,63 +7,54 @@ test.describe('Sidebar Resize', () => {
         await page.reload();
     });
 
-    test('resize handle is visible', async ({ page }) => {
-        const handle = page.locator('#sidebarResizeHandle');
-        await expect(handle).toBeVisible();
-    });
-
     test('sidebar has default width on initial load', async ({ page }) => {
         const sidebar = page.locator('aside');
         const box = await sidebar.boundingBox();
-        
+
         // Default width is 192px (w-48 = 12rem = 192px)
         expect(box.width).toBe(192);
     });
 
-    test('can drag resize handle to make sidebar wider', async ({ page }) => {
-        const handle = page.locator('#sidebarResizeHandle');
+    test('can drag sidebar edge to make sidebar wider', async ({ page }) => {
         const sidebar = page.locator('aside');
-        
+
         // Get initial width
         const initialBox = await sidebar.boundingBox();
         const initialWidth = initialBox.width;
-        
-        // Get handle position
-        const handleBox = await handle.boundingBox();
-        const handleX = handleBox.x + handleBox.width / 2;
-        const handleY = handleBox.y + handleBox.height / 2;
-        
-        // Drag the handle 100px to the right
-        await page.mouse.move(handleX, handleY);
+
+        // Get position near the right edge of sidebar (within 5px of edge)
+        const edgeX = initialBox.x + initialBox.width - 5;
+        const edgeY = initialBox.y + initialBox.height / 2;
+
+        // Drag from near the edge 100px to the right
+        await page.mouse.move(edgeX, edgeY);
         await page.mouse.down();
-        await page.mouse.move(handleX + 100, handleY);
+        await page.mouse.move(edgeX + 100, edgeY);
         await page.mouse.up();
-        
+
         // Verify sidebar got wider
         const newBox = await sidebar.boundingBox();
         expect(newBox.width).toBeGreaterThan(initialWidth);
         expect(newBox.width).toBeCloseTo(initialWidth + 100, -1);
     });
 
-    test('can drag resize handle to make sidebar narrower', async ({ page }) => {
-        const handle = page.locator('#sidebarResizeHandle');
+    test('can drag sidebar edge to make sidebar narrower', async ({ page }) => {
         const sidebar = page.locator('aside');
-        
+
         // Get initial width
         const initialBox = await sidebar.boundingBox();
         const initialWidth = initialBox.width;
-        
-        // Get handle position
-        const handleBox = await handle.boundingBox();
-        const handleX = handleBox.x + handleBox.width / 2;
-        const handleY = handleBox.y + handleBox.height / 2;
-        
-        // Drag the handle 50px to the left
-        await page.mouse.move(handleX, handleY);
+
+        // Get position near the right edge of sidebar (within 5px of edge)
+        const edgeX = initialBox.x + initialBox.width - 5;
+        const edgeY = initialBox.y + initialBox.height / 2;
+
+        // Drag from near the edge 50px to the left
+        await page.mouse.move(edgeX, edgeY);
         await page.mouse.down();
-        await page.mouse.move(handleX - 50, handleY);
+        await page.mouse.move(edgeX - 50, edgeY);
         await page.mouse.up();
-        
+
         // Verify sidebar got narrower
         const newBox = await sidebar.boundingBox();
         expect(newBox.width).toBeLessThan(initialWidth);
@@ -71,38 +62,36 @@ test.describe('Sidebar Resize', () => {
     });
 
     test('sidebar width respects minimum constraint', async ({ page }) => {
-        const handle = page.locator('#sidebarResizeHandle');
         const sidebar = page.locator('aside');
-        
-        // Get handle position
-        const handleBox = await handle.boundingBox();
-        const handleX = handleBox.x + handleBox.width / 2;
-        const handleY = handleBox.y + handleBox.height / 2;
-        
-        // Try to drag handle way to the left (beyond minimum)
-        await page.mouse.move(handleX, handleY);
+
+        // Get position near the right edge of sidebar
+        const initialBox = await sidebar.boundingBox();
+        const edgeX = initialBox.x + initialBox.width - 5;
+        const edgeY = initialBox.y + initialBox.height / 2;
+
+        // Try to drag edge way to the left (beyond minimum)
+        await page.mouse.move(edgeX, edgeY);
         await page.mouse.down();
-        await page.mouse.move(0, handleY);
+        await page.mouse.move(0, edgeY);
         await page.mouse.up();
-        
+
         // Sidebar should be at minimum width (120px)
         const newBox = await sidebar.boundingBox();
         expect(newBox.width).toBe(120);
     });
 
     test('sidebar width respects maximum constraint', async ({ page }) => {
-        const handle = page.locator('#sidebarResizeHandle');
         const sidebar = page.locator('aside');
+
+        // Get position near the right edge of sidebar
+        const initialBox = await sidebar.boundingBox();
+        const edgeX = initialBox.x + initialBox.width - 5;
+        const edgeY = initialBox.y + initialBox.height / 2;
         
-        // Get handle position
-        const handleBox = await handle.boundingBox();
-        const handleX = handleBox.x + handleBox.width / 2;
-        const handleY = handleBox.y + handleBox.height / 2;
-        
-        // Try to drag handle way to the right (beyond maximum)
-        await page.mouse.move(handleX, handleY);
+        // Try to drag edge way to the right (beyond maximum)
+        await page.mouse.move(edgeX, edgeY);
         await page.mouse.down();
-        await page.mouse.move(handleX + 500, handleY);
+        await page.mouse.move(edgeX + 500, edgeY);
         await page.mouse.up();
         
         // Sidebar should be at maximum width (500px)
@@ -111,18 +100,17 @@ test.describe('Sidebar Resize', () => {
     });
 
     test('sidebar width persists after reload', async ({ page }) => {
-        const handle = page.locator('#sidebarResizeHandle');
         const sidebar = page.locator('aside');
         
-        // Get handle position
-        const handleBox = await handle.boundingBox();
-        const handleX = handleBox.x + handleBox.width / 2;
-        const handleY = handleBox.y + handleBox.height / 2;
+        // Get position near the right edge of sidebar
+        const initialBox = await sidebar.boundingBox();
+        const edgeX = initialBox.x + initialBox.width - 5;
+        const edgeY = initialBox.y + initialBox.height / 2;
         
-        // Drag the handle 80px to the right
-        await page.mouse.move(handleX, handleY);
+        // Drag from near the edge 80px to the right
+        await page.mouse.move(edgeX, edgeY);
         await page.mouse.down();
-        await page.mouse.move(handleX + 80, handleY);
+        await page.mouse.move(edgeX + 80, edgeY);
         await page.mouse.up();
         
         // Get the new width
@@ -138,17 +126,17 @@ test.describe('Sidebar Resize', () => {
     });
 
     test('sidebar width is stored in settings localStorage', async ({ page }) => {
-        const handle = page.locator('#sidebarResizeHandle');
+        const sidebar = page.locator('aside');
         
-        // Get handle position
-        const handleBox = await handle.boundingBox();
-        const handleX = handleBox.x + handleBox.width / 2;
-        const handleY = handleBox.y + handleBox.height / 2;
+        // Get position near the right edge of sidebar
+        const initialBox = await sidebar.boundingBox();
+        const edgeX = initialBox.x + initialBox.width - 5;
+        const edgeY = initialBox.y + initialBox.height / 2;
         
-        // Drag the handle 60px to the right
-        await page.mouse.move(handleX, handleY);
+        // Drag from near the edge 60px to the right
+        await page.mouse.move(edgeX, edgeY);
         await page.mouse.down();
-        await page.mouse.move(handleX + 60, handleY);
+        await page.mouse.move(edgeX + 60, edgeY);
         await page.mouse.up();
         
         // Check localStorage
@@ -161,28 +149,26 @@ test.describe('Sidebar Resize', () => {
         expect(settings.sidebarWidth).toBeCloseTo(192 + 60, -1);
     });
 
-    test('resize handle shows visual feedback while dragging', async ({ page }) => {
-        const handle = page.locator('#sidebarResizeHandle');
-        
-        // Get handle position
-        const handleBox = await handle.boundingBox();
-        const handleX = handleBox.x + handleBox.width / 2;
-        const handleY = handleBox.y + handleBox.height / 2;
-        
-        // Start dragging
-        await page.mouse.move(handleX, handleY);
+    test('resize shows visual feedback while dragging', async ({ page }) => {
+        const sidebar = page.locator('aside');
+
+        // Get position near the right edge of sidebar
+        const sidebarBox = await sidebar.boundingBox();
+        const edgeX = sidebarBox.x + sidebarBox.width - 5;
+        const edgeY = sidebarBox.y + sidebarBox.height / 2;
+
+        // Start dragging from near the edge
+        await page.mouse.move(edgeX, edgeY);
         await page.mouse.down();
-        
-        // Check for visual feedback class
-        await expect(handle).toHaveClass(/resizing/);
+
+        // Check for visual feedback class on body
         await expect(page.locator('body')).toHaveClass(/resizing-sidebar/);
-        
+
         // Move mouse and release
-        await page.mouse.move(handleX + 50, handleY);
+        await page.mouse.move(edgeX + 50, edgeY);
         await page.mouse.up();
-        
-        // Visual feedback classes should be removed
-        await expect(handle).not.toHaveClass(/resizing/);
+
+        // Visual feedback class should be removed
         await expect(page.locator('body')).not.toHaveClass(/resizing-sidebar/);
     });
 
@@ -190,17 +176,18 @@ test.describe('Sidebar Resize', () => {
     test('other settings are preserved when resizing sidebar', async ({ page }) => {
         // First, change font size to create a setting
         await page.locator('#increaseFont').click();
-        
-        // Get handle position
-        const handle = page.locator('#sidebarResizeHandle');
-        const handleBox = await handle.boundingBox();
-        const handleX = handleBox.x + handleBox.width / 2;
-        const handleY = handleBox.y + handleBox.height / 2;
-        
+
+        const sidebar = page.locator('aside');
+
+        // Get position near the right edge of sidebar
+        const sidebarBox = await sidebar.boundingBox();
+        const edgeX = sidebarBox.x + sidebarBox.width - 5;
+        const edgeY = sidebarBox.y + sidebarBox.height / 2;
+
         // Resize sidebar
-        await page.mouse.move(handleX, handleY);
+        await page.mouse.move(edgeX, edgeY);
         await page.mouse.down();
-        await page.mouse.move(handleX + 30, handleY);
+        await page.mouse.move(edgeX + 30, edgeY);
         await page.mouse.up();
         
         // Check that other settings are preserved

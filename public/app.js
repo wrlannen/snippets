@@ -561,15 +561,44 @@ function buildSnippetItemHtml(snippet, isActive) {
     title = firstLine.trim();
   }
   
+  // Detect language based on comment pattern used
+  let detectedLanguage = "text";
+  
+  if (firstLine.match(/^\/\//)) {
+    detectedLanguage = "javascript";
+  } else if (firstLine.match(/^#/)) {
+    detectedLanguage = "python";
+  } else if (firstLine.match(/^--/)) {
+    detectedLanguage = "sql";
+  } else if (firstLine.match(/^\/\*/)) {
+    detectedLanguage = "css";
+  } else if (firstLine.match(/^<!--/)) {
+    detectedLanguage = "html";
+  }
+  
+  // Generate content preview (next few lines after title)
+  const lines = content.split(/\r?\n/).filter(line => line.trim());
+  let preview = "";
+  if (lines.length > 1) {
+    // Skip the title line and take next 1-2 lines
+    const previewLines = lines.slice(1, 3);
+    preview = previewLines.join(" ").trim();
+    // Truncate if too long
+    if (preview.length > 60) {
+      preview = preview.substring(0, 57) + "...";
+    }
+  }
+  
   const timestamp = escapeHtml(formatDate(snippet.updatedAt));
 
   // Container classes change based on active state
   const containerClasses = isActive
-    ? "bg-[#37373d] border-l-2 border-[#007acc]"
-    : "hover:bg-[#2d2d2d] border-l-2 border-transparent";
+    ? "bg-[#252526] border-l-3 border-[#007acc] shadow-sm"
+    : "hover:bg-[#2d2d2d] border-l-3 border-transparent hover:border-[#404040]";
 
-  const titleClasses = isActive ? "text-white" : "text-gray-200";
-  const dateClasses = isActive ? "text-gray-400" : "text-gray-500";
+  const titleClasses = isActive ? "text-white font-semibold" : "text-gray-200 font-medium";
+  const previewClasses = isActive ? "text-gray-400" : "text-gray-500";
+  const dateClasses = isActive ? "text-gray-500" : "text-gray-600";
 
   // Trash icon SVG (Heroicons)
   const trashIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 pointer-events-none">
@@ -577,16 +606,16 @@ function buildSnippetItemHtml(snippet, isActive) {
   </svg>`;
 
   return `
-    <div class="group relative flex items-stretch ${containerClasses}">
+    <div class="group relative ${containerClasses} transition-all duration-200 rounded-r-md mx-1 my-0.5">
       <button type="button" data-action="open" 
-        class="min-w-0 flex-1 px-3 py-3.5 text-left transition-colors flex flex-col justify-center gap-1">
-        <div class="truncate text-[16px] leading-none font-medium ${titleClasses}">${escapeHtml(title)}</div>
-        <div class="text-xs leading-none ${dateClasses}">${timestamp}</div>
+        class="w-full px-3 py-3 text-left transition-colors flex flex-col">
+        <div class="truncate text-sm leading-tight ${titleClasses} mb-1">${escapeHtml(title)}</div>
+        ${preview ? `<div class="truncate text-xs leading-tight ${previewClasses} mb-1 font-mono">${escapeHtml(preview)}</div>` : ''}
+        <div class="text-xs leading-tight ${dateClasses}">${timestamp}</div>
       </button>
-      <div class="flex items-center ml-auto pr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" 
-        style="position: absolute; right: 0; top: 0; height: 100%;">
+      <div class="absolute right-2 top-1/2 transform -translate-y-1/2 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity duration-200">
         <button type="button" data-action="delete" 
-          class="h-6 w-6 shrink-0 rounded text-[14px] leading-none text-gray-500 hover:text-gray-200 focus:text-gray-200 flex items-center justify-center" 
+          class="h-6 w-6 rounded hover:bg-[#404040] text-gray-500 hover:text-gray-200 flex items-center justify-center transition-colors" 
           aria-label="Delete snippet" title="Delete">
           ${trashIcon}
         </button>
@@ -618,6 +647,12 @@ function renderList() {
   const filtered = query
     ? snippets.filter(s => (s.content || "").toLowerCase().includes(query))
     : snippets;
+
+  // Update snippet count in header
+  const countEl = document.getElementById("snippetCount");
+  if (countEl) {
+    countEl.textContent = snippets.length.toString();
+  }
 
   // Show/hide empty state
   els.empty.style.display = filtered.length === 0 ? "flex" : "none";
@@ -928,36 +963,65 @@ function applySidebarWidth(width) {
 }
 
 /**
- * Initializes the sidebar resize handle with drag functionality.
- * Allows users to drag the handle to resize the sidebar.
+ * Initializes the sidebar resize functionality by detecting mouse position near the right edge.
+ * Allows users to drag the sidebar edge to resize it.
  * Persists the width to settings.
  */
 function initializeSidebarResize() {
-  const handle = document.getElementById('sidebarResizeHandle');
   const sidebar = document.querySelector('aside');
 
-  if (!handle || !sidebar) return;
+  if (!sidebar) return;
 
   let isResizing = false;
   let startX = 0;
   let startWidth = 0;
+  let isNearEdge = false;
 
   // Apply saved width on initialization
   const settings = loadSettings();
   applySidebarWidth(settings.sidebarWidth);
 
-  handle.addEventListener('mousedown', (e) => {
+  // Function to check if mouse is near the right edge of sidebar
+  function isNearSidebarEdge(e) {
+    const rect = sidebar.getBoundingClientRect();
+    const mouseX = e.clientX;
+    const edgeThreshold = 8; // pixels from edge
+
+    return mouseX >= rect.right - edgeThreshold && mouseX <= rect.right + edgeThreshold;
+  }
+
+  // Handle mouse movement to change cursor
+  document.addEventListener('mousemove', (e) => {
+    if (isResizing) return;
+
+    if (isNearSidebarEdge(e)) {
+      if (!isNearEdge) {
+        sidebar.style.cursor = 'col-resize';
+        isNearEdge = true;
+      }
+    } else {
+      if (isNearEdge) {
+        sidebar.style.cursor = '';
+        isNearEdge = false;
+      }
+    }
+  });
+
+  // Handle mouse down on sidebar
+  sidebar.addEventListener('mousedown', (e) => {
+    if (!isNearEdge) return;
+
     isResizing = true;
     startX = e.clientX;
     startWidth = sidebar.getBoundingClientRect().width;
 
     // Add visual feedback
-    handle.classList.add('resizing');
     document.body.classList.add('resizing-sidebar');
 
     e.preventDefault();
   });
 
+  // Handle mouse movement during resize
   document.addEventListener('mousemove', (e) => {
     if (!isResizing) return;
 
@@ -970,13 +1034,13 @@ function initializeSidebarResize() {
     applySidebarWidth(newWidth);
   });
 
+  // Handle mouse up
   document.addEventListener('mouseup', () => {
     if (!isResizing) return;
 
     isResizing = false;
 
     // Remove visual feedback
-    handle.classList.remove('resizing');
     document.body.classList.remove('resizing-sidebar');
 
     // Save the new width
@@ -1072,15 +1136,13 @@ function initializeApp() {
     renderList();
   });
 
-  // Close search when clicking outside
+  // Close search when clicking outside (now just clear search, don't hide)
   document.addEventListener("click", (e) => {
     const searchWrapper = document.getElementById("searchWrapper");
-    const isSearchOpen = searchWrapper && !searchWrapper.classList.contains("hidden");
     const clickedOutside = searchWrapper && !searchWrapper.contains(e.target);
 
-    if (isSearchOpen && clickedOutside) {
+    if (clickedOutside && els.search.value.trim()) {
       els.search.value = "";
-      searchWrapper.classList.add("hidden");
       renderList();
     }
   });
@@ -1088,12 +1150,10 @@ function initializeApp() {
   // --- Global Keyboard Shortcuts ---
 
   window.addEventListener("keydown", (e) => {
-    // Escape: Close search and return focus to editor
+    // Escape: Clear search and return focus to editor
     if (e.key === "Escape") {
-      const searchWrapper = document.getElementById("searchWrapper");
-      if (searchWrapper && !searchWrapper.classList.contains("hidden")) {
+      if (els.search.value.trim()) {
         els.search.value = "";
-        searchWrapper.classList.add("hidden");
         renderList();
         els.content.focus();
         return;
@@ -1110,10 +1170,9 @@ function initializeApp() {
       return;
     }
 
-    // Cmd/Ctrl+F: Open search
+    // Cmd/Ctrl+F: Focus search
     if (isMod && e.key === "f") {
       e.preventDefault();
-      document.getElementById("searchWrapper").classList.remove("hidden");
       els.search.focus();
       els.search.select();
       return;

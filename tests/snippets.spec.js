@@ -12,8 +12,8 @@ test.describe('Snippets App', () => {
   test('loads app with empty state', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('#empty')).toBeVisible();
-    await expect(page.locator('text=Start writing your first snippet')).toBeVisible();
-    await expect(page.locator('text=Changes auto-save.')).toBeVisible();
+    await expect(page.locator('text=Ready to code?')).toBeVisible();
+    await expect(page.locator('text=Start typing your first snippet')).toBeVisible();
   });
 
   test('creates a new snippet with CMD+K', async ({ page }) => {
@@ -96,16 +96,17 @@ test.describe('Snippets App', () => {
     await expect(page.locator('#list')).not.toContainText('Carrot');
   });
 
-  test('closes search with Escape', async ({ page }) => {
+  test('clears search with Escape', async ({ page }) => {
     await page.goto('/');
 
-    // Open search
-    await page.keyboard.press('Meta+KeyF');
-    await expect(page.locator('#searchWrapper')).not.toHaveClass(/hidden/);
+    // Type in search
+    const searchInput = page.locator('#search');
+    await searchInput.fill('test search');
+    await expect(searchInput).toHaveValue('test search');
 
-    // Close with Escape
+    // Clear with Escape
     await page.keyboard.press('Escape');
-    await expect(page.locator('#searchWrapper')).toHaveClass(/hidden/);
+    await expect(searchInput).toHaveValue('');
   });
 
   test('switches between snippets', async ({ page }) => {
@@ -157,17 +158,17 @@ test.describe('Snippets App', () => {
     await expect(page.locator('#charCount')).toContainText('4 characters');
   });
 
-  test('displays first line as snippet title', async ({ page }) => {
+  test('displays first line as snippet title with content preview', async ({ page }) => {
     await page.goto('/');
 
     await page.keyboard.press('Meta+k');
     await fillEditor(page, 'My Title\nLine 2\nLine 3');
     await page.waitForTimeout(1000);
 
-    // Sidebar should only show first line
+    // Sidebar should show title and content preview
     const listItem = page.locator('#list li').first();
     await expect(listItem).toContainText('My Title');
-    await expect(listItem).not.toContainText('Line 2');
+    await expect(listItem).toContainText('Line 2 Line 3'); // Content preview
   });
 
   test('shows "Untitled snippet" for empty snippets', async ({ page }) => {
