@@ -7,6 +7,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY tailwind.config.cjs ./
+COPY scripts ./scripts
 COPY public ./public
 
 # Build CSS + minified JS, then prune dev deps for production runtime
