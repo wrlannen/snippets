@@ -56,6 +56,8 @@ Build everything (CSS + JS):
 npm run build
 ```
 
+Vendor scripts (CodeMirror + modes/addons) are concatenated into a single file at `public/dist/vendor.js` to reduce network requests.
+
 
 ## Keyboard Shortcuts
 

@@ -6,7 +6,8 @@
   "scripts": {
     "build:css": "tailwindcss -c tailwind.config.cjs -i ./public/tailwind.css -o ./public/tailwind.output.css --minify",
     "build:js": "node ./scripts/build-js.mjs",
-    "build": "npm run build:css && npm run build:js",
+    "build:vendor": "node ./scripts/build-vendor.mjs",
+    "build": "npm run build:css && npm run build:vendor && npm run build:js",
     "dev:css": "tailwindcss -c tailwind.config.cjs -i ./public/tailwind.css -o ./public/tailwind.output.css --watch",
     "start": "npm run build && node server.js",
     "dev": "node --watch server.js",
