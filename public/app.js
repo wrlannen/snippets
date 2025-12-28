@@ -654,8 +654,25 @@ function renderList() {
     countEl.textContent = snippets.length.toString();
   }
 
-  // Show/hide empty state
-  els.empty.style.display = filtered.length === 0 ? "flex" : "none";
+  // Show/hide empty state and update messaging for search misses
+  const showEmpty = filtered.length === 0;
+  els.empty.style.display = showEmpty ? "flex" : "none";
+
+  if (showEmpty) {
+    const titleEl = els.empty.querySelector('h3');
+    const descEl = els.empty.querySelector('p');
+
+    const searching = Boolean(query);
+    const hasSnippets = snippets.length > 0;
+
+    if (searching && hasSnippets) {
+      if (titleEl) titleEl.textContent = "No matches";
+      if (descEl) descEl.textContent = "Try a different search or clear the filter.";
+    } else {
+      if (titleEl) titleEl.textContent = "Ready to code?";
+      if (descEl) descEl.textContent = "Start typing your first snippet. Everything saves automatically and works offline.";
+    }
+  }
 
   // Track rendered IDs for potential future optimization
   lastRenderIds = filtered.map(s => s.id);
@@ -1198,8 +1215,13 @@ function initializeApp() {
   // --- Global Keyboard Shortcuts ---
 
   window.addEventListener("keydown", (e) => {
-    // Escape: Clear search and return focus to editor
+    // Escape: Dismiss modal if open, else clear search and return focus to editor
+    const aboutModal = document.getElementById('aboutModal');
     if (e.key === "Escape") {
+      if (aboutModal && !aboutModal.classList.contains('hidden')) {
+        aboutModal.classList.add('hidden');
+        return;
+      }
       if (els.search.value.trim()) {
         els.search.value = "";
         renderList();
