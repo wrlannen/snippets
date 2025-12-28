@@ -36,9 +36,9 @@ Minimal, privacy-first snippet manager. All data stays in your browser (`localSt
 
 | Shortcut                | Action             |
 |-------------------------|--------------------|
+| ⌘/Ctrl + B              | Toggle sidebar     |
 | ⌘/Ctrl + K              | New snippet        |
 | ⌘/Ctrl + F              | Search             |
-| ⌘/Ctrl + B              | Toggle sidebar     |
 | ⌘/Ctrl + Shift + C      | Copy snippet       |
 | Escape                  | Dismiss search/modals |
 

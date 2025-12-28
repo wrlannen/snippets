@@ -617,7 +617,7 @@ function buildSnippetItemHtml(snippet, isActive) {
         ${preview ? `<div class="truncate text-xs leading-tight ${previewClasses} mb-1 font-mono">${escapeHtml(preview)}</div>` : ''}
         <div class="text-xs leading-tight ${dateClasses}">${timestamp}</div>
       </button>
-      <div class="absolute right-2 top-1/2 transform -translate-y-1/2 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity duration-200">
+      <div class="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100">
         <button type="button" data-action="delete" 
           class="h-6 w-6 rounded hover:bg-[#404040] text-gray-500 hover:text-gray-200 flex items-center justify-center transition-colors" 
           aria-label="Delete snippet" title="Delete">
@@ -1310,13 +1310,14 @@ function initializeApp() {
   const modKeySymbol = isMac ? '⌘' : 'Ctrl';
 
   document.getElementById('modKey').textContent = modKeySymbol;
-  document.getElementById('modKeySearch').textContent = modKeySymbol;
   document.getElementById('modKeySidebar').textContent = modKeySymbol;
+  document.getElementById('modKey').textContent = modKeySymbol;
+  document.getElementById('modKeySearch').textContent = modKeySymbol;
   document.getElementById('modKeyCopy').textContent = modKeySymbol;
+  document.getElementById('modalModKey4').textContent = modKeySymbol;
   document.getElementById('modalModKey1').textContent = modKeySymbol;
   document.getElementById('modalModKey2').textContent = modKeySymbol;
   document.getElementById('modalModKey3').textContent = modKeySymbol;
-  document.getElementById('modalModKey4').textContent = modKeySymbol;
 
   // --- Export/Import ---
 

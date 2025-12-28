@@ -58,6 +58,8 @@ test.describe('Snippets App', () => {
     await page.waitForTimeout(1000);
 
     // Click delete button (should delete immediately)
+    // Hover first to show the delete button
+    await page.locator('#list li').first().hover();
     await page.locator('[data-action="delete"]').click();
 
     // Check snippet is gone
