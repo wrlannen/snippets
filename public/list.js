@@ -1,6 +1,36 @@
 import { escapeHtml, formatDate } from './utils.js';
 
 let lastRenderIds = [];
+let delegatedListEl = null;
+let delegatedHandlers = { onOpen: null, onDelete: null };
+
+function ensureDelegatedListHandlers(listEl) {
+  if (!listEl || delegatedListEl === listEl) return;
+
+  delegatedListEl = listEl;
+
+  listEl.addEventListener('click', (e) => {
+    const actionBtn = e.target?.closest?.('button[data-action]');
+    if (!actionBtn) return;
+    if (!delegatedListEl.contains(actionBtn)) return;
+
+    const li = actionBtn.closest('li[data-id]');
+    const id = li?.dataset?.id;
+    if (!id) return;
+
+    const action = actionBtn.dataset.action;
+    if (action === 'delete') {
+      e.preventDefault();
+      e.stopPropagation();
+      delegatedHandlers.onDelete?.(id);
+      return;
+    }
+
+    if (action === 'open') {
+      delegatedHandlers.onOpen?.(id);
+    }
+  });
+}
 
 export function buildSnippetItemHtml(snippet, isActive) {
   const content = snippet.content ?? "";
@@ -41,8 +71,8 @@ export function buildSnippetItemHtml(snippet, isActive) {
   const timestamp = escapeHtml(formatDate(snippet.updatedAt));
 
   const containerClasses = isActive
-    ? "bg-[#252526] border-l-3 border-[#007acc] shadow-sm"
-    : "hover:bg-[#2d2d2d] border-l-3 border-transparent hover:border-[#404040]";
+    ? "bg-[#252526] border-l-[3px] border-[#007acc] shadow-sm"
+    : "hover:bg-[#2d2d2d] border-l-[3px] border-transparent hover:border-[#404040]";
 
   const titleClasses = isActive ? "text-white font-semibold" : "text-gray-200 font-medium";
   const previewClasses = isActive ? "text-gray-400" : "text-gray-500";
@@ -74,15 +104,14 @@ export function buildSnippetItemHtml(snippet, isActive) {
 export function renderList({ els, snippets, query, activeId, onOpen, onDelete }) {
   if (!els?.list || !els?.empty) return;
 
+  ensureDelegatedListHandlers(els.list);
+  delegatedHandlers.onOpen = onOpen;
+  delegatedHandlers.onDelete = onDelete;
+
   const normalizedQuery = (query || "").toLowerCase().trim();
   const filtered = normalizedQuery
     ? snippets.filter(s => (s.content || "").toLowerCase().includes(normalizedQuery))
     : snippets;
-
-  const countEl = document.getElementById("snippetCount");
-  if (countEl) {
-    countEl.textContent = snippets.length.toString();
-  }
 
   const showEmpty = filtered.length === 0;
   els.empty.style.display = showEmpty ? "flex" : "none";
@@ -104,26 +133,12 @@ export function renderList({ els, snippets, query, activeId, onOpen, onDelete })
   }
 
   lastRenderIds = filtered.map(s => s.id);
-  els.list.innerHTML = "";
-
-  for (const snippet of filtered) {
-    const li = document.createElement("li");
-    const isActive = snippet.id === activeId;
-
-    li.innerHTML = buildSnippetItemHtml(snippet, isActive);
-
-    li.querySelector('[data-action="open"]')?.addEventListener("click", () => {
-      onOpen(snippet.id);
-    });
-
-    li.querySelector('[data-action="delete"]')?.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      onDelete(snippet.id);
-    });
-
-    els.list.appendChild(li);
-  }
+  els.list.innerHTML = filtered
+    .map((snippet) => {
+      const isActive = snippet.id === activeId;
+      return `<li data-id="${escapeHtml(snippet.id)}">${buildSnippetItemHtml(snippet, isActive)}</li>`;
+    })
+    .join("");
 }
 
 export function getLastRenderIds() {

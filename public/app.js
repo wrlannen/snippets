@@ -101,7 +101,7 @@ const MIN_SIDEBAR_WIDTH = 120;
 const MAX_SIDEBAR_WIDTH = 500;
 
 /** Autosave delay in milliseconds after user stops typing */
-const AUTOSAVE_DELAY_MS = 400;
+const AUTOSAVE_DELAY_MS = 800;
 
 /** Debounce delay for sidebar re-renders during typing */
 const RENDER_DEBOUNCE_MS = 150;
@@ -115,9 +115,6 @@ let els;
 
 /** ID of the currently active/editing snippet (null if none) */
 let activeId = null;
-
-/** ID of snippet pending deletion confirmation (unused, kept for future) */
-let pendingDeleteId = null;
 
 /** Timer handle for debounced autosave */
 let autosaveTimer = null;
