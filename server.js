@@ -5,7 +5,7 @@
  * All application logic runs client-side; this server only provides:
  * - Static file serving with caching
  * - Security headers (CSP, X-Frame-Options, etc.)
- * - Gzip compression
+ * - Gzip compression (all files, no size threshold)
  * - Health check endpoint
  * 
  * For production, consider using nginx or Caddy for even lower resource usage.
@@ -50,7 +50,10 @@ app.use((req, res, next) => {
 // =============================================================================
 
 // Enable gzip compression for all responses
-app.use(compression());
+app.use(compression({
+  threshold: 0,  // Compress everything, even small responses
+  filter: () => true  // Compress all content types
+}));
 
 // Serve static files with appropriate cache headers
 app.use(express.static(publicDir, {
