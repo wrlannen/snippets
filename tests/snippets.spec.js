@@ -12,7 +12,8 @@ test.describe('Snippets App', () => {
   test('loads app with empty state', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('#empty')).toBeVisible();
-    await expect(page.locator('text=No snippets yet')).toBeVisible();
+    await expect(page.locator('text=Start writing your first snippet')).toBeVisible();
+    await expect(page.locator('text=Changes auto-save.')).toBeVisible();
   });
 
   test('creates a new snippet with CMD+K', async ({ page }) => {

@@ -533,8 +533,34 @@ function escapeHtml(s) {
  * @returns {string} HTML string for the list item
  */
 function buildSnippetItemHtml(snippet, isActive) {
-  const firstLineRaw = (snippet.content ?? "").split(/\r?\n/)[0] ?? "";
-  const firstLine = firstLineRaw.trim() ? firstLineRaw : "Untitled snippet";
+  const content = snippet.content ?? "";
+  
+  // Extract title from comment on first line, fallback to first line
+  let firstLine = content.split(/\r?\n/)[0] ?? "";
+  let title = "Untitled snippet";
+  
+  // Check for comment-based titles
+  const commentPatterns = [
+    /^\/\/\s*(.+)/,  // JavaScript/TypeScript single line comment
+    /^#\s*(.+)/,     // Python/Ruby/Bash comment
+    /^--\s*(.+)/,    // SQL comment
+    /^\/\*\s*(.+?)\s*\*\//, // CSS/JS multi-line comment (single line)
+    /^<!--\s*(.+?)\s*-->/  // HTML comment
+  ];
+  
+  for (const pattern of commentPatterns) {
+    const match = firstLine.match(pattern);
+    if (match) {
+      title = match[1].trim();
+      break;
+    }
+  }
+  
+  // Fallback to first line if no comment found
+  if (title === "Untitled snippet" && firstLine.trim()) {
+    title = firstLine.trim();
+  }
+  
   const timestamp = escapeHtml(formatDate(snippet.updatedAt));
 
   // Container classes change based on active state
@@ -554,7 +580,7 @@ function buildSnippetItemHtml(snippet, isActive) {
     <div class="group relative flex items-stretch ${containerClasses}">
       <button type="button" data-action="open" 
         class="min-w-0 flex-1 px-3 py-3.5 text-left transition-colors flex flex-col justify-center gap-1">
-        <div class="truncate text-[16px] leading-none font-medium ${titleClasses}">${escapeHtml(firstLine)}</div>
+        <div class="truncate text-[16px] leading-none font-medium ${titleClasses}">${escapeHtml(title)}</div>
         <div class="text-xs leading-none ${dateClasses}">${timestamp}</div>
       </button>
       <div class="flex items-center ml-auto pr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" 
