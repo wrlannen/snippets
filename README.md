@@ -13,7 +13,7 @@ Installable as a Progressive Web App (PWA), so you can add it to your desktop an
 - **Export/Import**: Backup and restore your snippets and settings.
 - **Autosave**: Edit without worry—changes save automatically.
 - **Quick navigation**: Sidebar list with instant search.
-- **Customizable editor**: Adjust font family, size, and color.
+- **Adjustable font size**: Use A+/A- buttons to change editor font size.
 - **Keyboard shortcuts**: <kbd>⌘</kbd>/<kbd>Ctrl</kbd>+<kbd>K</kbd> (new), <kbd>⌘</kbd>/<kbd>Ctrl</kbd>+<kbd>F</kbd> (search), <kbd>Esc</kbd> (dismiss).
 
 ## Getting Started
@@ -54,7 +54,7 @@ Installable as a Progressive Web App (PWA), so you can add it to your desktop an
 
 **Import**: Click the Import button to restore snippets and settings from a previously exported JSON file. The import:
 - Merges with existing snippets (skips duplicates by ID)
-- Restores your editor preferences (font size, font family, font color)
+- Restores your editor preferences (font size)
 - Supports both the current format and older array-only format for backward compatibility
 
 ## Creating Snippets
