@@ -300,6 +300,11 @@ function initializeApp() {
   // Setup PWA install UI
   initPwaInstall();
 
+  // Adjust title for PWA standalone mode
+  if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+    document.title = 'Snippets';
+  }
+
   // Set up new snippet button
   const newSnippetBtn = document.getElementById('newSnippetBtn');
   if (newSnippetBtn) {
