@@ -45,7 +45,7 @@ export function seedSnippetsOnFirstRun() {
       content: [
         '// Welcome to Snippets',
         '',
-        'Titles come from the first line (comment-style).',
+        'Titles come from the first line (plain text or comment-style).',
         'Everything saves automatically and works offline.',
         '',
         'Tip: Press ⌘K (or Ctrl+K) to create a new snippet.',
