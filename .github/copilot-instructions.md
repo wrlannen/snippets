@@ -65,7 +65,7 @@ All PRs/commits must pass Playwright tests covering:
 ## File Structure
 - `server.js` - Express server with security headers
 - `public/index.html` - Main HTML structure
-- `public/app.js` - All client-side logic
+- `public/js/app.js` - All client-side logic
 - `tests/snippets.spec.js` - Playwright E2E tests
 - `playwright.config.js` - Test configuration
 

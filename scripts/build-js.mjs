@@ -6,7 +6,7 @@ await mkdir(outdir, { recursive: true });
 
 // Bundle+minify the ESM app entrypoint
 await build({
-  entryPoints: ['public/app.js'],
+  entryPoints: ['public/js/app.js'],
   bundle: true,
   format: 'esm',
   platform: 'browser',
@@ -18,7 +18,7 @@ await build({
 
 // Minify the early sidebar state script (keep as classic script)
 await build({
-  entryPoints: ['public/sidebar-state.js'],
+  entryPoints: ['public/js/sidebar-state.js'],
   bundle: true,
   format: 'iife',
   platform: 'browser',

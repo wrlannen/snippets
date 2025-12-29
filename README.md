@@ -105,7 +105,7 @@ We use the Tailwind CLI to generate the stylesheet at `public/tailwind.output.cs
 
 Client-side code is bundled and minified using esbuild. Output files go to `public/dist/`:
 
-- `public/dist/app.js` (bundled from `public/app.js`)
+- `public/dist/app.js` (bundled from `public/js/app.js`)
 - `public/dist/sidebar-state.js` (minified early boot script)
 
 To build everything (CSS + JS):
