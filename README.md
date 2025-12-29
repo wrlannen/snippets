@@ -11,11 +11,9 @@ Try it now at [https://snippets.dev](https://snippets.dev)
 
 - **Offline-first**: PWA support means it works without an internet connection.
 - **Local storage**: Data lives in your browser, not on a backend server.
-- **Smart titles**: The first line becomes the title. Supports comments (//, #, --) so your code stays valid.
 - **Export/Import**: Backup your data to JSON anytime.
 - **Autosave**: Never lose work; edits save instantly.
-- **Fast search**: Filter snippets instantly with keyboard shortcuts.
-- **Adjustable editor**: Customize font size and syntax highlighting.
+- **Fast search**: Filter snippets instantly.
 - **Copy to clipboard**: One shortcut to copy code blocks.
 
 
@@ -59,7 +57,6 @@ Supported title formats:
 | ⌘/Ctrl + K              | New snippet        |
 | ⌘/Ctrl + F              | Search             |
 | ⌘/Ctrl + Shift + C      | Copy snippet       |
-| Escape                  | Dismiss search/modals |
 
 
 ## Export & Import
