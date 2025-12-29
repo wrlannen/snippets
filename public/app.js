@@ -268,19 +268,31 @@ function seedSnippetsOnFirstRun() {
   let shortcutsId;
   let backupId;
   let pwaId;
+  let openSourceId;
 
   try {
     welcomeId = uid();
     shortcutsId = uid();
     backupId = uid();
+    pwaId = uid();
+    openSourceId = uid();
   } catch (err) {
     console.error('Failed to seed snippets: secure IDs unavailable', err);
     return;
   }
 
-  pwaId = uid();
-
   const seeded = [
+    {
+      id: openSourceId,
+      createdAt: ts,
+      updatedAt: ts,
+      content: [
+        '// Open source',
+        '',
+        'Snippets is open source! View or contribute on GitHub:',
+        'https://github.com/wrlannen/snippets',
+      ].join('\n')
+    },
     {
       id: welcomeId,
       createdAt: ts,

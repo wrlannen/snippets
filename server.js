@@ -90,11 +90,11 @@ app.get("/health", (_req, res) => {
 });
 
 // Minimal sitemap for SEO discovery (single-page app)
-app.get("/sitemap.xml", (req, res) => {
-  const origin = getRequestOrigin(req);
+app.get("/sitemap.xml", (_req, res) => {
+  const canonical = "https://snippets.dev/";
   const body = `<?xml version="1.0" encoding="UTF-8"?>\n` +
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-    `  <url><loc>${origin}/</loc></url>\n` +
+    `  <url><loc>${canonical}</loc></url>\n` +
     `</urlset>\n`;
 
   res.setHeader("Content-Type", "application/xml; charset=utf-8");

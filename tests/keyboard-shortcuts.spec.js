@@ -192,8 +192,8 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
     test('About modal shows privacy information', async ({ page }) => {
         await page.locator('#aboutBtn').click();
 
-        // Check privacy and backup section
-        await expect(page.locator('text=offline-first tool')).toBeVisible();
-        await expect(page.locator('text=localStorage')).toBeVisible();
+        // Check privacy and backup section (updated copy)
+        await expect(page.locator('text=Minimal local scratchpad for code & notes')).toBeVisible();
+        await expect(page.locator('text=stored locally in your browser')).toBeVisible();
     });
 });
