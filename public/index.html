@@ -160,13 +160,13 @@
 
   <!-- About Modal -->
   <div id="aboutModal"
-    class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-200">
+    class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-200">
 
     <div
-      class="bg-[#1c1c1c] border border-[#333] rounded-2xl shadow-2xl w-full max-w-[420px] overflow-hidden transform transition-all scale-100">
+      class="bg-[#1c1c1c] border border-[#333] rounded-2xl shadow-2xl w-full max-w-[520px] max-h-[85vh] overflow-hidden transform transition-all scale-100 flex flex-col">
 
       <!-- Header -->
-      <div class="px-6 pt-6 pb-2 flex items-center justify-between">
+      <div class="px-6 pt-6 pb-4 flex items-center justify-between border-b border-[#2a2a2a]">
         <div class="flex items-center gap-3">
           <div class="w-8 h-8 bg-[#1e1e1e] rounded-lg flex items-center justify-center border border-[#333] shadow-sm">
             <span class="text-white font-bold font-mono text-lg">S</span>
@@ -183,57 +183,69 @@
       </div>
 
       <!-- Content -->
-      <div class="px-6 pb-8 space-y-8">
+      <div class="px-6 py-6 space-y-6 overflow-y-auto">
 
         <!-- Description -->
-        <p class="text-[13px] text-gray-400 leading-relaxed font-light">
-          <span class="font-medium text-gray-200">Snippets: Minimal local scratchpad for code & notes.</span><br>
-          A keyboard-first scratchpad for snippets, drafts, and quick notes - stored locally in your browser. Use <span
-            class="text-gray-300 font-medium">Export</span> and <span class="text-gray-300 font-medium">Import</span> to backup your data.
-        <br><br>
-        <a href="https://github.com/wrlannen/snippets" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-[#007acc] hover:underline text-[13px] font-medium">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path d="M10 2C5.58 2 2 5.58 2 10c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0 0 18 10c0-4.42-3.58-8-8-8z"/></svg>
-          GitHub: wrlannen/snippets
-        </a>
-        </p>
-
-        <!-- Install Section (Dynamic) -->
-        <div id="installSection" class="hidden space-y-3">
-          <h3 class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Install as App</h3>
-
-          <!-- Chrome/Edge -->
-          <div id="pwaInstallable" class="hidden">
-            <div class="flex items-center justify-between group">
-              <span class="text-[13px] text-gray-400">Install on Chrome</span>
-              <button id="installPwaBtn"
-                class="px-3 py-1.5 bg-[#007acc] hover:bg-[#0063a5] text-white text-[11px] font-medium rounded shadow-sm transition-all flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0l-4 4m4-4v12"></path>
-                </svg>
-                Install
-              </button>
+        <div class="bg-[#181818] border border-[#2a2a2a] rounded-xl p-4 space-y-3 text-[13px] text-gray-400 leading-relaxed font-light">
+          <div class="space-y-1">
+            <div class="font-medium text-gray-200">Snippets: Minimal local scratchpad for code & notes</div>
+            <div>
+              A keyboard-first scratchpad for snippets, drafts, and quick notes - stored locally in your browser. Use <span
+                class="text-gray-300 font-medium">Export</span> and <span class="text-gray-300 font-medium">Import</span> to backup your data.
             </div>
           </div>
 
+          <div>
+            <a href="https://github.com/wrlannen/snippets" target="_blank" rel="noopener"
+              class="inline-flex items-center gap-2 text-[#007acc] hover:underline text-[13px] font-medium">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                <path
+                  d="M10 2C5.58 2 2 5.58 2 10c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0 0 18 10c0-4.42-3.58-8-8-8z" />
+              </svg>
+              <span>View on GitHub</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Install Section (Dynamic) -->
+        <div id="installSection" class="hidden">
+          <div class="bg-[#181818] border border-[#2a2a2a] rounded-xl p-4 space-y-3">
+            <h3 class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Install as App</h3>
+
+          <!-- Chrome/Edge -->
+            <div id="pwaInstallable" class="hidden">
+              <div class="flex items-center justify-between group">
+                <span class="text-[13px] text-gray-400">Install on Chrome</span>
+                <button id="installPwaBtn"
+                  class="px-3 py-1.5 bg-[#007acc] hover:bg-[#0063a5] text-white text-[11px] font-medium rounded shadow-sm transition-all flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0l-4 4m4-4v12"></path>
+                  </svg>
+                  Install
+                </button>
+              </div>
+            </div>
+
           <!-- Safari -->
-          <div id="pwaSafari" class="hidden">
-            <div class="flex items-center justify-between group">
-              <span class="text-[13px] text-gray-400">Install on macOS</span>
-              <div class="flex items-center gap-2 text-xs text-gray-300">
-                <span
-                  class="bg-[#252526] px-1.5 py-0.5 rounded border border-[#333] font-mono text-[10px] text-gray-400">File</span>
-                <span class="text-gray-600">→</span>
-                <span
-                  class="bg-[#252526] px-1.5 py-0.5 rounded border border-[#333] font-mono text-[10px] text-gray-400">Add
-                  to Dock...</span>
+            <div id="pwaSafari" class="hidden">
+              <div class="flex items-center justify-between group">
+                <span class="text-[13px] text-gray-400">Install on macOS</span>
+                <div class="flex items-center gap-2 text-xs text-gray-300">
+                  <span
+                    class="bg-[#252526] px-1.5 py-0.5 rounded border border-[#333] font-mono text-[10px] text-gray-400">File</span>
+                  <span class="text-gray-600">→</span>
+                  <span
+                    class="bg-[#252526] px-1.5 py-0.5 rounded border border-[#333] font-mono text-[10px] text-gray-400">Add
+                    to Dock...</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Shortcuts -->
-        <div class="space-y-3">
+        <div class="bg-[#181818] border border-[#2a2a2a] rounded-xl p-4 space-y-3">
           <h3 class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Shortcuts</h3>
           <div class="space-y-2.5">
             <div class="flex items-center justify-between group">
