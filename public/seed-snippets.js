@@ -45,10 +45,12 @@ export function seedSnippetsOnFirstRun() {
       content: [
         '// Welcome to Snippets',
         '',
-        'Titles come from the first line (plain text or comment-style).',
+        'A minimal, keyboard-first scratchpad for code, drafts, and quick notes — stored locally in your browser.',
         'Everything saves automatically and works offline.',
         '',
-        'Tip: Press ⌘K (or Ctrl+K) to create a new snippet.',
+        'Titles come from the first line (plain text or comment-style).',
+        '',
+        'Tip: Press ⌘K (or Ctrl+K) to create a new snippet.'
       ].join('\n')
     },
     {
