@@ -1,15 +1,9 @@
 
 
 # Snippets
+A keyboard-first scratchpad for snippets, drafts, and quick notes - stored locally in your browser. No accounts, no servers. Fast, dark, and installable as a PWA. Try it now: [https://snippets.dev](https://snippets.dev).
+
 ![Screenshot](assets/demo_screenshot_3.png)
-
-
-**Snippets: Minimal local scratchpad for code & notes.**
-
-[Try it now: https://snippets.dev](https://snippets.dev)
-
-A keyboard-first scratchpad for snippets, drafts, and quick notes - stored locally in your browser. No accounts, no servers. Fast, dark, and installable as a PWA.
-
 
 ## Features
 
