@@ -283,17 +283,6 @@ function seedSnippetsOnFirstRun() {
 
   const seeded = [
     {
-      id: openSourceId,
-      createdAt: ts,
-      updatedAt: ts,
-      content: [
-        '// Open source',
-        '',
-        'Snippets is open source! View or contribute on GitHub:',
-        'https://github.com/wrlannen/snippets',
-      ].join('\n')
-    },
-    {
       id: welcomeId,
       createdAt: ts,
       updatedAt: ts,
@@ -340,6 +329,17 @@ function seedSnippetsOnFirstRun() {
         '',
         'You can install Snippets as a PWA (Progressive Web App) for quick access from your home screen or dock.',
         'Look for “Install” in your browser menu, or use the About (i) button for instructions.',
+      ].join('\n')
+    },
+    {
+      id: openSourceId,
+      createdAt: ts,
+      updatedAt: ts,
+      content: [
+        '// Open source',
+        '',
+        'Snippets is open source. View or contribute on GitHub:',
+        'https://github.com/wrlannen/snippets',
       ].join('\n')
     }
   ];
