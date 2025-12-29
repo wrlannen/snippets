@@ -62,9 +62,28 @@ export function seedSnippetsOnFirstRun() {
         '// Keyboard shortcuts',
         '',
         '⌘B / Ctrl+B  Toggle sidebar',
+        '',
         '⌘K / Ctrl+K  New snippet',
+        '',
         '⌘F / Ctrl+F  Search',
+        '',
         '⌘⇧C / Ctrl+Shift+C  Copy snippet',
+      ].join('\n')
+    },
+    {
+      id: pwaId,
+      createdAt: ts,
+      updatedAt: ts,
+      content: [
+        '// Install as an app',
+        '',
+        'You can install Snippets as a PWA (Progressive Web App) for quick access from your desktop or dock.',
+        '',
+        'Chrome: Look for "Install Snippets" (↓) in the address bar or menu.',
+        '',
+        'Safari: Go to File → Add to Dock...',
+        '',
+        'Or use the About (i) button for more instructions.',
       ].join('\n')
     },
     {
@@ -75,19 +94,10 @@ export function seedSnippetsOnFirstRun() {
         '// Backup & sync',
         '',
         'Snippets are stored locally in your browser (localStorage).',
-        'Use Export to download a JSON backup.',
-        'Use Import to restore from a backup.',
-      ].join('\n')
-    },
-    {
-      id: pwaId,
-      createdAt: ts,
-      updatedAt: ts,
-      content: [
-        '// Install as an app',
         '',
-        'You can install Snippets as a PWA (Progressive Web App) for quick access from your home screen or dock.',
-        'Look for "Install" in your browser menu, or use the About (i) button for instructions.',
+        'Use Export to download a JSON backup.',
+        '',
+        'Use Import to restore from a backup.',
       ].join('\n')
     },
     {
@@ -98,6 +108,7 @@ export function seedSnippetsOnFirstRun() {
         '// Open source',
         '',
         'Snippets is open source. View or contribute on GitHub:',
+        '',
         'https://github.com/wrlannen/snippets',
       ].join('\n')
     }
