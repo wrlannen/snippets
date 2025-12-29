@@ -394,16 +394,23 @@ function initializeApp() {
   // --- Global Keyboard Shortcuts ---
 
   window.addEventListener("keydown", (e) => {
-    // Escape: Dismiss modal if open, else clear search and return focus to editor
+    // Escape: Dismiss modal if open, else clear search or blur/focus editor
     const aboutModal = document.getElementById('aboutModal');
     if (e.key === "Escape") {
       if (aboutModal && !aboutModal.classList.contains('hidden')) {
         aboutModal.classList.add('hidden');
         return;
       }
+      // If search has content, always clear and focus editor
       if (els.search.value.trim()) {
         els.search.value = "";
         renderSidebar();
+        focusEditor();
+        return;
+      }
+      // If search is focused and empty, blur and focus editor
+      if (document.activeElement === els.search) {
+        els.search.blur();
         focusEditor();
         return;
       }
