@@ -1,3 +1,18 @@
+/**
+ * Snippets App
+ * 
+ * Main application controller that orchestrates:
+ * - Snippet CRUD operations and autosave
+ * - Editor initialization and event handling
+ * - Sidebar rendering and navigation
+ * - Search and filtering
+ * - Keyboard shortcuts
+ * - Export/import functionality
+ * - PWA installation prompts
+ * - Settings management
+ * 
+ */
+
 import { nowIso, uid, copyTextToClipboard, safeLocalStorageGet } from './utils.js';
 import { loadSnippets, saveSnippets, loadSettings, saveSettings, STORAGE_KEY } from './storage.js';
 import { bindEls, setStatus, flashStatus, updateCharCount } from './ui.js';

@@ -1,3 +1,16 @@
+/**
+ * Editor Module
+ * 
+ * Manages the CodeMirror editor instance with:
+ * - Editor initialization and configuration
+ * - Content get/set operations
+ * - Font size and family customization
+ * - Focus and refresh management
+ * - History clearing
+ * - Fallback to textarea when CodeMirror is unavailable
+ * 
+ */
+
 let editor = null;
 let fallbackTextarea = null;
 const DEFAULT_FONT_COLOR = "#ffffff";

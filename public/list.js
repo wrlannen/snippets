@@ -1,3 +1,15 @@
+/**
+ * List Module
+ * 
+ * Handles sidebar snippet list rendering and interactions:
+ * - Builds HTML for snippet items with titles and previews
+ * - Extracts titles from comment syntax or plain text
+ * - Manages empty state messaging
+ * - Delegates click events for open/delete actions
+ * - Optimizes re-renders by tracking previous state
+ * 
+ */
+
 import { escapeHtml, formatDate } from './utils.js';
 
 let lastRenderIds = [];

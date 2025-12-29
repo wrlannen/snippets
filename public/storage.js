@@ -1,3 +1,15 @@
+/**
+ * Storage Module
+ * 
+ * Manages localStorage persistence for snippets and settings:
+ * - Load and save snippets with error handling
+ * - Load and save user settings (fonts, sidebar width)
+ * - Storage quota warnings and error handling
+ * - Safe JSON parsing and serialization
+ * - Storage key versioning
+ * 
+ */
+
 import { safeLocalStorageGet, safeJsonParse } from './utils.js';
 
 export const STORAGE_KEY = "snippets.v1";

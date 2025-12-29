@@ -8,7 +8,6 @@
  * - Gzip compression (all files, no size threshold)
  * - Health check endpoint
  * 
- * For production, consider using nginx or Caddy for even lower resource usage.
  */
 
 import express from "express";

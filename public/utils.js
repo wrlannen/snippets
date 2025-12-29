@@ -1,4 +1,15 @@
-// Shared utility functions for Snippets
+/**
+ * Utilities Module
+ * 
+ * Shared utility functions used throughout the application:
+ * - Secure ID generation (crypto.randomUUID)
+ * - Date/time formatting
+ * - HTML escaping for XSS prevention
+ * - Safe JSON parsing and localStorage access
+ * - Clipboard operations
+ * - Text truncation
+ * 
+ */
 
 /**
  * Returns the current time as an ISO 8601 string.

@@ -1,4 +1,13 @@
-// DOM helpers for status and footer UI
+/**
+ * UI Module
+ * 
+ * DOM helpers for status messages and footer UI:
+ * - Status message display and flashing
+ * - Character count updates
+ * - DOM element binding and reference management
+ * - Temporary status highlights
+ * 
+ */
 
 let els = null;
 
