@@ -41,7 +41,10 @@ export async function getEditorValue(page) {
  */
 export async function resetStorage(page) {
     await page.goto('http://localhost:3000');
-    await page.evaluate(() => localStorage.clear());
+    await page.evaluate(() => {
+        localStorage.clear();
+        localStorage.setItem('snippets.v1', '[]');
+    });
     await page.reload();
 }
 

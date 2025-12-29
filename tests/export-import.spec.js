@@ -7,7 +7,10 @@ test.describe('Export/Import Functionality', () => {
   test.beforeEach(async ({ page }) => {
     // Clear localStorage before each test
     await page.goto('/');
-    await page.evaluate(() => localStorage.clear());
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('snippets.v1', '[]');
+    });
     await page.reload();
   });
 
@@ -322,7 +325,10 @@ test.describe('Export/Import Functionality', () => {
     const downloadPath = await download.path();
 
     // Clear everything
-    await page.evaluate(() => localStorage.clear());
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('snippets.v1', '[]');
+    });
     await page.reload();
     await expect(page.locator('#empty')).toBeVisible();
 

@@ -5,11 +5,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Snippets</title>
-  <meta name="description" content="A lightweight in-browser snippet keeper." />
+  <title>Snippets — Offline, local-first snippet manager</title>
+  <meta name="description" content="A keyboard-first, offline snippet manager stored locally in your browser. No accounts. Export/import JSON backups." />
+  <meta name="robots" content="index,follow" />
+  <meta name="application-name" content="Snippets" />
+  <meta name="color-scheme" content="dark" />
+
+  <!-- Open Graph / Social Preview -->
+  <meta property="og:title" content="Snippets — Offline, local-first snippet manager" />
+  <meta property="og:description" content="A keyboard-first, offline snippet manager stored locally in your browser. No accounts. Export/import JSON backups." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/icon-512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Snippets — Offline, local-first snippet manager" />
+  <meta name="twitter:description" content="A keyboard-first, offline snippet manager stored locally in your browser. No accounts. Export/import JSON backups." />
+  <meta name="twitter:image" content="/icon-512.png" />
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
+
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
 
   <!-- Apple-specific meta tags for PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +58,11 @@
 
 <body
   class="h-screen overflow-hidden bg-[#1e1e1e] text-gray-300 antialiased selection:bg-[#3a6996] selection:text-white">
+  <noscript>
+    <div style="padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: #e5e7eb; background: #111827;">
+      Snippets is a JavaScript app. Please enable JavaScript to use the editor.
+    </div>
+  </noscript>
   <div class="flex h-screen flex-col">
     <div class="flex flex-1 min-h-0">
       <!-- Sidebar -->

@@ -3,10 +3,24 @@ import { fillEditor, getEditorValue } from './test-utils';
 
 test.describe('Snippets App', () => {
   test.beforeEach(async ({ page }) => {
-    // Clear localStorage before each test
+    // Reset to an explicit empty state (avoid first-run seeding)
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('snippets.v1', '[]');
+    });
+    await page.reload();
+  });
+
+  test('seeds welcome snippets on first run', async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() => localStorage.clear());
     await page.reload();
+
+    await expect(page.locator('#list li')).toHaveCount(3);
+    await expect(page.locator('#list')).toContainText('Welcome to Snippets');
+    await expect(page.locator('#list')).toContainText('Keyboard shortcuts');
+    await expect(page.locator('#list')).toContainText('Backup & sync');
   });
 
   test('loads app with empty state', async ({ page }) => {

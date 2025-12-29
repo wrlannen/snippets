@@ -5,7 +5,10 @@ test.describe('Copy to Clipboard', () => {
   test.beforeEach(async ({ page }) => {
     // Clear localStorage before each test
     await page.goto('/');
-    await page.evaluate(() => localStorage.clear());
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('snippets.v1', '[]');
+    });
     await page.reload();
   });
 

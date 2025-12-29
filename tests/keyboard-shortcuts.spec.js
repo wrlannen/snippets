@@ -4,7 +4,10 @@ import { fillEditor } from './test-utils';
 test.describe('Keyboard Shortcuts & Platform Detection', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/');
-        await page.evaluate(() => localStorage.clear());
+        await page.evaluate(() => {
+            localStorage.clear();
+            localStorage.setItem('snippets.v1', '[]');
+        });
         await page.reload();
     });
 

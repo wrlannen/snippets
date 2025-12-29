@@ -1,5 +1,5 @@
-import { nowIso, uid, copyTextToClipboard } from './utils.js';
-import { loadSnippets, saveSnippets, loadSettings, saveSettings } from './storage.js';
+import { nowIso, uid, copyTextToClipboard, safeLocalStorageGet } from './utils.js';
+import { loadSnippets, saveSnippets, loadSettings, saveSettings, STORAGE_KEY } from './storage.js';
 import { bindEls, setStatus, flashStatus, updateCharCount } from './ui.js';
 import { initEditor, getEditorValue, setEditorValue, focusEditor, refreshEditor, clearHistory, applyFontSettings } from './editor.js';
 import { renderList } from './list.js';
@@ -257,6 +257,68 @@ function debouncedRenderList() {
   renderDebounceTimer = setTimeout(() => {
     renderSidebar();
   }, RENDER_DEBOUNCE_MS);
+}
+
+function seedSnippetsOnFirstRun() {
+  const existingRaw = safeLocalStorageGet(STORAGE_KEY);
+  if (existingRaw !== null && existingRaw !== undefined) return;
+
+  const ts = nowIso();
+  let welcomeId;
+  let shortcutsId;
+  let backupId;
+
+  try {
+    welcomeId = uid();
+    shortcutsId = uid();
+    backupId = uid();
+  } catch (err) {
+    console.error('Failed to seed snippets: secure IDs unavailable', err);
+    return;
+  }
+
+  const seeded = [
+    {
+      id: welcomeId,
+      createdAt: ts,
+      updatedAt: ts,
+      content: [
+        '// Welcome to Snippets',
+        '',
+        'Titles come from the first line (comment-style).',
+        'Everything saves automatically and works offline.',
+        '',
+        'Tip: Press ⌘K (or Ctrl+K) to create a new snippet.',
+      ].join('\n')
+    },
+    {
+      id: shortcutsId,
+      createdAt: ts,
+      updatedAt: ts,
+      content: [
+        '// Keyboard shortcuts',
+        '',
+        '⌘K / Ctrl+K  New snippet',
+        '⌘F / Ctrl+F  Search',
+        '⌘B / Ctrl+B  Toggle sidebar',
+        '⌘⇧C / Ctrl+Shift+C  Copy snippet',
+      ].join('\n')
+    },
+    {
+      id: backupId,
+      createdAt: ts,
+      updatedAt: ts,
+      content: [
+        '// Backup & sync',
+        '',
+        'Snippets are stored locally in your browser (localStorage).',
+        'Use Export to download a JSON backup.',
+        'Use Import to restore from a backup.',
+      ].join('\n')
+    }
+  ];
+
+  saveSnippets(seeded);
 }
 
 /**
@@ -786,6 +848,8 @@ function initializeApp() {
   const editorInstance = initEditor(els.content, { onChange: handleEditorChange });
 
   // --- Initial Data Load ---
+
+  seedSnippetsOnFirstRun();
 
   renderSidebar(); // Ensure list is rendered first
   const initial = loadSnippets();

@@ -3,7 +3,10 @@ import { test, expect } from '@playwright/test';
 test.describe('Sidebar Resize', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/');
-        await page.evaluate(() => localStorage.clear());
+        await page.evaluate(() => {
+            localStorage.clear();
+            localStorage.setItem('snippets.v1', '[]');
+        });
         await page.reload();
     });
 

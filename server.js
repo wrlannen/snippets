@@ -25,6 +25,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const publicDir = path.join(__dirname, "public");
 
+function getRequestOrigin(req) {
+  const forwardedProto = req.get("x-forwarded-proto");
+  const proto = (forwardedProto ?? req.protocol ?? "http").split(",")[0].trim();
+  const host = req.get("host");
+  return `${proto}://${host}`;
+}
+
 // =============================================================================
 // Security Headers Middleware
 // =============================================================================
@@ -80,6 +87,19 @@ app.use(express.static(publicDir, {
 // Health check endpoint for monitoring/orchestration
 app.get("/health", (_req, res) => {
   res.status(200).json({ ok: true });
+});
+
+// Minimal sitemap for SEO discovery (single-page app)
+app.get("/sitemap.xml", (req, res) => {
+  const origin = getRequestOrigin(req);
+  const body = `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+    `  <url><loc>${origin}/</loc></url>\n` +
+    `</urlset>\n`;
+
+  res.setHeader("Content-Type", "application/xml; charset=utf-8");
+  res.setHeader("Cache-Control", "public, max-age=3600, must-revalidate");
+  res.status(200).send(body);
 });
 
 // SPA fallback - serve index.html for all unmatched routes
