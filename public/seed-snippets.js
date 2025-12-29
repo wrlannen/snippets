@@ -46,6 +46,7 @@ export function seedSnippetsOnFirstRun() {
         '// Welcome to Snippets',
         '',
         'A minimal, keyboard-first scratchpad for code, drafts, and quick notes — stored locally in your browser.',
+        '',
         'Everything saves automatically and works offline.',
         '',
         'Titles come from the first line (plain text or comment-style).',
