@@ -1,7 +1,7 @@
 
 
 # Snippets
-A minimal, keyboard-focused scratchpad for code snippets and notes. Everything is stored locally in your browser - no accounts, no servers. It's fast, dark-themed, and works offline. 
+A minimal, keyboard-focused scratchpad for code snippets and notes. Everything is stored locally in your browser - no accounts, no servers. It's fast, dark-themed, installable as a PWA and works offline.
 
 Try it now at [https://snippets.dev](https://snippets.dev)
 
