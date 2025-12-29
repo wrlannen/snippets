@@ -17,10 +17,11 @@ test.describe('Snippets App', () => {
     await page.evaluate(() => localStorage.clear());
     await page.reload();
 
-    await expect(page.locator('#list li')).toHaveCount(3);
+    await expect(page.locator('#list li')).toHaveCount(4);
     await expect(page.locator('#list')).toContainText('Welcome to Snippets');
     await expect(page.locator('#list')).toContainText('Keyboard shortcuts');
     await expect(page.locator('#list')).toContainText('Backup & sync');
+    await expect(page.locator('#list')).toContainText('Install as an app');
   });
 
   test('loads app with empty state', async ({ page }) => {

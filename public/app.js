@@ -267,6 +267,7 @@ function seedSnippetsOnFirstRun() {
   let welcomeId;
   let shortcutsId;
   let backupId;
+  let pwaId;
 
   try {
     welcomeId = uid();
@@ -276,6 +277,8 @@ function seedSnippetsOnFirstRun() {
     console.error('Failed to seed snippets: secure IDs unavailable', err);
     return;
   }
+
+  pwaId = uid();
 
   const seeded = [
     {
@@ -314,6 +317,17 @@ function seedSnippetsOnFirstRun() {
         'Snippets are stored locally in your browser (localStorage).',
         'Use Export to download a JSON backup.',
         'Use Import to restore from a backup.',
+      ].join('\n')
+    },
+    {
+      id: pwaId,
+      createdAt: ts,
+      updatedAt: ts,
+      content: [
+        '// Install as an app',
+        '',
+        'You can install Snippets as a PWA (Progressive Web App) for quick access from your home screen or dock.',
+        'Look for “Install” in your browser menu, or use the About (i) button for instructions.',
       ].join('\n')
     }
   ];
