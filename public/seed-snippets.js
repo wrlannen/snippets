@@ -58,9 +58,9 @@ export function seedSnippetsOnFirstRun() {
       content: [
         '// Keyboard shortcuts',
         '',
+        '⌘B / Ctrl+B  Toggle sidebar',
         '⌘K / Ctrl+K  New snippet',
         '⌘F / Ctrl+F  Search',
-        '⌘B / Ctrl+B  Toggle sidebar',
         '⌘⇧C / Ctrl+Shift+C  Copy snippet',
       ].join('\n')
     },
