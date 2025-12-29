@@ -98,17 +98,20 @@ export function formatDate(iso) {
 
 /**
  * Copies text to the clipboard using modern or legacy APIs.
+ * Falls back to execCommand for older browsers.
  */
 export async function copyTextToClipboard(text) {
+  // Try modern Clipboard API first
   try {
     if (navigator?.clipboard?.writeText) {
       await navigator.clipboard.writeText(text);
       return true;
     }
   } catch {
-    // fall through
+    // fall through to legacy method
   }
 
+  // Fallback to execCommand for older browsers
   try {
     const ta = document.createElement('textarea');
     ta.value = text;

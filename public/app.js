@@ -108,6 +108,8 @@ function setupPwaInstallUI() {
 
 /** localStorage key for sidebar visibility state */
 const SIDEBAR_VISIBLE_KEY = "snippets.sidebar.visible";
+
+/** Font size constraints (in pixels) */
 const MIN_FONT_SIZE = 10;
 const MAX_FONT_SIZE = 24;
 
@@ -274,6 +276,11 @@ function debouncedRenderList() {
   }, RENDER_DEBOUNCE_MS);
 }
 
+/**
+ * Seeds the storage with welcome snippets on first run.
+ * Creates example snippets showing features and shortcuts.
+ * Only runs if localStorage is empty.
+ */
 function seedSnippetsOnFirstRun() {
   const existingRaw = safeLocalStorageGet(STORAGE_KEY);
   if (existingRaw !== null && existingRaw !== undefined) return;
@@ -371,6 +378,7 @@ function renderSidebar() {
 
   const snippets = loadSnippets();
 
+  // Inject live editor content before rendering for immediate title/preview updates
   if (activeId) {
     const liveContent = getEditorValue().content;
     const idx = snippets.findIndex(s => s.id === activeId);
@@ -421,7 +429,7 @@ function exportToJson() {
   const snippets = loadSnippets();
   const settings = loadSettings();
   const exportData = {
-    version: 1,
+    version: 1,  // Export format version for future compatibility
     exportedAt: nowIso(),
     snippets: snippets,
     settings: settings
@@ -453,11 +461,13 @@ function importFromJson(file) {
     try {
       const imported = JSON.parse(e.target.result);
 
+      // Sanitize and validate imported snippet data to prevent malicious content
       const sanitizeSnippet = (snippet) => {
         if (!snippet || typeof snippet !== 'object') return null;
         if (typeof snippet.id !== 'string' || !snippet.id.trim()) return null;
         if (typeof snippet.content !== 'string') return null;
 
+        // Enforce reasonable limits to prevent localStorage quota issues
         const id = snippet.id.trim().slice(0, 200);
         const content = snippet.content.slice(0, 1_000_000);
         const createdAt = (typeof snippet.createdAt === 'string' && snippet.createdAt) ? snippet.createdAt : nowIso();
@@ -466,6 +476,7 @@ function importFromJson(file) {
         return { id, content, createdAt, updatedAt };
       };
 
+      // Sanitize imported settings and clamp values to valid ranges
       const sanitizeImportedSettings = (settings) => {
         if (!settings || typeof settings !== 'object') return null;
         const out = {};
@@ -486,6 +497,8 @@ function importFromJson(file) {
       };
 
       // Support both old format (array) and new format (object with snippets/settings)
+      // Old format: [snippet1, snippet2, ...]
+      // New format: { version: 1, snippets: [...], settings: {...} }
       let snippetsToImport;
       let settingsToImport = null;
 
@@ -512,7 +525,7 @@ function importFromJson(file) {
         sanitizedSnippets.push(s);
       }
 
-      // Merge with existing snippets
+      // Merge with existing snippets (skip duplicates by ID)
       const existing = loadSnippets();
       const existingIds = new Set(existing.map(s => s.id));
 
@@ -530,7 +543,7 @@ function importFromJson(file) {
 
       saveSnippets(existing, { onStatus: setStatus });
 
-      // Import settings if provided
+      // Import and merge settings if provided (preserves existing settings not in import)
       if (settingsToImport && typeof settingsToImport === 'object') {
         const sanitizedSettings = sanitizeImportedSettings(settingsToImport);
         if (sanitizedSettings) {
@@ -603,11 +616,11 @@ function initializeSidebarResize() {
   const settings = loadSettings();
   applySidebarWidth(settings.sidebarWidth);
 
-  // Function to check if mouse is near the right edge of sidebar
+  // Check if mouse is near the right edge of sidebar for resize cursor
   function isNearSidebarEdge(e) {
     const rect = sidebar.getBoundingClientRect();
     const mouseX = e.clientX;
-    const edgeThreshold = 8; // pixels from edge
+    const edgeThreshold = 8; // 8px detection zone on either side of edge
 
     return mouseX >= rect.right - edgeThreshold && mouseX <= rect.right + edgeThreshold;
   }

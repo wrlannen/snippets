@@ -50,12 +50,13 @@ export function buildSnippetItemHtml(snippet, isActive) {
   let firstLine = content.split(/\r?\n/)[0] ?? "";
   let title = "Untitled snippet";
 
+  // Try to extract title from comment syntax (e.g., // Title, # Title, etc.)
   const commentPatterns = [
-    /^\/\/\s*(.+)/,
-    /^#\s*(.+)/,
-    /^--\s*(.+)/,
-    /^\/\*\s*(.+?)\s*\*\//,
-    /^<!--\s*(.+?)\s*-->/
+    /^\/\/\s*(.+)/,        // JavaScript, C++, TypeScript
+    /^#\s*(.+)/,            // Python, Ruby, Bash
+    /^--\s*(.+)/,           // SQL
+    /^\/\*\s*(.+?)\s*\*\//, // CSS, C-style
+    /^<!--\s*(.+?)\s*-->/   // HTML
   ];
 
   for (const pattern of commentPatterns) {
@@ -66,12 +67,14 @@ export function buildSnippetItemHtml(snippet, isActive) {
     }
   }
 
+  // If no comment pattern matched, use the first line as-is (plain text)
   if (title === "Untitled snippet" && firstLine.trim()) {
     title = firstLine.trim();
   }
 
   const lines = content.split(/\r?\n/).filter(line => line.trim());
   let preview = "";
+  // Show lines 2-3 as preview (skip the title line)
   if (lines.length > 1) {
     const previewLines = lines.slice(1, 3);
     preview = previewLines.join(" ").trim();

@@ -31,7 +31,7 @@ export function initEditor(textarea, { onChange } = {}) {
     indentUnit: 2,
     autoCloseBrackets: true,
     matchBrackets: true,
-    viewportMargin: Infinity
+    viewportMargin: Infinity  // Render entire document for proper scrolling
   });
 
   editor.on("change", () => {
@@ -41,10 +41,10 @@ export function initEditor(textarea, { onChange } = {}) {
     if (onChange) onChange(editor.getValue());
   });
 
-  // Handle custom key events if needed
+  // Prevent browser save dialog (Cmd/Ctrl+S) - autosave handles persistence
   editor.addKeyMap({
-    "Cmd-S": () => { /* Prevent default save if needed */ },
-    "Ctrl-S": () => { },
+    "Cmd-S": () => { /* no-op */ },
+    "Ctrl-S": () => { /* no-op */ },
   });
 
   return editor;

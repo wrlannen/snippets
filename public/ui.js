@@ -35,6 +35,7 @@ export function flashStatus(text, ms = 1200, options = {}) {
   setStatus(text);
   if (highlightClass && !hadHighlight) els.status.classList.add(highlightClass);
 
+  // Restore previous status after delay
   window.setTimeout(() => {
     if (els?.status?.textContent === text) {
       setStatus(previousText);
