@@ -1,8 +1,11 @@
 
+
 # Snippets
 ![Screenshot](assets/demo_screenshot_3.png)
 
-Minimal, privacy-first snippet manager. All data stays in your browser (`localStorage`). No accounts, no servers. Fast, dark, and installable as a PWA.
+**Snippets: Minimal local scratchpad for code & notes.**
+
+A keyboard-first scratchpad for snippets, drafts, and quick notes - stored locally in your browser. No accounts, no servers. Fast, dark, and installable as a PWA.
 
 
 ## Features
