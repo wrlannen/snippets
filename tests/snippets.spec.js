@@ -32,11 +32,14 @@ test.describe('Snippets App', () => {
     await expect(page.locator('text=Start typing your first snippet')).toBeVisible();
   });
 
-  test('creates a new snippet with CMD+K', async ({ page }) => {
+  test('creates a new snippet via command palette', async ({ page }) => {
     await page.goto('/');
 
-    // Press CMD+K to create new snippet
+    // Open command palette and create new snippet
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
 
     // Type content
     await fillEditor(page, 'Test Snippet Title\nThis is the content');
@@ -52,8 +55,12 @@ test.describe('Snippets App', () => {
   test('edits existing snippet', async ({ page }) => {
     await page.goto('/');
 
-    // Create snippet
+    // Create snippet via command palette
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     await fillEditor(page, 'Original Title\nOriginal content');
     await page.waitForTimeout(1000);
 
@@ -68,8 +75,12 @@ test.describe('Snippets App', () => {
   test('deletes snippet with confirmation', async ({ page }) => {
     await page.goto('/');
 
-    // Create snippet
+    // Create snippet via command palette
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     await fillEditor(page, 'To Delete\nContent');
     await page.waitForTimeout(1000);
 
@@ -84,25 +95,38 @@ test.describe('Snippets App', () => {
   });
 
 
-  test('searches snippets with CMD+F', async ({ page }) => {
+  test('searches snippets with search command', async ({ page }) => {
     await page.goto('/');
 
-    // Create multiple snippets
+    // Create multiple snippets via command palette
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
     await fillEditor(page, 'Apple\nFruit content');
     await page.waitForTimeout(1000);
 
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
     await fillEditor(page, 'Banana\nYellow fruit');
     await page.waitForTimeout(1000);
 
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
     await fillEditor(page, 'Carrot\nVegetable content');
     await page.waitForTimeout(1000);
 
-    // Open search with CMD+F
-    await page.keyboard.press('Meta+KeyF');
-    await expect(page.locator('#search')).toBeVisible();
+    // Open search via command palette
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('search');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
+    await expect(page.locator('#search')).toBeFocused();
 
     // Search for "fruit"
     await page.locator('#search').fill('fruit');
@@ -130,13 +154,21 @@ test.describe('Snippets App', () => {
   test('switches between snippets', async ({ page }) => {
     await page.goto('/');
 
-    // Create first snippet
+    // Create first snippet via command palette
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     await fillEditor(page, 'First\nFirst content');
     await page.waitForTimeout(1000);
 
     // Create second snippet
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     await fillEditor(page, 'Second\nSecond content');
     await page.waitForTimeout(1000);
 
@@ -151,8 +183,12 @@ test.describe('Snippets App', () => {
   test('autosaves snippet', async ({ page }) => {
     await page.goto('/');
 
-    // Create snippet
+    // Create snippet via command palette
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     await fillEditor(page, 'Autosave Test\nContent');
 
     // Wait for autosave
@@ -171,6 +207,10 @@ test.describe('Snippets App', () => {
     await page.goto('/');
 
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     await fillEditor(page, 'Test');
 
     await expect(page.locator('#charCount')).toContainText('4 characters');
@@ -180,6 +220,10 @@ test.describe('Snippets App', () => {
     await page.goto('/');
 
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     await fillEditor(page, 'My Title\nLine 2\nLine 3');
     await page.waitForTimeout(1000);
 
@@ -193,6 +237,10 @@ test.describe('Snippets App', () => {
     await page.goto('/');
 
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     // Leave empty
     await page.waitForTimeout(1000);
 

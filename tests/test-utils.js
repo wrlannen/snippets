@@ -63,13 +63,18 @@ export async function waitForSnippetsToLoad(page) {
  * @param {string} content
  */
 export async function createSnippet(page, content) {
-    // Press CMD+K or Ctrl+K to create new snippet
+    // Press ⌘K or Ctrl+K to open command palette
     const isMac = process.platform === 'darwin';
     if (isMac) {
-        await page.keyboard.press('Meta+KeyK');
+        await page.keyboard.press('Meta+k');
     } else {
-        await page.keyboard.press('Control+KeyK');
+        await page.keyboard.press('Control+k');
     }
+    
+    // Type "new" to filter to New Snippet command
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
     
     await fillEditor(page, content);
     // Wait for autosave to complete

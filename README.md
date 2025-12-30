@@ -7,15 +7,15 @@ Try it now at [https://snippets.dev](https://snippets.dev)
 
 ## Features
 
-- **Keyboard-first**: Fast, minimal, and designed for shortcuts
+- **Command palette**: ⌘/Ctrl+K to discover and run commands
+- **Keyboard-first**: Fast, minimal interactions with clear shortcuts
 - **Syntax highlighting**: Supports JavaScript, Python, SQL, Shell, Markdown, YAML, HTML, CSS, XML, TypeScript, JSON, and Plain Text
 - **Automatic language detection**: Highlights code as content is entered; manual override available
 - **Offline-first**: Functions as a PWA, no internet required
 - **Local storage**: Data is stored in the browser
-- **Export/Import**: Backup and restore with one click
+- **Export/Import**: Backup and restore quickly
 - **Autosave**: Edits are saved automatically
-- **Fast search**: Instant filtering
-- **Copy to clipboard**: Shortcut for copying code blocks
+- **Fast search**: Instant filtering in the sidebar
 
 ## Syntax Highlighting
 
@@ -61,14 +61,30 @@ Supported title formats:
 - `<!-- Title -->` (HTML)
 
 
+## Command Palette
+
+Open with ⌘/Ctrl+K. Commands include:
+- New snippet
+- Open file from disk
+- Search snippets
+- Toggle sidebar
+- Copy current snippet
+- Delete current snippet
+- Export all snippets
+- Import snippets
+- Increase font size
+- Decrease font size
+
+
 ## Keyboard Shortcuts
 
-| Shortcut                | Action             |
-|-------------------------|--------------------|
-| ⌘/Ctrl + B              | Toggle sidebar     |
-| ⌘/Ctrl + K              | New snippet        |
-| ⌘/Ctrl + F              | Search             |
-| ⌘/Ctrl + Shift + C      | Copy snippet       |
+| Shortcut          | Action                                 |
+|-------------------|----------------------------------------|
+| ⌘/Ctrl + K        | Open command palette                   |
+| ⌘/Ctrl + /        | Toggle sidebar                         |
+| Esc               | Close palette/modal or clear search    |
+
+Use the command palette to run all app actions (new snippet, open file, search snippets, toggle sidebar, copy, delete, export/import, increase/decrease font).
 
 
 ## Export & Import

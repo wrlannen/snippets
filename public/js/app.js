@@ -22,6 +22,7 @@ import { seedSnippetsOnFirstRun } from './seed-snippets.js';
 import { initPwaInstall } from './pwa-install.js';
 import { exportToJson, importFromJson } from './import-export.js';
 import { initializeSidebarResize } from './sidebar-resize.js';
+import { initCommandPalette, registerCommands, openPalette, closePalette, isPaletteOpen } from './command-palette.js';
 
 // =============================================================================
 // Configuration Constants
@@ -259,8 +260,10 @@ function renderSidebar() {
 /**
  * Creates a new empty snippet and loads it into the editor.
  * The snippet is added to the top of the list.
+ * @param {string} initialContent - Optional initial content for the snippet
+ * @param {string} initialMode - Optional initial language mode
  */
-function createNewSnippet() {
+function createNewSnippet(initialContent = "", initialMode = 'javascript') {
   try {
     activeId = uid();
   } catch (err) {
@@ -271,12 +274,74 @@ function createNewSnippet() {
   const ts = nowIso();
 
   const snippets = loadSnippets();
-  snippets.unshift({ id: activeId, content: "", mode: 'javascript', modeManual: false, createdAt: ts, updatedAt: ts });
+  snippets.unshift({ 
+    id: activeId, 
+    content: initialContent, 
+    mode: initialMode, 
+    modeManual: false, 
+    createdAt: ts, 
+    updatedAt: ts 
+  });
   saveSnippets(snippets, { onStatus: setStatus });
 
   loadIntoEditor(activeId);
 
   focusEditor();
+}
+
+/**
+ * Opens a file picker to load a file from disk into a new snippet
+ */
+function openFileFromDisk() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.txt,.js,.ts,.py,.md,.html,.css,.json,.yaml,.yml,.xml,.sql,.sh';
+  
+  input.addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    try {
+      const text = await file.text();
+      
+      // Detect language from file extension
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      let mode = 'javascript'; // default
+      
+      const extMap = {
+        'js': 'javascript',
+        'ts': 'javascript',
+        'tsx': 'javascript',
+        'jsx': 'javascript',
+        'py': 'python',
+        'md': 'markdown',
+        'html': 'htmlmixed',
+        'htm': 'htmlmixed',
+        'css': 'css',
+        'json': 'javascript',
+        'yaml': 'yaml',
+        'yml': 'yaml',
+        'xml': 'xml',
+        'sql': 'sql',
+        'sh': 'shell',
+        'bash': 'shell',
+        'txt': 'null'
+      };
+      
+      mode = extMap[ext] || 'javascript';
+      
+      // Add filename as first line comment
+      const commentedContent = `// ${file.name}\n${text}`;
+      
+      createNewSnippet(commentedContent, mode);
+      flashStatus(`Opened ${file.name}`, 1500);
+    } catch (err) {
+      console.error('Error reading file:', err);
+      flashStatus('Failed to open file', 1500);
+    }
+  });
+  
+  input.click();
 }
 
 /**
@@ -466,13 +531,21 @@ function initializeApp() {
   // --- Global Keyboard Shortcuts ---
 
   window.addEventListener("keydown", (e) => {
-    // Escape: Dismiss modal if open, else clear search or blur/focus editor
-    const aboutModal = document.getElementById('aboutModal');
+    // Escape: Dismiss command palette, modal, or clear search
     if (e.key === "Escape") {
+      // Close command palette first
+      if (isPaletteOpen()) {
+        closePalette();
+        return;
+      }
+      
+      // Then check about modal
+      const aboutModal = document.getElementById('aboutModal');
       if (aboutModal && !aboutModal.classList.contains('hidden')) {
         aboutModal.classList.add('hidden');
         return;
       }
+      
       // If search has content, always clear and focus editor
       if (els.search.value.trim()) {
         els.search.value = "";
@@ -480,6 +553,7 @@ function initializeApp() {
         focusEditor();
         return;
       }
+      
       // If search is focused and empty, blur and focus editor
       if (document.activeElement === els.search) {
         els.search.blur();
@@ -491,39 +565,18 @@ function initializeApp() {
     // Modifier key (Cmd on Mac, Ctrl on Windows/Linux)
     const isMod = e.metaKey || e.ctrlKey;
 
-    // Cmd/Ctrl+K: Create new snippet
+    // Cmd/Ctrl+K: Open command palette
     if (isMod && e.key === "k") {
       e.preventDefault();
-      createNewSnippet();
+      openPalette();
       return;
     }
 
-    // Cmd/Ctrl+F: Focus search
-    if (isMod && e.key === "f") {
-      e.preventDefault();
-      els.search.focus();
-      els.search.select();
-      return;
-    }
-
-    // Cmd/Ctrl+B: Toggle sidebar visibility
-    if (isMod && e.key === "b") {
+    // Cmd/Ctrl+/: Toggle sidebar visibility
+    if (isMod && e.key === "/") {
       e.preventDefault();
       toggleSidebar();
       return;
-    }
-
-    // Cmd/Ctrl+Shift+C: Copy snippet to clipboard
-    if (isMod && e.shiftKey && e.key.toLowerCase() === "c") {
-      e.preventDefault();
-      const text = els?.content?.value ?? '';
-      if (!text.trim()) {
-        flashStatus('Nothing to copy');
-        return;
-      }
-      copyTextToClipboard(text).then(ok => {
-        flashStatus(ok ? 'Copied to clipboard' : 'Copy failed', 1200, { highlightClass: ok ? 'text-white' : undefined });
-      });
     }
   });
 
@@ -558,26 +611,137 @@ function initializeApp() {
   initializeFontControls();
   initializeSidebarResize({ MIN_SIDEBAR_WIDTH, MAX_SIDEBAR_WIDTH });
 
+  // --- Command Palette Setup ---
+  
+  initCommandPalette();
+  
+  const modKeySymbol = navigator.platform.toUpperCase().indexOf('MAC') >= 0 ? '⌘' : 'Ctrl';
+  
+  registerCommands([
+    {
+      id: 'new-snippet',
+      label: 'New Snippet',
+      description: 'Create a new empty snippet',
+      keywords: ['create', 'add'],
+      action: () => createNewSnippet()
+    },
+    {
+      id: 'open-file',
+      label: 'Open File from Disk',
+      description: 'Load a file from your computer into a new snippet',
+      keywords: ['import', 'load', 'upload'],
+      action: () => openFileFromDisk()
+    },
+    {
+      id: 'search',
+      label: 'Search Snippets',
+      description: 'Search your snippets list',
+      keywords: ['find', 'filter'],
+      action: () => {
+        els.search.focus();
+        els.search.select();
+      }
+    },
+    {
+      id: 'toggle-sidebar',
+      label: 'Toggle Sidebar',
+      description: 'Show or hide the sidebar',
+      shortcut: `${modKeySymbol}/`,
+      action: () => toggleSidebar()
+    },
+    {
+      id: 'copy-snippet',
+      label: 'Copy Snippet to Clipboard',
+      description: 'Copy the current snippet content',
+      keywords: ['clipboard'],
+      action: () => {
+        const text = getEditorValue()?.content ?? '';
+        if (!text.trim()) {
+          flashStatus('Nothing to copy');
+          return;
+        }
+        copyTextToClipboard(text).then(ok => {
+          flashStatus(ok ? 'Copied to clipboard' : 'Copy failed', 1200, { 
+            highlightClass: ok ? 'text-white' : undefined 
+          });
+        });
+      }
+    },
+    {
+      id: 'delete-snippet',
+      label: 'Delete Current Snippet',
+      description: 'Delete the currently active snippet',
+      keywords: ['remove', 'trash'],
+      action: () => {
+        if (activeId) {
+          deleteSnippet(activeId);
+        }
+      }
+    },
+    {
+      id: 'export',
+      label: 'Export All Snippets',
+      description: 'Download all snippets as JSON',
+      keywords: ['backup', 'save', 'download'],
+      action: () => exportToJson()
+    },
+    {
+      id: 'import',
+      label: 'Import Snippets',
+      description: 'Load snippets from a JSON file',
+      keywords: ['restore', 'upload', 'load'],
+      action: () => {
+        const importFileInput = document.getElementById('importFileInput');
+        if (importFileInput) {
+          importFileInput.click();
+        }
+      }
+    }
+    ,
+    {
+      id: 'increase-font',
+      label: 'Increase Font Size',
+      description: 'Make the editor text larger',
+      keywords: ['zoom', 'bigger'],
+      action: () => {
+        const settings = loadSettings();
+        const newSize = Math.min(MAX_FONT_SIZE, settings.fontSize + 1);
+        const newSettings = { ...settings, fontSize: newSize };
+        saveSettings(newSettings);
+        applyFontSettings(newSettings);
+      }
+    },
+    {
+      id: 'decrease-font',
+      label: 'Decrease Font Size',
+      description: 'Make the editor text smaller',
+      keywords: ['zoom', 'smaller'],
+      action: () => {
+        const settings = loadSettings();
+        const newSize = Math.max(MIN_FONT_SIZE, settings.fontSize - 1);
+        const newSettings = { ...settings, fontSize: newSize };
+        saveSettings(newSettings);
+        applyFontSettings(newSettings);
+      }
+    }
+  ]);
+
   // --- Platform-specific UI ---
 
   // Show correct modifier key symbol based on OS
   const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-  const modKeySymbol = isMac ? '⌘' : 'Ctrl';
+  const modKeySymbolUI = isMac ? '⌘' : 'Ctrl';
 
   const modKeyTargets = [
     'modKey',
-    'modKeySidebar',
-    'modKeySearch',
-    'modKeyCopy',
-    'modalModKey4',
+    'modKey2',
     'modalModKey1',
-    'modalModKey2',
-    'modalModKey3'
+    'modalModKey2'
   ];
 
   modKeyTargets.forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.textContent = modKeySymbol;
+    if (el) el.textContent = modKeySymbolUI;
   });
 
   // --- Export/Import ---

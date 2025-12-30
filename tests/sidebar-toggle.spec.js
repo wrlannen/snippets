@@ -13,81 +13,88 @@ test.describe('Sidebar Toggle', () => {
     await expect(sidebar).toBeVisible();
   });
 
-  test('CMD+B hides the sidebar', async ({ page, browserName }) => {
+  test('⌘/ hides the sidebar', async ({ page, browserName }) => {
     const sidebar = page.locator('#sidebar');
     const isMac = browserName === 'webkit' || process.platform === 'darwin';
     
     // Sidebar should be visible initially
     await expect(sidebar).toBeVisible();
 
-    // Press CMD+B (or Ctrl+B on non-Mac)
+    // Press ⌘/ (or Ctrl+/ on non-Mac)
     if (isMac) {
-      await page.keyboard.press('Meta+KeyB');
+      await page.keyboard.press('Meta+Slash');
     } else {
-      await page.keyboard.press('Control+KeyB');
+      await page.keyboard.press('Control+Slash');
     }
 
-    // Sidebar should be hidden
-    await expect(sidebar).toBeHidden();
+    // Check if sidebar is hidden via CSS class on html element
+    const html = page.locator('html');
+    await expect(html).toHaveClass(/sidebar-hidden/);
   });
 
-  test('CMD+B toggles sidebar on and off', async ({ page, browserName }) => {
-    const sidebar = page.locator('#sidebar');
+  test('⌘/ toggles sidebar on and off', async ({ page, browserName }) => {
+    const html = page.locator('html');
     const isMac = browserName === 'webkit' || process.platform === 'darwin';
-    const shortcut = isMac ? 'Meta+KeyB' : 'Control+KeyB';
+    const shortcut = isMac ? 'Meta+Slash' : 'Control+Slash';
     
-    // Initially visible
-    await expect(sidebar).toBeVisible();
+    // Initially not hidden
+    await expect(html).not.toHaveClass(/sidebar-hidden/);
 
     // Hide
     await page.keyboard.press(shortcut);
-    await expect(sidebar).toBeHidden();
+    await page.waitForTimeout(300);
+    await expect(html).toHaveClass(/sidebar-hidden/);
 
     // Show again
     await page.keyboard.press(shortcut);
-    await expect(sidebar).toBeVisible();
+    await page.waitForTimeout(300);
+    await expect(html).not.toHaveClass(/sidebar-hidden/);
 
     // Hide again
     await page.keyboard.press(shortcut);
-    await expect(sidebar).toBeHidden();
+    await page.waitForTimeout(300);
+    await expect(html).toHaveClass(/sidebar-hidden/);
   });
 
   test('sidebar visibility persists across page reloads', async ({ page, browserName }) => {
-    const sidebar = page.locator('#sidebar');
+    const html = page.locator('html');
     const isMac = browserName === 'webkit' || process.platform === 'darwin';
-    const shortcut = isMac ? 'Meta+KeyB' : 'Control+KeyB';
+    const shortcut = isMac ? 'Meta+Slash' : 'Control+Slash';
     
     // Hide sidebar
     await page.keyboard.press(shortcut);
-    await expect(sidebar).toBeHidden();
+    await page.waitForTimeout(300);
+    await expect(html).toHaveClass(/sidebar-hidden/);
 
     // Reload page
     await page.reload();
     await waitForSnippetsToLoad(page);
 
     // Sidebar should still be hidden
-    await expect(sidebar).toBeHidden();
+    await expect(html).toHaveClass(/sidebar-hidden/);
 
     // Show sidebar
     await page.keyboard.press(shortcut);
-    await expect(sidebar).toBeVisible();
+    await page.waitForTimeout(300);
+    await expect(html).not.toHaveClass(/sidebar-hidden/);
 
     // Reload again
     await page.reload();
     await waitForSnippetsToLoad(page);
 
     // Sidebar should now be visible
-    await expect(sidebar).toBeVisible();
+    await expect(html).not.toHaveClass(/sidebar-hidden/);
   });
 
   test('can create and edit snippets with sidebar hidden', async ({ page, browserName }) => {
-    const sidebar = page.locator('#sidebar');
+    const html = page.locator('html');
     const isMac = browserName === 'webkit' || process.platform === 'darwin';
-    const shortcut = isMac ? 'Meta+KeyB' : 'Control+KeyB';
+    const shortcut = isMac ? 'Meta+Slash' : 'Control+Slash';
     
     // Hide sidebar
     await page.keyboard.press(shortcut);
-    await expect(sidebar).toBeHidden();
+    await page.waitForTimeout(300);
+    await expect(html).toHaveClass(/sidebar-hidden/);
 
     // Create a new snippet
     await createSnippet(page, '// Test snippet\nconsole.log("hello");');
@@ -98,7 +105,8 @@ test.describe('Sidebar Toggle', () => {
 
     // Show sidebar to verify snippet was created
     await page.keyboard.press(shortcut);
-    await expect(sidebar).toBeVisible();
+    await page.waitForTimeout(300);
+    await expect(html).not.toHaveClass(/sidebar-hidden/);
 
     // Snippet should appear in list
     const snippetItem = page.locator('#list li');
@@ -110,24 +118,24 @@ test.describe('Sidebar Toggle', () => {
     const isMac = browserName === 'webkit' || process.platform === 'darwin';
     const expectedKey = isMac ? '⌘' : 'Ctrl';
     
-    // Check footer shortcut display
-    const sidebarKey = page.locator('#modKeySidebar');
-    await expect(sidebarKey).toHaveText(expectedKey);
+    // Check footer shortcut display (now just two elements)
+    const modKey = page.locator('#modKey');
+    await expect(modKey).toHaveText(expectedKey);
 
     // Check modal shortcut display
     await page.click('#aboutBtn');
-    const modalKey = page.locator('#modalModKey4');
+    const modalKey = page.locator('#modalModKey1');
     await expect(modalKey).toHaveText(expectedKey);
   });
 
   test('sidebar toggle works with existing snippets', async ({ page, browserName }) => {
     const isMac = browserName === 'webkit' || process.platform === 'darwin';
-    const shortcut = isMac ? 'Meta+KeyB' : 'Control+KeyB';
+    const shortcut = isMac ? 'Meta+Slash' : 'Control+Slash';
     
     // Create a snippet
     await createSnippet(page, '// First snippet\ntest');
     
-    const sidebar = page.locator('#sidebar');
+    const html = page.locator('html');
     const snippetItem = page.locator('#list li').first();
     
     // Verify snippet is visible
@@ -136,11 +144,13 @@ test.describe('Sidebar Toggle', () => {
 
     // Hide sidebar
     await page.keyboard.press(shortcut);
-    await expect(sidebar).toBeHidden();
+    await page.waitForTimeout(300);
+    await expect(html).toHaveClass(/sidebar-hidden/);
 
     // Show sidebar
     await page.keyboard.press(shortcut);
-    await expect(sidebar).toBeVisible();
+    await page.waitForTimeout(300);
+    await expect(html).not.toHaveClass(/sidebar-hidden/);
 
     // Snippet should still be there
     await expect(snippetItem).toBeVisible();

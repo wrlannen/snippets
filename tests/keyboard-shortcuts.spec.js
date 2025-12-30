@@ -11,7 +11,7 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
         await page.reload();
     });
 
-    test('⌘K creates a new snippet on Mac', async ({ page }) => {
+    test('⌘K opens command palette on Mac', async ({ page }) => {
         // Simulate Mac platform
         await page.addInitScript(() => {
             Object.defineProperty(navigator, 'platform', {
@@ -23,18 +23,12 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
         // Press ⌘K
         await page.keyboard.press('Meta+k');
 
-        // Should create a new snippet and focus editor
-        await expect(page.locator('.CodeMirror')).toHaveClass(/CodeMirror-focused/);
-
-        // Type some content
-        await fillEditor(page, 'Test snippet from ⌘K');
-        await page.waitForTimeout(1000);
-
-        // Verify snippet was created
-        await expect(page.locator('#list li')).toHaveCount(1);
+        // Command palette should be visible
+        await expect(page.locator('#commandPalette')).not.toHaveClass(/hidden/);
+        await expect(page.locator('#commandPaletteInput')).toBeFocused();
     });
 
-    test('Ctrl+K creates a new snippet on Windows', async ({ page }) => {
+    test('Ctrl+K opens command palette on Windows', async ({ page }) => {
         // Simulate Windows platform
         await page.addInitScript(() => {
             Object.defineProperty(navigator, 'platform', {
@@ -46,33 +40,129 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
         // Press Ctrl+K
         await page.keyboard.press('Control+k');
 
+        // Command palette should be visible
+        await expect(page.locator('#commandPalette')).not.toHaveClass(/hidden/);
+        await expect(page.locator('#commandPaletteInput')).toBeFocused();
+    });
+
+    test('Can create new snippet via command palette', async ({ page }) => {
+        // Open command palette
+        await page.keyboard.press('Meta+k');
+
+        // Type "new" to filter
+        await page.locator('#commandPaletteInput').fill('new');
+        await page.waitForTimeout(100);
+
+        // Press Enter to execute "New Snippet" command
+        await page.keyboard.press('Enter');
+        await page.waitForTimeout(500);
+
         // Should create a new snippet and focus editor
         await expect(page.locator('.CodeMirror')).toHaveClass(/CodeMirror-focused/);
 
         // Type some content
-        await fillEditor(page, 'Test snippet from Ctrl+K');
+        await fillEditor(page, 'Test snippet from command palette');
         await page.waitForTimeout(1000);
 
         // Verify snippet was created
         await expect(page.locator('#list li')).toHaveCount(1);
     });
 
-    test('⌘F opens search on Mac', async ({ page }) => {
+    test('Can search via command palette', async ({ page }) => {
         // Create some snippets first
         await page.keyboard.press('Meta+k');
+        await page.locator('#commandPaletteInput').fill('new');
+        await page.keyboard.press('Enter');
+        await page.waitForTimeout(300);
         await fillEditor(page, 'First snippet');
         await page.waitForTimeout(1000);
 
+        // Open command palette again
         await page.keyboard.press('Meta+k');
-        await fillEditor(page, 'Second snippet');
-        await page.waitForTimeout(1000);
+        await page.locator('#commandPaletteInput').fill('search');
+        await page.keyboard.press('Enter');
+        await page.waitForTimeout(300);
 
-        // Press ⌘F
-        await page.keyboard.press('Meta+f');
-
-        // Search should be visible and focused
-        await expect(page.locator('#searchWrapper')).not.toHaveClass(/hidden/);
+        // Search input should be focused
         await expect(page.locator('#search')).toBeFocused();
+    });
+
+    test('⌘/ toggles sidebar', async ({ page }) => {
+        // Initially sidebar should be visible
+        await expect(page.locator('#sidebar')).toBeVisible();
+
+        // Press ⌘/
+        await page.keyboard.press('Meta+/');
+        await page.waitForTimeout(300);
+
+        // Check if sidebar is hidden via CSS class
+        const html = page.locator('html');
+        await expect(html).toHaveClass(/sidebar-hidden/);
+
+        // Press ⌘/ again to show
+        await page.keyboard.press('Meta+/');
+        await page.waitForTimeout(300);
+
+        await expect(html).not.toHaveClass(/sidebar-hidden/);
+    });
+
+    test('Escape closes command palette', async ({ page }) => {
+        // Open command palette
+        await page.keyboard.press('Meta+k');
+        await expect(page.locator('#commandPalette')).not.toHaveClass(/hidden/);
+
+        // Press Escape
+        await page.keyboard.press('Escape');
+        await page.waitForTimeout(100);
+
+        // Command palette should be closed
+        await expect(page.locator('#commandPalette')).toHaveClass(/hidden/);
+    });
+
+    test('Arrow keys navigate command palette', async ({ page }) => {
+        // Open command palette
+        await page.keyboard.press('Meta+k');
+        
+        // Get the command list
+        const list = page.locator('#commandPaletteList');
+        
+        // First item should be selected by default
+        let selected = list.locator('[data-selected="true"]');
+        await expect(selected).toHaveCount(1);
+        
+        // Press down arrow
+        await page.keyboard.press('ArrowDown');
+        await page.waitForTimeout(100);
+        
+        // Second item should now be selected
+        selected = list.locator('[data-selected="true"]');
+        await expect(selected).toHaveCount(1);
+        
+        // Press up arrow
+        await page.keyboard.press('ArrowUp');
+        await page.waitForTimeout(100);
+        
+        // First item should be selected again
+        selected = list.locator('[data-selected="true"]');
+        await expect(selected).toHaveCount(1);
+    });
+
+    test('Fuzzy search filters commands', async ({ page }) => {
+        // Open command palette
+        await page.keyboard.press('Meta+k');
+        
+        // Get initial command count
+        const initialCount = await page.locator('#commandPaletteList > div').count();
+        expect(initialCount).toBeGreaterThan(0);
+        
+        // Type a search query
+        await page.locator('#commandPaletteInput').fill('exp');
+        await page.waitForTimeout(100);
+        
+        // Should filter to export command
+        const filteredCount = await page.locator('#commandPaletteList > div').count();
+        expect(filteredCount).toBeLessThan(initialCount);
+        expect(filteredCount).toBeGreaterThan(0);
     });
 
     test('Escape clears search', async ({ page }) => {
@@ -99,7 +189,6 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
 
         // Check status bar
         await expect(page.locator('#modKey')).toHaveText('⌘');
-        await expect(page.locator('#modKeySearch')).toHaveText('⌘');
 
         // Open About modal
         await page.locator('#aboutBtn').click();
@@ -120,7 +209,6 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
 
         // Check status bar
         await expect(page.locator('#modKey')).toHaveText('Ctrl');
-        await expect(page.locator('#modKeySearch')).toHaveText('Ctrl');
 
         // Open About modal
         await page.locator('#aboutBtn').click();
@@ -141,7 +229,6 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
 
         // Check status bar
         await expect(page.locator('#modKey')).toHaveText('Ctrl');
-        await expect(page.locator('#modKeySearch')).toHaveText('Ctrl');
     });
 
     test('About modal opens and closes correctly', async ({ page }) => {
@@ -175,8 +262,7 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
 
     test('keyboard shortcuts are displayed in status bar', async ({ page }) => {
         // Check that shortcuts are visible
-        await expect(page.locator('text=K New')).toBeVisible();
-        await expect(page.locator('text=F Search')).toBeVisible();
+        await expect(page.locator('text=K Commands')).toBeVisible();
     });
 
     test('About modal shows all keyboard shortcuts', async ({ page }) => {
@@ -184,16 +270,14 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
         const modal = page.locator('#aboutModal');
 
         // Check shortcuts are documented
-        await expect(modal.locator('text=New snippet')).toBeVisible();
-        await expect(modal.locator('text=Search')).toBeVisible();
-        await expect(modal.locator('text=Copy snippet')).toBeVisible();
+        await expect(modal.locator('text=Command palette')).toBeVisible();
+        await expect(modal.locator('text=Toggle sidebar')).toBeVisible();
     });
 
     test('About modal shows privacy information', async ({ page }) => {
         await page.locator('#aboutBtn').click();
 
         // Check privacy and backup section (updated copy)
-        await expect(page.locator('text=Minimal local scratchpad for code & notes')).toBeVisible();
-        await expect(page.locator('text=stored locally in your browser')).toBeVisible();
+        await expect(page.locator('text=A keyboard-first scratchpad for snippets, drafts, and quick notes - stored locally in your browser.')).toBeVisible();
     });
 });

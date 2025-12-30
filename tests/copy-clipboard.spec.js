@@ -20,12 +20,19 @@ test.describe('Copy to Clipboard', () => {
 
     // Create a snippet
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     const testContent = 'Test Snippet\nLine 2\nLine 3';
     await fillEditor(page, testContent);
     await page.waitForTimeout(1000);
 
-    // Use copy shortcut (Cmd+Shift+C)
-    await page.keyboard.press('Meta+Shift+c');
+    // Use copy command via palette
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('copy');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
 
     // Verify status message appears
     await expect(page.locator('#status')).toHaveText('Copied to clipboard');
@@ -41,11 +48,18 @@ test.describe('Copy to Clipboard', () => {
 
     // Create a snippet
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     await fillEditor(page, 'Sample content for copy test');
     await page.waitForTimeout(1000);
 
-    // Use copy shortcut
-    await page.keyboard.press('Meta+Shift+c');
+    // Use copy command
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('copy');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
 
     // Check status message is white (highlighting)
     await expect(page.locator('#status')).toHaveClass(/text-white/);
@@ -61,10 +75,15 @@ test.describe('Copy to Clipboard', () => {
 
     // Create empty snippet
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
     await page.waitForTimeout(500);
 
-    // Use copy shortcut with no content
-    await page.keyboard.press('Meta+Shift+c');
+    // Use copy command with no content
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('copy');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
 
     // Verify appropriate message
     await expect(page.locator('#status')).toHaveText('Nothing to copy');
@@ -75,11 +94,18 @@ test.describe('Copy to Clipboard', () => {
 
     // Create snippet with only whitespace
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     await fillEditor(page, '   \n   \n   ');
     await page.waitForTimeout(500);
 
-    // Use copy shortcut
-    await page.keyboard.press('Meta+Shift+c');
+    // Use copy command
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('copy');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
 
     // Should treat whitespace-only as empty
     await expect(page.locator('#status')).toHaveText('Nothing to copy');
@@ -91,6 +117,10 @@ test.describe('Copy to Clipboard', () => {
 
     // Create multi-line snippet with special characters
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     const multiLineContent = `function test() {
   console.log("Hello");
   return 42;
@@ -98,8 +128,12 @@ test.describe('Copy to Clipboard', () => {
     await fillEditor(page, multiLineContent);
     await page.waitForTimeout(1000);
 
-    // Use copy shortcut
-    await page.keyboard.press('Meta+Shift+c');
+    // Use copy command
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('copy');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     const clipboardContent = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboardContent).toBe(multiLineContent);
   });
@@ -110,12 +144,20 @@ test.describe('Copy to Clipboard', () => {
 
     // Create snippet with special characters
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     const specialContent = 'Special chars: <>&"\'`\n${}[]()';
     await fillEditor(page, specialContent);
     await page.waitForTimeout(1000);
 
-    // Use copy shortcut
-    await page.keyboard.press('Meta+Shift+c');
+    // Use copy command
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('copy');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     const clipboardContent = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboardContent).toBe(specialContent);
   });
@@ -126,23 +168,39 @@ test.describe('Copy to Clipboard', () => {
 
     // Create first snippet
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     const content1 = 'First snippet';
     await fillEditor(page, content1);
     await page.waitForTimeout(1000);
 
     // Copy first
-    await page.keyboard.press('Meta+Shift+c');
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('copy');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     let clipboardContent = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboardContent).toBe(content1);
 
     // Create second snippet
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     const content2 = 'Second snippet';
     await fillEditor(page, content2);
     await page.waitForTimeout(1000);
 
     // Copy second
-    await page.keyboard.press('Meta+Shift+c');
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('copy');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    
     clipboardContent = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboardContent).toBe(content2);
   });

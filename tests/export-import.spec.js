@@ -29,12 +29,18 @@ test.describe('Export/Import Functionality', () => {
   test('exports snippets and settings to JSON', async ({ page }) => {
     await page.goto('/');
 
-    // Create some snippets
+    // Create some snippets via command palette
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
     await fillEditor(page, 'First Snippet\nFirst content');
     await page.waitForTimeout(1000);
 
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
     await fillEditor(page, 'Second Snippet\nSecond content');
     await page.waitForTimeout(1000);
 
@@ -305,12 +311,18 @@ test.describe('Export/Import Functionality', () => {
   test('export and import roundtrip preserves data', async ({ page }) => {
     await page.goto('/');
 
-    // Create snippets and change settings
+    // Create snippets via command palette
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
     await fillEditor(page, 'Test 1\nContent 1');
     await page.waitForTimeout(1000);
 
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
     await fillEditor(page, 'Test 2\nContent 2');
     await page.waitForTimeout(1000);
 
