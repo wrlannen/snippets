@@ -1,0 +1,10 @@
+#!/bin/bash
+set -euo pipefail
+
+LOG_DIR="/var/log/myapp"
+MAX_DAYS=30
+
+find "$LOG_DIR" -name "*.log" -type f -mtime +$MAX_DAYS -delete
+
+echo "Cleaned logs older than $MAX_DAYS days"
+logger "Log cleanup completed"

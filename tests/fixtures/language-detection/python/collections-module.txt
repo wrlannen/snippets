@@ -1,0 +1,14 @@
+from collections import defaultdict, Counter, namedtuple
+
+# defaultdict example
+word_count = defaultdict(int)
+for word in ['apple', 'banana', 'apple']:
+    word_count[word] += 1
+
+# Counter example
+counter = Counter(['a', 'b', 'a', 'c', 'a', 'b'])
+most_common = counter.most_common(2)
+
+# namedtuple example
+Point = namedtuple('Point', ['x', 'y'])
+p = Point(10, 20)

@@ -1,0 +1,17 @@
+.parent {
+    container-type: inline-size;
+    container-name: card;
+}
+
+@container card (min-width: 400px) {
+    .child {
+        display: flex;
+        gap: 1rem;
+    }
+}
+
+@container (min-width: 600px) {
+    .responsive-content {
+        grid-template-columns: 1fr 1fr;
+    }
+}

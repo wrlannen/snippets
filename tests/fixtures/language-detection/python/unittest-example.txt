@@ -1,0 +1,19 @@
+import unittest
+from unittest.mock import Mock, patch
+
+class TestCalculator(unittest.TestCase):
+    def setUp(self):
+        self.calc = Calculator()
+
+    def test_add(self):
+        self.assertEqual(self.calc.add(2, 3), 5)
+
+    def test_divide_by_zero(self):
+        with self.assertRaises(ZeroDivisionError):
+            self.calc.divide(10, 0)
+
+    @patch('module.external_api')
+    def test_with_mock(self, mock_api):
+        mock_api.return_value = {'status': 'ok'}
+        result = self.calc.fetch_data()
+        self.assertTrue(result)

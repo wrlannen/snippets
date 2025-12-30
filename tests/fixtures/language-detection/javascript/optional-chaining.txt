@@ -1,0 +1,11 @@
+const user = response?.data?.user;
+const city = user?.address?.city ?? 'Unknown';
+
+const handler = obj.onClick?.();
+const item = arr?.[0];
+
+const config = {
+  api: {
+    endpoint: process.env.API_URL ?? 'http://localhost:3000'
+  }
+};

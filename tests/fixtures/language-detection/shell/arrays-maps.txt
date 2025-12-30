@@ -1,0 +1,15 @@
+#!/bin/bash
+
+declare -A config
+config["host"]="localhost"
+config["port"]="8080"
+config["debug"]="true"
+
+for key in "${!config[@]}"; do
+    echo "$key = ${config[$key]}"
+done
+
+files=("file1.txt" "file2.txt" "file3.txt")
+for f in "${files[@]}"; do
+    touch "$f"
+done

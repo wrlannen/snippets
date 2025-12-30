@@ -1,0 +1,10 @@
+read -p "Enter your name: " name
+read -sp "Enter password: " password
+echo ""
+
+if [[ -z "$name" ]]; then
+    echo "Error: Name is required"
+    exit 1
+fi
+
+echo "Welcome, $name!"

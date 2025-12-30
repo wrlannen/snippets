@@ -1,0 +1,22 @@
+### Installation
+
+First, install the dependencies:
+
+```bash
+npm install
+```
+
+Then create a configuration file:
+
+```json
+{
+  "debug": true,
+  "port": 3000
+}
+```
+
+Finally, start the server:
+
+```bash
+npm start
+```

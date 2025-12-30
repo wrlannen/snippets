@@ -1,0 +1,11 @@
+SELECT 
+    DATE_TRUNC('month', created_at) as month,
+    COUNT(*) as total_orders,
+    SUM(amount) as revenue,
+    AVG(amount) as avg_order_value
+FROM orders
+WHERE created_at >= '2023-01-01'
+GROUP BY DATE_TRUNC('month', created_at)
+HAVING COUNT(*) > 100
+ORDER BY month DESC
+LIMIT 12;

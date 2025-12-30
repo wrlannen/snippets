@@ -1,0 +1,14 @@
+server:
+  host: 0.0.0.0
+  port: 8080
+  ssl:
+    enabled: true
+    cert: /etc/ssl/cert.pem
+    key: /etc/ssl/key.pem
+
+database:
+  driver: postgres
+  host: localhost
+  port: 5432
+  name: myapp
+  pool_size: 10

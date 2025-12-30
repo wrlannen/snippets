@@ -1,0 +1,14 @@
+<iframe 
+    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+    width="560" 
+    height="315"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media"
+    allowfullscreen
+    loading="lazy"
+    title="Video player">
+</iframe>
+
+<object data="document.pdf" type="application/pdf" width="600" height="400">
+    <p>PDF cannot be displayed. <a href="document.pdf">Download</a></p>
+</object>

@@ -1,0 +1,14 @@
+---
+title: Blog Post Title
+author: John Doe
+date: 2024-01-15
+tags: [javascript, web, tutorial]
+---
+
+# Blog Post Title
+
+This is the introduction paragraph with **bold** and *italic* text.
+
+## Section 1
+
+Some content here with `inline code` examples.

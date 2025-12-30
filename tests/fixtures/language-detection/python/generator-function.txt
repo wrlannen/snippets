@@ -1,0 +1,13 @@
+def fibonacci(n):
+    """Generate first n Fibonacci numbers."""
+    a, b = 0, 1
+    for _ in range(n):
+        yield a
+        a, b = b, a + b
+
+# Usage
+for num in fibonacci(10):
+    print(num)
+
+# Convert to list
+fib_list = list(fibonacci(20))

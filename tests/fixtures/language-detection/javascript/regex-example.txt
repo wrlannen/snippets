@@ -1,0 +1,10 @@
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phoneRegex = /^\+?[\d\s-]{10,}$/;
+
+function validateEmail(email) {
+  return emailRegex.test(email);
+}
+
+const text = 'Hello World';
+const matches = text.match(/\w+/g);
+const replaced = text.replace(/World/, 'JavaScript');

@@ -1,0 +1,11 @@
+CREATE OR REPLACE VIEW active_orders AS
+SELECT 
+    o.id,
+    o.order_date,
+    o.total_amount,
+    c.name as customer_name,
+    c.email as customer_email
+FROM orders o
+JOIN customers c ON o.customer_id = c.id
+WHERE o.status NOT IN ('cancelled', 'refunded')
+AND o.order_date >= CURRENT_DATE - INTERVAL '30 days';

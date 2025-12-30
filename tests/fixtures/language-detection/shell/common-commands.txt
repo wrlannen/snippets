@@ -1,0 +1,14 @@
+echo "Finding large files..."
+find /var/log -type f -size +100M
+
+echo "Checking disk usage..."
+df -h
+
+echo "Listing processes..."
+ps aux | grep nginx
+
+curl -X POST https://api.example.com/data \
+  -H "Content-Type: application/json" \
+  -d '{"key": "value"}'
+
+grep -r "error" /var/log/*.log | tail -n 20

@@ -1,0 +1,15 @@
+import json
+from pathlib import Path
+
+# Read JSON file
+config_path = Path('config.json')
+with open(config_path) as f:
+    config = json.load(f)
+
+# Write JSON file
+data = {'name': 'test', 'value': 42}
+with open('output.json', 'w') as f:
+    json.dump(data, f, indent=2)
+
+# Parse JSON string
+parsed = json.loads('{"key": "value"}')

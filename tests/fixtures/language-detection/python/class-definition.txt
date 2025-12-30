@@ -1,0 +1,15 @@
+# Python class with inheritance
+class Animal:
+    def __init__(self, name):
+        self.name = name
+    
+    def speak(self):
+        raise NotImplementedError("Subclass must implement")
+
+class Dog(Animal):
+    def __init__(self, name, breed):
+        super().__init__(name)
+        self.breed = breed
+    
+    def speak(self):
+        return f"{self.name} says Woof!"

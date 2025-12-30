@@ -1,0 +1,11 @@
+TEXT="Hello, World!"
+LOWER="${TEXT,,}"
+UPPER="${TEXT^^}"
+LENGTH="${#TEXT}"
+
+FILENAME="/path/to/file.tar.gz"
+DIR="${FILENAME%/*}"
+BASE="${FILENAME##*/}"
+EXT="${FILENAME##*.}"
+
+DEFAULT="${UNSET_VAR:-default_value}"

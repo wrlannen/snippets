@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Header>
+        <auth:Credentials xmlns:auth="http://example.com/auth">
+            <auth:Username>user</auth:Username>
+            <auth:Token>abc123</auth:Token>
+        </auth:Credentials>
+    </soap:Header>
+    <soap:Body>
+        <GetUserRequest xmlns="http://example.com/users">
+            <UserId>12345</UserId>
+        </GetUserRequest>
+    </soap:Body>
+</soap:Envelope>

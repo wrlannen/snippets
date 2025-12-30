@@ -1,0 +1,24 @@
+# API Documentation
+
+## Example Request
+
+```bash
+curl -X GET https://api.example.com/users
+```
+
+## Example Response
+
+```json
+{
+  "users": [
+    {"id": 1, "name": "Alice"},
+    {"id": 2, "name": "Bob"}
+  ]
+}
+```
+
+## Installation
+
+```sh
+npm install example-package
+```

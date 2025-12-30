@@ -1,0 +1,15 @@
+process_file() {
+    local file="$1"
+    local output_dir="$2"
+    
+    if [[ ! -f "$file" ]]; then
+        echo "File not found: $file"
+        return 1
+    fi
+    
+    local basename=$(basename "$file")
+    cp "$file" "$output_dir/$basename.bak"
+    return 0
+}
+
+process_file "/tmp/data.txt" "/backup"

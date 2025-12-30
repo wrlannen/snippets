@@ -1,0 +1,17 @@
+rules:
+  - alert: HighCPUUsage
+    expr: cpu_usage > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: High CPU usage detected
+      description: CPU usage is {{ $value }}%
+
+  - alert: DiskSpaceLow
+    expr: disk_free_percent < 10
+    for: 10m
+    labels:
+      severity: critical
+    annotations:
+      summary: Low disk space

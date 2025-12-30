@@ -1,0 +1,18 @@
+<input type="text" list="browsers" placeholder="Choose a browser">
+<datalist id="browsers">
+    <option value="Chrome">
+    <option value="Firefox">
+    <option value="Safari">
+    <option value="Edge">
+</datalist>
+
+<select name="country" required>
+    <optgroup label="North America">
+        <option value="us">United States</option>
+        <option value="ca">Canada</option>
+    </optgroup>
+    <optgroup label="Europe">
+        <option value="uk">United Kingdom</option>
+        <option value="de">Germany</option>
+    </optgroup>
+</select>

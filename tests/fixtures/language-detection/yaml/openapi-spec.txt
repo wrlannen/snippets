@@ -1,0 +1,21 @@
+openapi: 3.0.0
+info:
+  title: User API
+  version: 1.0.0
+  description: API for managing users
+
+paths:
+  /users:
+    get:
+      summary: List all users
+      responses:
+        '200':
+          description: Successful response
+    post:
+      summary: Create a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'

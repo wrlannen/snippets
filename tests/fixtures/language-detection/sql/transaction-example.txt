@@ -1,0 +1,13 @@
+BEGIN;
+
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE id = 2;
+
+-- Check constraints
+SELECT balance FROM accounts WHERE id = 1;
+
+-- If valid, commit; otherwise rollback
+COMMIT;
+
+-- Or in case of error:
+-- ROLLBACK;

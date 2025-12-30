@@ -1,0 +1,9 @@
+cat data.csv | \
+    grep -v "^#" | \
+    cut -d',' -f1,3 | \
+    sort -t',' -k2 -n | \
+    uniq | \
+    head -n 20 > output.txt
+
+wc -l output.txt
+md5sum output.txt

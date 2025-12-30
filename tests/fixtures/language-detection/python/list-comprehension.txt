@@ -1,0 +1,11 @@
+# List comprehensions and generators
+numbers = [1, 2, 3, 4, 5]
+
+squares = [n**2 for n in numbers]
+evens = [n for n in numbers if n % 2 == 0]
+
+# Generator expression
+sum_of_squares = sum(n**2 for n in range(100))
+
+# Dictionary comprehension
+word_lengths = {word: len(word) for word in ['hello', 'world']}

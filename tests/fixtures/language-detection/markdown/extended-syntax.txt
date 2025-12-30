@@ -1,0 +1,16 @@
+# Emoji and Special Characters
+
+:rocket: :star: :heart:
+
+## Strikethrough
+
+~~This text is crossed out~~
+
+## Subscript and Superscript
+
+H~2~O is water
+X^2^ is X squared
+
+## Highlighting
+
+==This is highlighted text==

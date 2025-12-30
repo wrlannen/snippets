@@ -1,0 +1,16 @@
+from functools import lru_cache
+import time
+
+@lru_cache(maxsize=128)
+def expensive_computation(n):
+    time.sleep(0.1)  # Simulate slow operation
+    return n ** 2
+
+# First call is slow
+result1 = expensive_computation(42)
+
+# Second call is instant (cached)
+result2 = expensive_computation(42)
+
+# Clear cache
+expensive_computation.cache_clear()

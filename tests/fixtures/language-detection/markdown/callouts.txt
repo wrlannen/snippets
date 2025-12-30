@@ -1,0 +1,17 @@
+> **Note:** This is an important note.
+
+> **Warning:** Be careful with this operation.
+
+> **Tip:** Here's a helpful tip for users.
+
+## Horizontal Rules
+
+Content above the line.
+
+---
+
+Content below the line.
+
+***
+
+Another section.

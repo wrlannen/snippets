@@ -1,0 +1,14 @@
+function getStatusMessage(status) {
+  switch (status) {
+    case 'pending':
+      return 'Your order is being processed';
+    case 'shipped':
+      return 'Your order is on the way';
+    case 'delivered':
+      return 'Your order has arrived';
+    case 'cancelled':
+      return 'Your order was cancelled';
+    default:
+      return 'Unknown status';
+  }
+}

@@ -1,0 +1,11 @@
+UPDATE orders
+SET 
+    status = 'shipped',
+    shipped_at = CURRENT_TIMESTAMP,
+    tracking_number = 'TRK123456'
+WHERE order_id IN (
+    SELECT order_id 
+    FROM order_items 
+    WHERE product_id = 42
+)
+AND status = 'pending';

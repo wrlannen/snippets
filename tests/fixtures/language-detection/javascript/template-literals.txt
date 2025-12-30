@@ -1,0 +1,13 @@
+const name = 'World';
+const greeting = `Hello, ${name}!`;
+
+const multiline = `
+  This is a multiline string
+  with ${2 + 2} interpolations
+  and proper indentation.
+`;
+
+function tag(strings, ...values) {
+  return strings.reduce((acc, str, i) => 
+    acc + str + (values[i] || ''), '');
+}

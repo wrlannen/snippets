@@ -1,0 +1,13 @@
+class ValidationError(Exception):
+    def __init__(self, message, field=None):
+        super().__init__(message)
+        self.field = field
+
+def validate_age(age):
+    if not isinstance(age, int):
+        raise TypeError("Age must be an integer")
+    if age < 0:
+        raise ValueError("Age cannot be negative")
+    if age > 150:
+        raise ValidationError("Invalid age", field="age")
+    return True

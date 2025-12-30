@@ -1,0 +1,21 @@
+.blur {
+    filter: blur(5px);
+}
+
+.grayscale {
+    filter: grayscale(100%);
+}
+
+.combined-filter {
+    filter: brightness(1.2) contrast(1.1) saturate(1.3);
+}
+
+.backdrop {
+    backdrop-filter: blur(10px) saturate(180%);
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.blend-mode {
+    mix-blend-mode: multiply;
+    background-blend-mode: overlay;
+}

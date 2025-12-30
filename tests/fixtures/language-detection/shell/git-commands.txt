@@ -1,0 +1,10 @@
+git clone https://github.com/user/repo.git
+git checkout -b feature/new-feature
+
+git add .
+git commit -m "Add new feature"
+git push origin feature/new-feature
+
+git fetch --all
+git rebase origin/main
+git merge --squash feature-branch

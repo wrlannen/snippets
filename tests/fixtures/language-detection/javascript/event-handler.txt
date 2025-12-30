@@ -1,0 +1,12 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const button = document.getElementById('submit');
+  const input = document.querySelector('input[name="email"]');
+  
+  button.addEventListener('click', (event) => {
+    event.preventDefault();
+    const value = input.value.trim();
+    if (value) {
+      submitForm(value);
+    }
+  });
+});

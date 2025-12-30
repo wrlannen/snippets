@@ -1,0 +1,10 @@
+SELECT 
+    employee_id,
+    department,
+    salary,
+    RANK() OVER (PARTITION BY department ORDER BY salary DESC) as dept_rank,
+    ROW_NUMBER() OVER (ORDER BY salary DESC) as overall_rank,
+    AVG(salary) OVER (PARTITION BY department) as dept_avg,
+    SUM(salary) OVER () as total_salaries
+FROM employees
+ORDER BY department, salary DESC;

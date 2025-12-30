@@ -1,0 +1,11 @@
+trap cleanup EXIT
+trap 'echo "Interrupted"; exit 1' INT TERM
+
+cleanup() {
+    echo "Cleaning up..."
+    rm -f /tmp/lockfile
+}
+
+touch /tmp/lockfile
+sleep 10
+echo "Done"

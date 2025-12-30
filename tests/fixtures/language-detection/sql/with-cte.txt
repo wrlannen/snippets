@@ -1,0 +1,19 @@
+WITH monthly_sales AS (
+    SELECT 
+        DATE_TRUNC('month', order_date) as month,
+        SUM(total_amount) as total_sales
+    FROM orders
+    WHERE status = 'completed'
+    GROUP BY DATE_TRUNC('month', order_date)
+),
+avg_sales AS (
+    SELECT AVG(total_sales) as avg_monthly_sales
+    FROM monthly_sales
+)
+SELECT 
+    ms.month,
+    ms.total_sales,
+    (ms.total_sales - a.avg_monthly_sales) as variance
+FROM monthly_sales ms
+CROSS JOIN avg_sales a
+ORDER BY ms.month DESC;

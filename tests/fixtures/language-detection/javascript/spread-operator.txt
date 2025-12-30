@@ -1,0 +1,11 @@
+const defaults = { theme: 'dark', fontSize: 14 };
+const userPrefs = { fontSize: 16 };
+const settings = { ...defaults, ...userPrefs };
+
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+const combined = [...arr1, ...arr2];
+
+function sum(...numbers) {
+  return numbers.reduce((a, b) => a + b, 0);
+}

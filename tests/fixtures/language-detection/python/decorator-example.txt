@@ -1,0 +1,18 @@
+from functools import wraps
+
+def timing_decorator(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        import time
+        start = time.time()
+        result = func(*args, **kwargs)
+        elapsed = time.time() - start
+        print(f"{func.__name__} took {elapsed:.2f}s")
+        return result
+    return wrapper
+
+@timing_decorator
+def slow_function():
+    import time
+    time.sleep(2)
+    return "Done"

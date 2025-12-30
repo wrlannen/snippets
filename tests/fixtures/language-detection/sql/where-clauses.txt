@@ -1,0 +1,12 @@
+SELECT * FROM products WHERE name LIKE '%phone%';
+SELECT * FROM users WHERE email ILIKE '%@gmail.com';
+
+SELECT * FROM orders 
+WHERE status IN ('pending', 'processing', 'shipped');
+
+SELECT * FROM products 
+WHERE price BETWEEN 10 AND 100;
+
+SELECT * FROM users 
+WHERE deleted_at IS NULL
+AND (role = 'admin' OR is_verified = true);

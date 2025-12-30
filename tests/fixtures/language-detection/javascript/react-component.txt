@@ -1,0 +1,20 @@
+// React Component
+import React, { useState, useEffect } from 'react';
+
+function TodoList({ items }) {
+  const [filter, setFilter] = useState('all');
+  
+  useEffect(() => {
+    console.log('Filter changed:', filter);
+  }, [filter]);
+  
+  return (
+    <div className="todo-list">
+      {items.map(item => (
+        <div key={item.id}>{item.text}</div>
+      ))}
+    </div>
+  );
+}
+
+export default TodoList;

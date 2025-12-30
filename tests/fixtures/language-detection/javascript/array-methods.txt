@@ -1,0 +1,11 @@
+const users = [
+  { id: 1, name: 'Alice', age: 25 },
+  { id: 2, name: 'Bob', age: 30 },
+  { id: 3, name: 'Charlie', age: 35 }
+];
+
+const names = users.map(u => u.name);
+const adults = users.filter(u => u.age >= 30);
+const found = users.find(u => u.id === 2);
+const hasMinor = users.some(u => u.age < 18);
+const allAdults = users.every(u => u.age >= 18);

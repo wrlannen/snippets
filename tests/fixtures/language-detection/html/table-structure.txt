@@ -1,0 +1,16 @@
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Alice</td>
+            <td>alice@example.com</td>
+            <td><span class="badge active">Active</span></td>
+        </tr>
+    </tbody>
+</table>

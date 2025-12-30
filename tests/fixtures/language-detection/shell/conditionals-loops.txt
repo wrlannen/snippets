@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+for file in *.txt; do
+    if [ -f "$file" ]; then
+        echo "Processing $file"
+        cat "$file" | wc -l
+    fi
+done
+
+while read line; do
+    echo "Line: $line"
+done < input.txt
+
+if [ $? -eq 0 ]; then
+    echo "Success"
+else
+    echo "Failed"
+    exit 1
+fi

@@ -1,0 +1,13 @@
+-- Delete with subquery
+DELETE FROM orders
+WHERE customer_id IN (
+    SELECT id FROM customers
+    WHERE status = 'inactive'
+    AND last_login < NOW() - INTERVAL '1 year'
+);
+
+-- Soft delete pattern
+UPDATE users
+SET deleted_at = CURRENT_TIMESTAMP,
+    is_active = false
+WHERE id = 123;

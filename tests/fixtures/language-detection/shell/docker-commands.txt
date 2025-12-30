@@ -1,0 +1,10 @@
+docker build -t myapp:latest .
+docker run -d --name myapp -p 8080:8080 myapp:latest
+
+docker exec -it myapp bash
+docker logs -f myapp
+
+docker-compose up -d
+docker-compose logs --tail=100
+
+docker system prune -af

@@ -1,0 +1,11 @@
+const user = {
+  name: 'Alice',
+  age: 30,
+  email: 'alice@example.com'
+};
+
+const { name, age } = user;
+const { email: userEmail } = user;
+
+const arr = [1, 2, 3, 4, 5];
+const [first, second, ...rest] = arr;

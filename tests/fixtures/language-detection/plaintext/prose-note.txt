@@ -1,0 +1,9 @@
+// Meeting Notes
+
+We discussed the upcoming project launch and decided on the following action items:
+
+The team needs to complete the testing phase by next Friday. This includes both unit tests and integration tests.
+
+John will coordinate with the design team to finalize the UI mockups. Sarah mentioned she can help with the documentation.
+
+We should schedule a follow-up meeting to review progress. Let's plan for next Tuesday at 2pm.

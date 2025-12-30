@@ -1,0 +1,7 @@
+// Backup & sync
+
+Snippets are stored locally in your browser (localStorage).
+
+Use Export to download a JSON backup.
+
+Use Import to restore from a backup.

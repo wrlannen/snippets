@@ -1,0 +1,14 @@
+SELECT 
+    CASE 
+        WHEN age < 18 THEN 'Minor'
+        WHEN age BETWEEN 18 AND 65 THEN 'Adult'
+        ELSE 'Senior'
+    END as age_group,
+    COUNT(*) as count
+FROM users
+GROUP BY 
+    CASE 
+        WHEN age < 18 THEN 'Minor'
+        WHEN age BETWEEN 18 AND 65 THEN 'Adult'
+        ELSE 'Senior'
+    END;

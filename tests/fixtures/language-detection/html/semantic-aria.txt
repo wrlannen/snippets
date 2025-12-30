@@ -1,0 +1,20 @@
+<main role="main" aria-labelledby="main-title">
+    <h1 id="main-title">Page Title</h1>
+    
+    <section aria-label="Featured content">
+        <article>
+            <header>
+                <h2>Article Title</h2>
+                <time datetime="2024-01-15">January 15, 2024</time>
+            </header>
+            <p>Article content...</p>
+            <footer>
+                <address>By <a href="mailto:author@example.com">Author</a></address>
+            </footer>
+        </article>
+    </section>
+    
+    <aside aria-label="Related content">
+        <h3>Related Articles</h3>
+    </aside>
+</main>

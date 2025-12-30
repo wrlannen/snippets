@@ -1,0 +1,15 @@
+# Math Examples
+
+Inline math: $E = mc^2$
+
+Block math:
+
+$$
+\frac{n!}{k!(n-k)!} = \binom{n}{k}
+$$
+
+Another equation:
+
+$$
+\sum_{i=1}^{n} i = \frac{n(n+1)}{2}
+$$

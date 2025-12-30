@@ -1,0 +1,15 @@
+<video controls width="640" poster="thumbnail.jpg">
+    <source src="video.mp4" type="video/mp4">
+    <source src="video.webm" type="video/webm">
+    Your browser doesn't support video.
+</video>
+
+<audio controls>
+    <source src="audio.mp3" type="audio/mpeg">
+    <source src="audio.ogg" type="audio/ogg">
+</audio>
+
+<picture>
+    <source srcset="image-large.webp" media="(min-width: 800px)">
+    <img src="image-small.jpg" alt="Responsive image">
+</picture>

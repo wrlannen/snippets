@@ -1,0 +1,13 @@
+SELECT 
+    p.name,
+    p.price,
+    c.name as category,
+    COALESCE(r.avg_rating, 0) as rating
+FROM products p
+INNER JOIN categories c ON p.category_id = c.id
+LEFT JOIN (
+    SELECT product_id, AVG(rating) as avg_rating
+    FROM reviews
+    GROUP BY product_id
+) r ON p.id = r.product_id
+WHERE p.active = true;

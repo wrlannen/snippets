@@ -1,0 +1,18 @@
+default:
+  image: node:18-alpine
+  
+  before_script:
+    - npm ci
+
+  cache:
+    paths:
+      - node_modules/
+
+lint:
+  script: npm run lint
+
+test:
+  script: npm test
+  artifacts:
+    reports:
+      junit: test-results.xml

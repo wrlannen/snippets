@@ -1,0 +1,15 @@
+# Type hints and dataclasses
+from dataclasses import dataclass
+from typing import List, Optional
+
+@dataclass
+class User:
+    id: int
+    name: str
+    email: str
+    age: Optional[int] = None
+    roles: List[str] = None
+
+    def __post_init__(self):
+        if self.roles is None:
+            self.roles = []

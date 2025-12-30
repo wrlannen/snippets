@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Backup script
+BACKUP_DIR="/backup"
+DATE=$(date +%Y%m%d)
+
+echo "Starting backup at $(date)"
+
+if [ ! -d "$BACKUP_DIR" ]; then
+    mkdir -p "$BACKUP_DIR"
+fi
+
+tar -czf "$BACKUP_DIR/backup-$DATE.tar.gz" /var/www/html
+
+echo "Backup completed"

@@ -1,0 +1,11 @@
+while getopts "hv:o:" opt; do
+    case $opt in
+        h) show_help; exit 0 ;;
+        v) VERBOSE="$OPTARG" ;;
+        o) OUTPUT="$OPTARG" ;;
+        \?) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
+    esac
+done
+
+shift $((OPTIND-1))
+echo "Remaining args: $@"

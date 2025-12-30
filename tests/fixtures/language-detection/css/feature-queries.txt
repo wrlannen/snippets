@@ -1,0 +1,25 @@
+@supports (display: grid) {
+    .container {
+        display: grid;
+    }
+}
+
+@supports not (aspect-ratio: 1) {
+    .fallback {
+        padding-top: 56.25%;
+    }
+}
+
+@layer base, components, utilities;
+
+@layer base {
+    * {
+        box-sizing: border-box;
+    }
+}
+
+@layer components {
+    .btn {
+        padding: 0.5rem 1rem;
+    }
+}

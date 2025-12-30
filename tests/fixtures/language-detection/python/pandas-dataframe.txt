@@ -1,0 +1,12 @@
+import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({
+    'name': ['Alice', 'Bob', 'Charlie'],
+    'age': [25, 30, 35],
+    'salary': [50000, 60000, 70000]
+})
+
+filtered = df[df['age'] > 28]
+grouped = df.groupby('age').mean()
+df['bonus'] = df['salary'] * 0.1

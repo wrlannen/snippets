@@ -1,0 +1,10 @@
+import re
+
+text = "Contact: john@example.com, jane@test.org"
+pattern = r'[\w.-]+@[\w.-]+\.\w+'
+
+emails = re.findall(pattern, text)
+match = re.search(r'\d{3}-\d{4}', '555-1234')
+
+cleaned = re.sub(r'\s+', ' ', '  too   many   spaces  ')
+parts = re.split(r'[,;]', 'a,b;c,d')

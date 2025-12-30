@@ -1,0 +1,13 @@
+function parseJSON(str) {
+  try {
+    const data = JSON.parse(str);
+    return { success: true, data };
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      console.error('Invalid JSON:', error.message);
+    }
+    return { success: false, error: error.message };
+  } finally {
+    console.log('Parse attempt complete');
+  }
+}

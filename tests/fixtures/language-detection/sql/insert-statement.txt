@@ -1,0 +1,10 @@
+-- Insert multiple rows
+INSERT INTO products (name, price, category_id, stock)
+VALUES 
+    ('Laptop', 999.99, 1, 50),
+    ('Mouse', 29.99, 2, 200),
+    ('Keyboard', 79.99, 2, 150)
+ON CONFLICT (name) 
+DO UPDATE SET 
+    price = EXCLUDED.price,
+    stock = EXCLUDED.stock;

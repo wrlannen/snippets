@@ -1,0 +1,14 @@
+// Async/await example
+async function fetchUser(userId) {
+  try {
+    const response = await fetch(`/api/users/${userId}`);
+    if (!response.ok) {
+      throw new Error('User not found');
+    }
+    const user = await response.json();
+    return user;
+  } catch (error) {
+    console.error('Failed to fetch user:', error);
+    return null;
+  }
+}

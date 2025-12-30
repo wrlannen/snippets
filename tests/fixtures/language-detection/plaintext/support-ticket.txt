@@ -1,0 +1,21 @@
+Customer Support Ticket #48291
+
+Subject: Unable to access account after password reset
+
+Customer: David Morrison
+Email: d.morrison@email.com
+Date Submitted: January 14, 2024 at 3:47 PM
+Priority: Medium
+
+Description:
+I tried to reset my password yesterday using the forgot password link. I received the reset email and created a new password. However, when I try to log in with the new password, I get an error message saying my credentials are invalid.
+
+I have tried:
+- Clearing browser cache and cookies
+- Using a different browser
+- Requesting another password reset
+
+Nothing seems to work. I need access to my account urgently for work purposes.
+
+Agent Notes:
+Checked system logs. Password reset completed successfully at 2:47 PM on January 13. Account shows no lockout status. Escalating to technical team for investigation.

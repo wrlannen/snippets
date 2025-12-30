@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Example App">
+    <metadata>
+        <name>Morning Run</name>
+        <time>2024-01-15T07:30:00Z</time>
+    </metadata>
+    
+    <trk>
+        <name>Run Track</name>
+        <trkseg>
+            <trkpt lat="37.7749" lon="-122.4194">
+                <ele>10</ele>
+                <time>2024-01-15T07:30:00Z</time>
+            </trkpt>
+            <trkpt lat="37.7750" lon="-122.4190">
+                <ele>12</ele>
+                <time>2024-01-15T07:30:30Z</time>
+            </trkpt>
+        </trkseg>
+    </trk>
+</gpx>

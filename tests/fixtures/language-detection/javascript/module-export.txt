@@ -1,0 +1,13 @@
+// ES Module exports
+export const API_URL = 'https://api.example.com';
+export const TIMEOUT = 5000;
+
+export function formatDate(date) {
+  return date.toISOString().split('T')[0];
+}
+
+export default class ApiClient {
+  constructor(baseUrl) {
+    this.baseUrl = baseUrl;
+  }
+}
