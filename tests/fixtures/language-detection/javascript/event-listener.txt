@@ -1,0 +1,9 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const button = document.querySelector('#submit');
+  
+  button.addEventListener('click', (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target.closest('form'));
+    console.log('Form submitted:', Object.fromEntries(formData));
+  });
+});

@@ -1,0 +1,12 @@
+from pathlib import Path
+
+def read_and_process(filepath):
+    path = Path(filepath)
+    if not path.exists():
+        raise FileNotFoundError(f"File not found: {filepath}")
+    
+    with open(path, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+    
+    processed = [line.strip().upper() for line in lines if line.strip()]
+    return processed

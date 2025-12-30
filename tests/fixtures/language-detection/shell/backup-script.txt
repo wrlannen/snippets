@@ -1,0 +1,14 @@
+#!/bin/bash
+BACKUP_DIR="/var/backups"
+DATE=$(date +%Y%m%d)
+FILENAME="backup_${DATE}.tar.gz"
+
+tar -czf "${BACKUP_DIR}/${FILENAME}" /home/user/data
+
+if [ $? -eq 0 ]; then
+    echo "Backup successful: ${FILENAME}"
+    find "${BACKUP_DIR}" -name "backup_*.tar.gz" -mtime +7 -delete
+else
+    echo "Backup failed!" >&2
+    exit 1
+fi

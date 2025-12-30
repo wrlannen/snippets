@@ -1,0 +1,16 @@
+<article class="blog-post">
+  <header>
+    <h1>Getting Started with TypeScript</h1>
+    <p class="meta">Posted on <time datetime="2024-03-15">March 15, 2024</time></p>
+  </header>
+  <section class="content">
+    <p>TypeScript adds static typing to JavaScript, making it easier to catch errors early.</p>
+    <figure>
+      <img src="typescript-logo.png" alt="TypeScript Logo">
+      <figcaption>The TypeScript programming language</figcaption>
+    </figure>
+  </section>
+  <footer>
+    <p>Tags: <a href="/tags/typescript">TypeScript</a>, <a href="/tags/javascript">JavaScript</a></p>
+  </footer>
+</article>

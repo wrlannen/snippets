@@ -1,0 +1,20 @@
+# Release Checklist
+
+## Pre-release
+
+- [x] All tests passing
+- [x] Documentation updated
+- [ ] Changelog written
+- [ ] Version bumped
+
+## Deployment
+
+- [ ] Backup database
+- [ ] Deploy to staging
+- [ ] Run smoke tests
+- [ ] Deploy to production
+
+## Post-release
+
+- [ ] Monitor error rates
+- [ ] Notify stakeholders

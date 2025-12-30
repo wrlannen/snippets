@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  flex: 1 1 300px;
+  min-width: 250px;
+  max-width: 400px;
+}
+
+.sidebar {
+  flex: 0 0 250px;
+}
+
+.main-content {
+  flex: 1;
+}

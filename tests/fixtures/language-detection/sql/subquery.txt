@@ -1,0 +1,8 @@
+SELECT e.name, e.department, e.salary
+FROM employees e
+WHERE e.salary > (
+    SELECT AVG(salary)
+    FROM employees
+    WHERE department = e.department
+)
+ORDER BY e.department, e.salary DESC;

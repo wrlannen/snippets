@@ -1,0 +1,15 @@
+server:
+  listen: 443
+  server_name: example.com
+  ssl: true
+  ssl_certificate: /etc/ssl/certs/example.crt
+  ssl_certificate_key: /etc/ssl/private/example.key
+  
+locations:
+  - path: /
+    proxy_pass: http://backend:3000
+  - path: /api
+    proxy_pass: http://api:8080
+    proxy_set_header:
+      Host: $host
+      X-Real-IP: $remote_addr

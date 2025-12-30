@@ -1,0 +1,14 @@
+#!/bin/bash
+declare -a servers=("web1" "web2" "db1" "cache1")
+
+for server in "${servers[@]}"; do
+    echo "Checking ${server}..."
+    ping -c 1 "${server}.example.com" > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        echo "  ${server} is UP"
+    else
+        echo "  ${server} is DOWN"
+    fi
+done
+
+echo "Total servers: ${#servers[@]}"

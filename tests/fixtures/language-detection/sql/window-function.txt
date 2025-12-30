@@ -1,0 +1,9 @@
+SELECT 
+    employee_name,
+    department,
+    salary,
+    RANK() OVER (PARTITION BY department ORDER BY salary DESC) as dept_rank,
+    salary - LAG(salary) OVER (ORDER BY hire_date) as salary_diff
+FROM employees
+WHERE status = 'active'
+ORDER BY department, dept_rank;

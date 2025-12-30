@@ -1,0 +1,15 @@
+# Resources
+
+Check out the [official documentation](https://docs.example.com) for more details.
+
+## Screenshots
+
+Here's what the dashboard looks like:
+
+![Dashboard Screenshot](./images/dashboard.png)
+
+## Related Links
+
+- [GitHub Repository](https://github.com/user/repo)
+- [Issue Tracker](https://github.com/user/repo/issues)
+- [Discord Community](https://discord.gg/example)

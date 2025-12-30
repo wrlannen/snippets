@@ -63,6 +63,10 @@ export function detectLanguage(content) {
   const hasPythonLambda = /\blambda\s+\w+.*:/.test(trimmed);
   const hasWithAs = /\bwith\s+\w+.*\s+as\s+\w+:/.test(trimmed);
   const hasIfMain = /if\s+__name__\s*==\s*["']__main__["']:/.test(trimmed);
+  // Python dict methods and patterns
+  const hasPythonDictMethods = /\.(items|values|keys|update|get|pop|setdefault)\s*\(/.test(trimmed);
+  const hasPythonForLoop = /^\s*for\s+\w+(?:,\s*\w+)?\s+in\s+\w+.*:\s*$/m.test(trimmed);
+  const hasPythonPrint = /\bprint\s*\(f?["']/.test(trimmed);
 
   if (hasPythonImport && (hasPythonDef || hasAsyncDef || hasPythonClass || hasSelf || hasPythonKeywords || hasPythonListComp || hasPythonLambda)) return 'python';
   if (hasPythonDef || hasAsyncDef) return 'python';
@@ -72,6 +76,8 @@ export function detectLanguage(content) {
   if (hasWithAs) return 'python';
   if (hasIfMain) return 'python';
   if (hasPythonLambda && !trimmed.includes(';')) return 'python';
+  // Python dict operations (dict methods + for loop or print)
+  if (hasPythonDictMethods && (hasPythonForLoop || hasPythonPrint)) return 'python';
   // Python comprehension (list/dict/set) after Python-style comment
   if (/^#\s+\w/.test(firstLine) && hasPythonListComp) return 'python';
   // Python dict comprehension

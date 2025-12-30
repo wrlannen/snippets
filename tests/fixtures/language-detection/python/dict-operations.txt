@@ -1,0 +1,11 @@
+inventory = {'apples': 50, 'oranges': 30, 'bananas': 20}
+
+total_items = sum(inventory.values())
+fruit_names = list(inventory.keys())
+
+inventory.update({'grapes': 40, 'apples': 55})
+
+for fruit, count in inventory.items():
+    print(f"{fruit}: {count}")
+
+filtered = {k: v for k, v in inventory.items() if v > 25}

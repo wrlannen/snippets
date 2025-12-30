@@ -1,0 +1,15 @@
+Team Standup Meeting Notes - March 15, 2024
+
+Attendees: Sarah, Mike, Lisa, David
+
+Discussion Points:
+
+Sarah mentioned that the database migration is nearly complete. She expects to finish testing by end of day tomorrow. There were some minor issues with the foreign key constraints but those have been resolved.
+
+Mike is working on the new dashboard feature. He raised concerns about the timeline given the additional requirements that came in yesterday. The team agreed to prioritize the core functionality first.
+
+Action Items:
+David will schedule a follow-up meeting with the client to discuss the timeline.
+Lisa will review the pull request for the authentication module.
+
+Next meeting scheduled for Thursday at 10 AM.

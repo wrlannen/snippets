@@ -1,0 +1,13 @@
+#!/bin/bash
+LOG_FILE="/var/log/nginx/access.log"
+
+echo "Top 10 IP addresses:"
+awk '{print $1}' "$LOG_FILE" | sort | uniq -c | sort -rn | head -10
+
+echo ""
+echo "404 errors:"
+grep " 404 " "$LOG_FILE" | wc -l
+
+echo ""
+echo "Requests per hour:"
+awk '{print $4}' "$LOG_FILE" | cut -d: -f2 | sort | uniq -c

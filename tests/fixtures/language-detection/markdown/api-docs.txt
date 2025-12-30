@@ -1,0 +1,23 @@
+# User API
+
+## Endpoints
+
+### GET /users/:id
+
+Returns a single user by ID.
+
+**Parameters:**
+- `id` (required): The user's unique identifier
+
+**Response:**
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john@example.com"
+}
+```
+
+### POST /users
+
+Creates a new user account.

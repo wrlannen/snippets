@@ -1,0 +1,16 @@
+CREATE OR REPLACE PROCEDURE update_inventory(
+    product_id INT,
+    quantity_change INT
+)
+AS $$
+BEGIN
+    UPDATE products
+    SET stock_count = stock_count + quantity_change,
+        last_updated = NOW()
+    WHERE id = product_id;
+    
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Product % not found', product_id;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;

@@ -1,0 +1,10 @@
+const user = { name: 'Alice', age: 30, address: { city: 'NYC', zip: '10001' } };
+
+const { name, age, address: { city } } = user;
+
+function greet({ name, age = 25 }) {
+  return `Hello, ${name}! You are ${age} years old.`;
+}
+
+const numbers = [1, 2, 3, 4, 5];
+const [first, second, ...rest] = numbers;
