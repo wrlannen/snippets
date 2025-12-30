@@ -27,7 +27,7 @@ Language detection is automatic, with manual selection available via the dropdow
 
 ## Creating Snippets
 
-Typing in the editor autosaves changes. The first line is used as the sidebar title. Titles can be plain text or comment syntax:
+Typing in the editor autosaves changes. The first line is used as the sidebar title. Titles can be plain text or comment syntax, e.g:
 
 
 ```javascript
@@ -47,16 +47,6 @@ import pandas as pd
 SELECT * FROM users WHERE active = true;
 ```
 
-
-Supported title formats:
-- Plain text (e.g. `My Notes`)
-- `// Title` (JavaScript, TypeScript, C++)
-- `# Title` (Python, Ruby, Bash)
-- `-- Title` (SQL)
-- `/* Title */` (CSS, JavaScript)
-- `<!-- Title -->` (HTML)
-
-
 ## Command Palette
 
 Open with ⌘/Ctrl+K. Commands include:
@@ -70,17 +60,6 @@ Open with ⌘/Ctrl+K. Commands include:
 - Import snippets
 - Increase font size
 - Decrease font size
-
-
-## Keyboard Shortcuts
-
-| Shortcut          | Action                                 |
-|-------------------|----------------------------------------|
-| ⌘/Ctrl + K        | Open command palette                   |
-| ⌘/Ctrl + /        | Toggle sidebar                         |
-| Esc               | Close palette/modal or clear search    |
-
-Use the command palette to run all app actions (new snippet, open file, search snippets, toggle sidebar, copy, delete, export/import, increase/decrease font).
 
 
 ## Export & Import
