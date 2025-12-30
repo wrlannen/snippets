@@ -1,0 +1,10 @@
+SELECT
+  date_trunc('day', created_at) as day,
+  COUNT(DISTINCT user_id) as daily_active_users,
+  COUNT(*) as total_events,
+  ROUND(AVG(session_duration), 2) as avg_session_duration
+FROM user_events
+WHERE created_at >= CURRENT_DATE - INTERVAL '30 days'
+GROUP BY date_trunc('day', created_at)
+HAVING COUNT(DISTINCT user_id) > 100
+ORDER BY day DESC;

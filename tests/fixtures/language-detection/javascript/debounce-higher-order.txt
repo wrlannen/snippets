@@ -1,0 +1,11 @@
+const debounce = (func, delay) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  };
+};
+
+const handleInput = debounce((e) => {
+  console.log('Input value:', e.target.value);
+}, 300);

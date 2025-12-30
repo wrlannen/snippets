@@ -1,0 +1,17 @@
+Dear Customer,
+
+Thank you for your recent purchase from our online store. Your order has been confirmed and is currently being processed.
+
+Order Details:
+Order Number: ORD-2024-001234
+Order Date: December 30, 2024
+Estimated Delivery: January 5, 2025
+
+Your items will be shipped to the address you provided during checkout. You will receive a tracking number via email once your package has been dispatched.
+
+If you have any questions or concerns about your order, please contact our customer service team at support@example.com or call us at 1-800-555-0123.
+
+Thank you for shopping with us!
+
+Best regards,
+The Customer Service Team

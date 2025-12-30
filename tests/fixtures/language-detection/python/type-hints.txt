@@ -1,0 +1,15 @@
+from typing import List, Dict, Optional, Union
+
+def process_records(records: List[Dict[str, Union[str, int]]]) -> Optional[Dict[str, int]]:
+    if not records:
+        return None
+    
+    totals: Dict[str, int] = {}
+    for record in records:
+        category = record.get('category', 'unknown')
+        amount = record.get('amount', 0)
+        
+        if isinstance(amount, int):
+            totals[category] = totals.get(category, 0) + amount
+    
+    return totals if totals else None

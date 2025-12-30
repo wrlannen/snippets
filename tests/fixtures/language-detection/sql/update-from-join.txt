@@ -1,0 +1,7 @@
+UPDATE products p
+SET price = p.price * 1.1
+FROM categories c
+WHERE p.category_id = c.id
+  AND c.name IN ('Electronics', 'Computers')
+  AND p.stock > 0
+  AND p.updated_at < NOW() - INTERVAL '6 months';

@@ -1,0 +1,11 @@
+<section class="hero">
+  <div class="container">
+    <h1 class="hero-title">Welcome to Our Platform</h1>
+    <p class="hero-subtitle">Build amazing things with our tools</p>
+    <div class="cta-buttons">
+      <a href="/signup" class="btn btn-primary">Get Started</a>
+      <a href="/demo" class="btn btn-outline">Watch Demo</a>
+    </div>
+  </div>
+  <img src="/images/hero.svg" alt="Platform illustration" class="hero-image">
+</section>

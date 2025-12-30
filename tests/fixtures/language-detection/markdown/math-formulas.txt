@@ -1,0 +1,20 @@
+# Algorithm Complexity
+
+The time complexity can be expressed as:
+
+$$T(n) = O(n \log n)$$
+
+For space complexity, we have:
+
+$$S(n) = O(n)$$
+
+The recurrence relation:
+
+$$
+T(n) = \begin{cases}
+1 & \text{if } n = 1 \\
+2T(n/2) + n & \text{if } n > 1
+\end{cases}
+$$
+
+This is typical of divide-and-conquer algorithms like merge sort.

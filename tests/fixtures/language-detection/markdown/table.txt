@@ -1,0 +1,10 @@
+## Team Members
+
+| Name | Role | Email | Location |
+|------|------|-------|----------|
+| Alice Johnson | Senior Developer | alice@example.com | San Francisco |
+| Bob Smith | Product Manager | bob@example.com | New York |
+| Carol White | Designer | carol@example.com | Remote |
+| David Brown | DevOps Engineer | david@example.com | Seattle |
+
+**Note:** All team members work in the Pacific timezone.

@@ -1,0 +1,22 @@
+ansible_host: 192.168.1.100
+ansible_user: deploy
+ansible_python_interpreter: /usr/bin/python3
+
+nginx:
+  port: 80
+  worker_processes: auto
+  keepalive_timeout: 65
+
+app:
+  name: myapp
+  version: 2.1.0
+  environment: production
+  features:
+    - authentication
+    - logging
+    - monitoring
+
+database:
+  host: db.example.com
+  port: 5432
+  name: myapp_prod

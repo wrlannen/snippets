@@ -1,0 +1,10 @@
+CREATE TRIGGER update_inventory_timestamp
+BEFORE UPDATE ON products
+FOR EACH ROW
+BEGIN
+  SET NEW.updated_at = NOW();
+  IF NEW.stock < 10 AND OLD.stock >= 10 THEN
+    INSERT INTO alerts (product_id, alert_type, created_at)
+    VALUES (NEW.id, 'low_stock', NOW());
+  END IF;
+END;

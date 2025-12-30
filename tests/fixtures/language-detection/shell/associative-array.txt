@@ -1,0 +1,15 @@
+#!/bin/bash
+source /etc/profile.d/env.sh
+
+declare -A config
+config[env]="production"
+config[region]="us-east-1"
+config[instances]=5
+
+for key in "${!config[@]}"; do
+    echo "$key = ${config[$key]}"
+done
+
+if [[ -n "${DEPLOY_KEY}" ]]; then
+    aws s3 sync ./build s3://mybucket --region "${config[region]}"
+fi

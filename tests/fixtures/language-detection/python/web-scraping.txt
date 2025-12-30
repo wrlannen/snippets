@@ -1,0 +1,20 @@
+import requests
+from bs4 import BeautifulSoup
+import json
+
+def scrape_articles(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    
+    articles = []
+    for article in soup.find_all('article'):
+        title = article.find('h2').text.strip()
+        link = article.find('a')['href']
+        articles.append({'title': title, 'link': link})
+    
+    return articles
+
+if __name__ == '__main__':
+    data = scrape_articles('https://example.com/blog')
+    with open('articles.json', 'w') as f:
+        json.dump(data, f, indent=2)

@@ -1,0 +1,24 @@
+# React Component Lifecycle
+
+Components go through several phases:
+
+## Mounting Phase
+
+1. `constructor()` - Initialize state
+2. `getDerivedStateFromProps()` - Sync state with props
+3. `render()` - Return JSX
+4. `componentDidMount()` - Side effects
+
+## Updating Phase
+
+- Props or state changes trigger re-render
+- `shouldComponentUpdate()` can prevent unnecessary renders
+- Use `React.memo()` for functional components
+
+## Unmounting Phase
+
+`componentWillUnmount()` is called before component removal.
+
+---
+
+*Last updated: March 2024*

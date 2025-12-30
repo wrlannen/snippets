@@ -1,0 +1,23 @@
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr data-id="1">
+      <td>1</td>
+      <td>John Doe</td>
+      <td>john@example.com</td>
+      <td><span class="badge badge-active">Active</span></td>
+      <td>
+        <button class="btn-edit" data-action="edit">Edit</button>
+        <button class="btn-delete" data-action="delete">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

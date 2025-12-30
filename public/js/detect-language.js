@@ -39,6 +39,8 @@ export function detectLanguage(content) {
   if (/\*\*\w+.*\*\*/.test(trimmed) && !trimmed.includes('{') && !/\bdef\s+|\bclass\s+/.test(trimmed)) return 'markdown';
   // Markdown blockquotes with bold
   if (/^>\s+\*\*/.test(trimmed)) return 'markdown';
+  // Markdown blockquotes (quotes, prose)
+  if (/^>\s/.test(trimmed) && !trimmed.includes('{') && !/\bfunction\b|\bclass\b|\bimport\b/.test(trimmed)) return 'markdown';
   // Markdown with LaTeX math
   if (/^#{1,6}\s/.test(trimmed) && /\$\$[\s\S]+\$\$|\$[^$]+\$/.test(trimmed)) return 'markdown';
 
@@ -95,6 +97,9 @@ export function detectLanguage(content) {
   const looksLikeYamlConfig = /^\w+:\s*$/m.test(trimmed) && /^\s+-\s+\w+/m.test(trimmed) && !trimmed.includes(';');
   if (looksLikeYamlConfig) return 'yaml';
   if (/^---\s*$/.test(firstLine) && !/^#{1,6}\s+\w/m.test(trimmed)) return 'yaml';
+  // YAML config with nested keys and possible ${} variables (before shell detection)
+  const hasYamlStructure = /^\w+:\s*$/m.test(trimmed) && /^\s{2,}\w+:/m.test(trimmed);
+  if (hasYamlStructure && !trimmed.includes(';') && !trimmed.includes('#!/')) return 'yaml';
 
   // Shell detection - look for shell-specific patterns
   // Skip shell detection for template literals (JS)
@@ -145,6 +150,7 @@ export function detectLanguage(content) {
   }
 
   // CSS detection
+  if (/^:root\s*\{/.test(trimmed)) return 'css'; // CSS custom properties
   if (/^[.#]?[\w-]+\s*\{/.test(trimmed)) return 'css';
   if (/^@(import|media|keyframes|charset|font-face|page|supports|container)\b/.test(trimmed)) return 'css';
   if (trimmed.includes('{') && trimmed.includes('}') && /:\s*[^;]+;/.test(trimmed)) {

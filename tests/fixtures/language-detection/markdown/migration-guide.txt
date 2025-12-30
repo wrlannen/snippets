@@ -1,0 +1,33 @@
+# Database Migration Guide
+
+## Prerequisites
+
+Before running migrations, ensure you have:
+
+1. **Database backup** - Always backup before migrating
+2. **Connection string** configured in `.env`
+3. **Migration tool** installed (`npm install -g db-migrate`)
+
+## Running Migrations
+
+```bash
+db-migrate up
+```
+
+This will apply all pending migrations in order.
+
+## Rolling Back
+
+If something goes wrong:
+
+```bash
+db-migrate down
+```
+
+> **Warning**: Rolling back may result in data loss.
+
+## Creating New Migrations
+
+```bash
+db-migrate create add-users-table
+```

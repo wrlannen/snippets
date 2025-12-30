@@ -1,0 +1,18 @@
+#!/bin/bash
+set -euo pipefail
+
+function cleanup() {
+    echo "Cleaning up..."
+    rm -f /tmp/deploy.lock
+    exit
+}
+
+trap cleanup EXIT INT TERM
+
+if [ -f /tmp/deploy.lock ]; then
+    echo "Another deployment is in progress"
+    exit 1
+fi
+
+touch /tmp/deploy.lock
+echo "Starting deployment at $(date)"

@@ -1,0 +1,15 @@
+const cart = {
+  items: [],
+  total: 0,
+  addItem(item) {
+    this.items.push(item);
+    this.total += item.price;
+  },
+  removeItem(id) {
+    const index = this.items.findIndex(item => item.id === id);
+    if (index > -1) {
+      this.total -= this.items[index].price;
+      this.items.splice(index, 1);
+    }
+  }
+};

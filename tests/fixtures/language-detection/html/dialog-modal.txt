@@ -1,0 +1,15 @@
+<dialog id="modal" class="modal">
+  <div class="modal-content">
+    <header class="modal-header">
+      <h2>Confirm Action</h2>
+      <button class="close-btn" aria-label="Close">&times;</button>
+    </header>
+    <main class="modal-body">
+      <p>Are you sure you want to proceed?</p>
+    </main>
+    <footer class="modal-footer">
+      <button class="btn btn-cancel">Cancel</button>
+      <button class="btn btn-confirm">Confirm</button>
+    </footer>
+  </div>
+</dialog>

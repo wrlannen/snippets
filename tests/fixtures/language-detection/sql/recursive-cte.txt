@@ -1,0 +1,13 @@
+WITH RECURSIVE employee_hierarchy AS (
+  SELECT employee_id, manager_id, name, 1 as level
+  FROM employees
+  WHERE manager_id IS NULL
+  
+  UNION ALL
+  
+  SELECT e.employee_id, e.manager_id, e.name, eh.level + 1
+  FROM employees e
+  INNER JOIN employee_hierarchy eh ON e.manager_id = eh.employee_id
+)
+SELECT * FROM employee_hierarchy
+ORDER BY level, name;

@@ -1,0 +1,11 @@
+> "The best way to predict the future is to invent it."
+> 
+> — Alan Kay
+
+This quote perfectly captures the spirit of innovation in technology. Kay's work at Xerox PARC led to many foundational concepts we use today:
+
+- Object-oriented programming
+- Graphical user interfaces
+- The Dynabook concept (precursor to tablets)
+
+His vision continues to inspire new generations of developers and designers.

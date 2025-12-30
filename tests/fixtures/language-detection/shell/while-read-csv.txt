@@ -1,0 +1,9 @@
+#!/bin/bash
+while IFS=',' read -r name email age; do
+    if [[ "$age" -gt 18 ]]; then
+        echo "Processing: $name ($email)"
+        curl -X POST https://api.example.com/users \
+            -H "Content-Type: application/json" \
+            -d "{\"name\":\"$name\",\"email\":\"$email\",\"age\":$age}"
+    fi
+done < users.csv

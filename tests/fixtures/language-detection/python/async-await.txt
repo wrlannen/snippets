@@ -1,0 +1,14 @@
+import asyncio
+import aiohttp
+
+async def fetch_url(session, url):
+    async with session.get(url) as response:
+        return await response.text()
+
+async def fetch_all(urls):
+    async with aiohttp.ClientSession() as session:
+        tasks = [fetch_url(session, url) for url in urls]
+        return await asyncio.gather(*tasks)
+
+urls = ['https://example.com/1', 'https://example.com/2', 'https://example.com/3']
+results = asyncio.run(fetch_all(urls))
