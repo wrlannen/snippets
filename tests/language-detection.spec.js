@@ -134,7 +134,19 @@ test.describe('Language Detection & Switching', () => {
     
     // Should have all mode options
     const options = await selector.locator('option').allTextContents();
-    expect(options).toEqual(['JavaScript', 'HTML', 'CSS', 'XML']);
+    expect(options).toEqual([
+      'JavaScript',
+      'TypeScript',
+      'Python',
+      'SQL',
+      'Shell',
+      'Markdown',
+      'YAML',
+      'HTML',
+      'CSS',
+      'XML',
+      'Plain Text'
+    ]);
   });
 
   test('exports and imports snippets with mode field', async ({ page }) => {
