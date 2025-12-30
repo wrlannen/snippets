@@ -1,3 +1,15 @@
+/* Force dark background and light text for language dropdown on all platforms */
+#languageSelector {
+  background-color: #232323 !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #333 !important;
+}
+
+#languageSelector:focus {
+  border-color: #007acc !important;
+  outline: none !important;
+  box-shadow: 0 0 0 1.5px #007acc;
+}
 /* App-specific styles that can't (or shouldn't) live in Tailwind */
 
 /* Modern minimalist scrollbars */
