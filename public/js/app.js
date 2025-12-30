@@ -585,7 +585,7 @@ function initializeApp() {
     // Modifier key (Cmd on Mac, Ctrl on Windows/Linux)
     const isMod = e.metaKey || e.ctrlKey;
 
-    // Cmd/Ctrl+K: Open command palette
+    // ⌘+K / Ctrl+K: Open command palette
     if (isMod && e.key === "k") {
       e.preventDefault();
       openPalette();
@@ -666,7 +666,7 @@ function initializeApp() {
       id: 'toggle-sidebar',
       label: 'Toggle Sidebar',
       description: 'Show or hide the sidebar',
-      shortcut: `${modKeySymbol}/`,
+      shortcut: `${modKeySymbol}+/`,
       action: () => toggleSidebar()
     },
     {

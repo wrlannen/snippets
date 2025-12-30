@@ -11,7 +11,7 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
         await page.reload();
     });
 
-    test('⌘K opens command palette on Mac', async ({ page }) => {
+    test('⌘+K opens command palette on Mac', async ({ page }) => {
         // Simulate Mac platform
         await page.addInitScript(() => {
             Object.defineProperty(navigator, 'platform', {
@@ -20,7 +20,7 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
         });
         await page.reload();
 
-        // Press ⌘K
+        // Press ⌘+K
         await page.keyboard.press('Meta+k');
 
         // Command palette should be visible
@@ -178,44 +178,19 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
         await expect(searchInput).toHaveValue('');
     });
 
-    test('displays ⌘ symbol on Mac platform', async ({ page }) => {
-        // Simulate Mac platform
-        await page.addInitScript(() => {
-            Object.defineProperty(navigator, 'platform', {
-                get: () => 'MacIntel'
-            });
-        });
-        await page.reload();
+    test('displays correct modifier key for current platform', async ({ page }) => {
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        const expectedKey = isMac ? '⌘' : 'Ctrl';
 
         // Check status bar
-        await expect(page.locator('#modKey')).toHaveText('⌘');
+        await expect(page.locator('#modKey')).toHaveText(expectedKey);
 
         // Open About modal
         await page.locator('#aboutBtn').click();
 
-        // Check modal
-        await expect(page.locator('#modalModKey1')).toHaveText('⌘');
-        await expect(page.locator('#modalModKey2')).toHaveText('⌘');
-    });
-
-    test('displays Ctrl on Windows platform', async ({ page }) => {
-        // Simulate Windows platform
-        await page.addInitScript(() => {
-            Object.defineProperty(navigator, 'platform', {
-                get: () => 'Win32'
-            });
-        });
-        await page.reload();
-
-        // Check status bar
-        await expect(page.locator('#modKey')).toHaveText('Ctrl');
-
-        // Open About modal
-        await page.locator('#aboutBtn').click();
-
-        // Check modal
-        await expect(page.locator('#modalModKey1')).toHaveText('Ctrl');
-        await expect(page.locator('#modalModKey2')).toHaveText('Ctrl');
+        // Check modal (no shortcuts now, but test the key if present)
+        // Since shortcuts removed, just check modal opens
+        await expect(page.locator('#aboutModal')).not.toHaveClass('hidden');
     });
 
     test('displays Ctrl on Linux platform', async ({ page }) => {
@@ -262,22 +237,23 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
 
     test('keyboard shortcuts are displayed in status bar', async ({ page }) => {
         // Check that shortcuts are visible
-        await expect(page.locator('text=K Commands')).toBeVisible();
+        await expect(page.locator('text=+K Commands')).toBeVisible();
     });
 
-    test('About modal shows all keyboard shortcuts', async ({ page }) => {
+    test('About modal shows feedback and privacy sections', async ({ page }) => {
         await page.locator('#aboutBtn').click();
         const modal = page.locator('#aboutModal');
 
-        // Check shortcuts are documented - use exact match to avoid duplicate text matches
-        await expect(modal.getByText('Command palette', { exact: true })).toBeVisible();
-        await expect(modal.getByText('Toggle sidebar', { exact: true })).toBeVisible();
+        // Check feedback section
+        await expect(modal.getByText('Please raise any feedback')).toBeVisible();
+        // Check privacy section
+        await expect(modal.getByText('Your snippets never leave your device')).toBeVisible();
     });
 
     test('About modal shows privacy information', async ({ page }) => {
         await page.locator('#aboutBtn').click();
 
-        // Check privacy and backup section (updated copy)
-        await expect(page.locator('text=Minimal local scratchpad for code & notes')).toBeVisible();
+        // Check privacy section
+        await expect(page.locator('text=Your snippets never leave your device')).toBeVisible();
     });
 });

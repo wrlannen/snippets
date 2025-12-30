@@ -63,7 +63,7 @@ export async function waitForSnippetsToLoad(page) {
  * @param {string} content
  */
 export async function createSnippet(page, content) {
-    // Press ⌘K or Ctrl+K to open command palette
+    // Press ⌘+K or Ctrl+K to open command palette
     const isMac = process.platform === 'darwin';
     if (isMac) {
         await page.keyboard.press('Meta+k');

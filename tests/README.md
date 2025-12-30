@@ -29,15 +29,26 @@ The language detection fixture test output is printed to the terminal.
 
 ### Playwright UI/Integration Tests
 
-- Creating snippets (new snippet button, CMD+K/Ctrl+K on Mac/Windows)
+The following test files cover end-to-end scenarios:
+
+- **snippets.spec.js**: Core snippet CRUD (create, edit, delete), autosave, empty state, first-run seeding, sidebar updates, character count, localStorage persistence.
+- **keyboard-shortcuts.spec.js**: Platform-specific shortcuts (⌘+K / Ctrl+K for palette, CMD+F/Ctrl+F for search, CMD+B/Ctrl+B for sidebar toggle, copy shortcuts).
+- **sidebar-toggle.spec.js**: Sidebar show/hide functionality and persistence.
+- **sidebar-resize.spec.js**: Draggable sidebar resizing and state persistence.
+- **search.spec.js**: Search and filter functionality in sidebar.
+- **export-import.spec.js**: JSON export/import of snippets and settings.
+- **copy-clipboard.spec.js**: Copy snippet to clipboard shortcuts and functionality.
+- **settings.spec.js**: Font size controls, settings persistence.
+- **pwa-install.spec.js**: PWA install prompts for Chrome/Edge and Safari.
+- **mobile-overlay.spec.js**: Desktop-only overlay on mobile devices.
+- **language-detection.spec.js**: Manual language mode switching and persistence.
+
+Scenarios include:
+- Creating snippets (new snippet button, ⌘+K / Ctrl+K on Mac/Windows)
 - Editing and autosave (debounced)
 - Deleting snippets (confirmation, cancel flow, delete all)
 - Search and filter (CMD+F/Ctrl+F, sidebar filter)
-- Keyboard shortcuts:
-  - New snippet: CMD+K (Mac), Ctrl+K (Windows)
-  - Search: CMD+F (Mac), Ctrl+F (Windows)
-  - Toggle sidebar: CMD+B (Mac), Ctrl+B (Windows)
-  - Copy to clipboard: CMD+Shift+C (Mac), Ctrl+Shift+C (Windows)
+- Keyboard shortcuts (as above)
 - Platform-specific shortcut behavior (Mac/Windows)
 - Sidebar rendering, updates, first-line comment titles
 - Sidebar resize (drag to resize) and toggle (show/hide)

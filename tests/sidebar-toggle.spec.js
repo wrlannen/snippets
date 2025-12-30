@@ -118,14 +118,9 @@ test.describe('Sidebar Toggle', () => {
     const isMac = browserName === 'webkit' || process.platform === 'darwin';
     const expectedKey = isMac ? '⌘' : 'Ctrl';
     
-    // Check footer shortcut display (now just two elements)
+    // Check footer shortcut display
     const modKey = page.locator('#modKey');
     await expect(modKey).toHaveText(expectedKey);
-
-    // Check modal shortcut display
-    await page.click('#aboutBtn');
-    const modalKey = page.locator('#modalModKey1');
-    await expect(modalKey).toHaveText(expectedKey);
   });
 
   test('sidebar toggle works with existing snippets', async ({ page, browserName }) => {

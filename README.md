@@ -8,7 +8,7 @@ Try it now at [https://snippets.dev](https://snippets.dev)
 
 ## Features
 
-- **Command palette & keyboard-first**: ⌘/Ctrl+K to run any action. Minimal interactions and clear shortcuts.
+- **Command palette & keyboard-first**: ⌘+K / Ctrl+K to run any action. Minimal interactions and clear shortcuts.
 - **Syntax highlighting & language detection**: Automatic highlighting for JavaScript, Python, SQL, Shell, Markdown, YAML, HTML, CSS, XML, TypeScript, JSON, and Plain Text. Manual override available.
 - **Offline-first & local storage**: Works as a PWA, storing all data in the browser. No accounts, no servers, no internet required.
 - **Export/Import & autosave**: Edits are autosaved. Backup or restore with a single click.
@@ -50,7 +50,7 @@ SELECT * FROM users WHERE active = true;
 
 ## Command Palette
 
-Open with ⌘/Ctrl+K. Commands include:
+Open with ⌘+K / Ctrl+K. Commands include:
 - New snippet
 - Open file from disk
 - Search snippets
