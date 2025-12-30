@@ -43,6 +43,7 @@ export function seedSnippetsOnFirstRun() {
       createdAt: ts,
       updatedAt: ts,
       mode: 'javascript',
+      modeManual: true,
       content: [
         '// Welcome to Snippets',
         '',
@@ -60,6 +61,7 @@ export function seedSnippetsOnFirstRun() {
       createdAt: ts,
       updatedAt: ts,
       mode: 'javascript',
+      modeManual: true,
       content: [
         '// The Command Palette',
         '',
