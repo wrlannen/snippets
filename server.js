@@ -66,8 +66,12 @@ app.use(express.static(publicDir, {
   etag: true,
   lastModified: true,
   setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.html') || filePath.endsWith('.json')) {
-      // No cache for HTML and manifest - always check for updates
+    // Set correct MIME type for manifest
+    if (filePath.endsWith('manifest.json')) {
+      res.setHeader('Content-Type', 'application/manifest+json');
+      res.setHeader('Cache-Control', 'no-cache');
+    } else if (filePath.endsWith('.html') || filePath.endsWith('.json')) {
+      // No cache for HTML and JSON - always check for updates
       res.setHeader('Cache-Control', 'no-cache');
     } else if (filePath.endsWith('.js') || filePath.endsWith('.css')) {
       // Short cache for JS/CSS - revalidate after 1 hour
