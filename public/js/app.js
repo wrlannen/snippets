@@ -324,6 +324,44 @@ function initializeApp() {
     charCount: document.getElementById("charCount"),
   };
 
+  // --- Responsive Overlay & Sidebar Auto-hide ---
+  const mobileOverlay = document.getElementById('mobileOverlay');
+  const appMain = document.getElementById('appMain');
+  const sidebar = document.getElementById('sidebar');
+  
+  // Utility to detect mobile devices
+  function isMobileDevice() {
+    return /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent);
+  }
+  
+  function handleResponsiveUI() {
+    const width = window.innerWidth;
+    const html = document.documentElement;
+    const isMobile = isMobileDevice();
+    
+    // Show overlay and hide app for mobile devices on small screens
+    if (isMobile && width < 700) {
+      if (mobileOverlay) mobileOverlay.classList.remove('hidden');
+      if (appMain) appMain.classList.add('hidden');
+    } else {
+      if (mobileOverlay) mobileOverlay.classList.add('hidden');
+      if (appMain) {
+        appMain.classList.remove('hidden');
+        appMain.classList.add('flex');
+      }
+    }
+    
+    // Auto-hide sidebar on small widths (desktop only) - hide earlier for more editor space
+    if (!isMobile && width < 900) {
+      html.classList.add('sidebar-hidden');
+    } else {
+      html.classList.remove('sidebar-hidden');
+    }
+  }
+  
+  window.addEventListener('resize', handleResponsiveUI);
+  handleResponsiveUI();
+
   bindEls(els);
 
   // Setup PWA install UI

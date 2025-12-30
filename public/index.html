@@ -75,7 +75,7 @@
       <p class="text-gray-400 mb-4 text-sm">This app is designed for desktop browsers.<br>Please visit from a larger screen for the best experience.</p>
     </div>
   </div>
-  <div class="hidden md:flex h-screen flex-col app-main">
+  <div id="appMain" class="hidden h-screen flex-col app-main">
     <div class="flex flex-1 min-h-0">
       <!-- Sidebar -->
       <aside id="sidebar" class="relative flex flex-col border-r border-[#252526] bg-[#1e1e1e] w-[300px] min-w-[120px] max-w-[500px]">
@@ -139,10 +139,10 @@
         <span class="text-gray-700">|</span>
         <span id="charCount">0 characters</span>
         <span class="text-gray-700">|</span>
-        <span class="text-gray-600"><span id="modKeySidebar">⌘</span>B Toggle sidebar</span>
-        <span class="text-gray-600"><span id="modKey">⌘</span>K New snippet</span>
+        <span class="text-gray-600"><span id="modKeySidebar">⌘</span>B Sidebar</span>
+        <span class="text-gray-600"><span id="modKey">⌘</span>K New</span>
         <span class="text-gray-600"><span id="modKeySearch">⌘</span>F Search</span>
-        <span class="text-gray-600"><span id="modKeyCopy">⌘</span>⇧C Copy snippet</span>
+        <span class="text-gray-600"><span id="modKeyCopy">⌘</span>⇧C Copy</span>
       </div>
       <div class="flex items-center gap-2">
         <select id="languageSelector" 

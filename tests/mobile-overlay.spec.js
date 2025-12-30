@@ -3,9 +3,13 @@ import { test, expect } from '@playwright/test';
 // This test checks that the mobile overlay appears and the app is hidden on small screens
 
 test.describe('Mobile Overlay', () => {
-  test('shows desktop-only overlay on small screens', async ({ page }) => {
-    // Set viewport to a small mobile size before navigation
-    await page.setViewportSize({ width: 400, height: 800 });
+  test('shows desktop-only overlay on small screens with mobile user agent', async ({ browser }) => {
+    // Create a mobile context with iPhone user agent
+    const context = await browser.newContext({
+      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15A372 Safari/604.1',
+      viewport: { width: 400, height: 800 }
+    });
+    const page = await context.newPage();
     await page.goto('/');
 
     const overlay = page.locator('#mobileOverlay');
@@ -16,6 +20,8 @@ test.describe('Mobile Overlay', () => {
     // The main app should be hidden
     const appMain = page.locator('.app-main');
     await expect(appMain).toBeHidden();
+    
+    await context.close();
   });
 
   test('does not show overlay on desktop screens', async ({ page }) => {
