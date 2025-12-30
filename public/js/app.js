@@ -761,7 +761,29 @@ function initializeApp() {
 
   modKeyTargets.forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.textContent = modKeySymbolUI;
+    if (el) {
+      if (isMac) {
+        el.textContent = '⌘';
+        // For status bar, show "⌘K" (no space)
+        if (id === 'modKey') {
+          el.textContent = '⌘';
+          const modKeySpan = el;
+          if (modKeySpan.nextSibling && modKeySpan.nextSibling.nodeType === 3) {
+            modKeySpan.nextSibling.textContent = 'K Commands';
+          }
+        }
+      } else {
+        el.textContent = 'Ctrl';
+        // For status bar, show "Ctrl + K" (with space and plus)
+        if (id === 'modKey') {
+          el.textContent = 'Ctrl';
+          const modKeySpan = el;
+          if (modKeySpan.nextSibling && modKeySpan.nextSibling.nodeType === 3) {
+            modKeySpan.nextSibling.textContent = ' + K Commands';
+          }
+        }
+      }
+    }
   });
 
   // --- Export/Import ---
