@@ -1,8 +1,11 @@
 /* Force dark background and light text for language dropdown on all platforms */
-#languageSelector {
-  background-color: #232323 !important;
-  color: #e2e8f0 !important;
-  border: 1px solid #333 !important;
+
+
+/* Windows-specific: force black text in select if background is white */
+@media screen and (-ms-high-contrast: active), (forced-colors: active) {
+  #languageSelector, #languageSelector option {
+    color: #111 !important;
+  }
 }
 
 #languageSelector:focus {
