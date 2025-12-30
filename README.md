@@ -7,15 +7,11 @@ Try it now at [https://snippets.dev](https://snippets.dev)
 
 ## Features
 
-- **Command palette**: ⌘/Ctrl+K to discover and run commands
-- **Keyboard-first**: Fast, minimal interactions with clear shortcuts
-- **Syntax highlighting**: Supports JavaScript, Python, SQL, Shell, Markdown, YAML, HTML, CSS, XML, TypeScript, JSON, and Plain Text
-- **Automatic language detection**: Highlights code as content is entered; manual override available
-- **Offline-first**: Functions as a PWA, no internet required
-- **Local storage**: Data is stored in the browser
-- **Export/Import**: Backup and restore quickly
-- **Autosave**: Edits are saved automatically
-- **Fast search**: Instant filtering in the sidebar
+- **Command palette & keyboard-first**: ⌘/Ctrl+K to run any action. Minimal interactions and clear shortcuts.
+- **Syntax highlighting & language detection**: Automatic highlighting for JavaScript, Python, SQL, Shell, Markdown, YAML, HTML, CSS, XML, TypeScript, JSON, and Plain Text. Manual override available.
+- **Offline-first & local storage**: Works as a PWA, storing all data in the browser. No accounts, no servers, no internet required.
+- **Export/Import & autosave**: Edits are autosaved. Backup or restore with a single click.
+- **Fast search**: Instantly filter and find snippets in the sidebar.
 
 ## Syntax Highlighting
 
