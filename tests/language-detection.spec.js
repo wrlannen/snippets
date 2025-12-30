@@ -182,10 +182,14 @@ test.describe('Language Detection & Switching', () => {
     await fillEditor(page, '<!DOCTYPE html>\n<html></html>');
     await page.waitForTimeout(1000);
 
-    // Export
+    // Export via command palette
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.click('#exportBtn')
+      (async () => {
+        await page.keyboard.press('Meta+k');
+        await page.locator('#commandPaletteInput').fill('export');
+        await page.keyboard.press('Enter');
+      })()
     ]);
 
     const exportedData = await download.path();

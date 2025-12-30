@@ -3,7 +3,14 @@ A minimal, keyboard-focused scratchpad for code snippets and notes. Everything i
 
 Try it now at [https://snippets.dev](https://snippets.dev)
 
-![Screenshot](assets/screenshot_3012.png)
+<p align="center">
+   <a href="assets/screenshot_1_3012.png" target="_blank">
+      <img src="assets/screenshot_1_3012.png" alt="Main UI" width="45%" style="display:inline-block; margin-right: 8px;"/>
+   </a>
+   <a href="assets/screenshot_2_3012.png" target="_blank">
+      <img src="assets/screenshot_2_3012.png" alt="Command Palette" width="45%" style="display:inline-block;"/>
+   </a>
+</p>
 
 ## Features
 

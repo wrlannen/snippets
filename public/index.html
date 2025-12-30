@@ -62,6 +62,8 @@
 
 <body
   class="h-screen overflow-hidden bg-[#1e1e1e] text-gray-300 antialiased selection:bg-[#3a6996] selection:text-white">
+  <!-- Hidden file input for importing snippets -->
+  <input type="file" id="importFileInput" accept=".json" class="hidden" aria-hidden="true" />
   <noscript>
     <div style="padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: #e5e7eb; background: #111827;">
       Snippets is a JavaScript app. Please enable JavaScript to use the editor.
@@ -94,33 +96,6 @@
             <h3 class="text-lg font-semibold text-gray-200 mb-2">Ready to code?</h3>
             <p class="text-sm text-gray-500 mb-6 max-w-xs">Start typing your first snippet. Everything saves automatically and works offline.</p>
           </div>
-        </div>
-        <div class="p-3">
-          <div class="flex gap-2">
-            <button id="importBtn"
-              class="flex-1 px-3 py-2 text-xs font-medium text-gray-400 hover:text-gray-200 flex items-center justify-center gap-2 transition-colors duration-200"
-              title="Import snippets from JSON">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5">
-                <path
-                  d="M10.75 2.75a.75.75 0 00-1.5 0v8.614L6.295 8.235a.75.75 0 10-1.09 1.03l4.25 4.5a.75.75 0 001.09 0l4.25-4.5a.75.75 0 00-1.09-1.03l-2.955 3.129V2.75z" />
-                <path
-                  d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
-              </svg>
-              Import
-            </button>
-            <button id="exportBtn"
-              class="flex-1 px-3 py-2 text-xs font-medium text-gray-400 hover:text-gray-200 flex items-center justify-center gap-2 transition-colors duration-200"
-              title="Export all snippets to JSON">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
-                <path
-                  d="M9.25 13.25a.75.75 0 001.5 0V4.636l2.955 3.129a.75.75 0 001.09-1.03l-4.25-4.5a.75.75 0 00-1.09 0l-4.25 4.5a.75.75 0 101.09 1.03L9.25 4.636v8.614z" />
-                <path
-                  d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
-              </svg>
-              Export
-            </button>
-          </div>
-          <input type="file" id="importFileInput" accept=".json,application/json" class="hidden" />
         </div>
       </aside>
       <!-- Main Editor -->
@@ -226,8 +201,7 @@
         <div class="bg-[#181818] border border-[#2a2a2a] rounded-xl p-4 space-y-3 text-[13px] text-gray-400 leading-relaxed font-light">
           <div class="space-y-3">
             <div>
-              A keyboard-first scratchpad for snippets, drafts, and quick notes - stored locally in your browser. Use <span
-                class="text-gray-300 font-medium">Export</span> and <span class="text-gray-300 font-medium">Import</span> to backup your data.
+              A keyboard-first scratchpad for snippets, drafts, and quick notes - stored locally in your browser. Use the Command Palette (⌘K / Ctrl+K) to export and import backups.
             </div>
             <div class="pt-1">
               <a href="https://github.com/wrlannen/snippets" target="_blank" rel="noopener"

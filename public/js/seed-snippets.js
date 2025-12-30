@@ -106,6 +106,7 @@ export function seedSnippetsOnFirstRun() {
         '',
         'You own your data.',
         '',
+        'Use the Command Palette (⌘K / Ctrl+K):',
         '- Export downloads a single JSON file',
         '- Import merges snippets + restores settings',
         '',

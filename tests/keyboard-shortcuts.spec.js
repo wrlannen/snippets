@@ -269,9 +269,9 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
         await page.locator('#aboutBtn').click();
         const modal = page.locator('#aboutModal');
 
-        // Check shortcuts are documented
-        await expect(modal.locator('text=Command palette')).toBeVisible();
-        await expect(modal.locator('text=Toggle sidebar')).toBeVisible();
+        // Check shortcuts are documented - use exact match to avoid duplicate text matches
+        await expect(modal.getByText('Command palette', { exact: true })).toBeVisible();
+        await expect(modal.getByText('Toggle sidebar', { exact: true })).toBeVisible();
     });
 
     test('About modal shows privacy information', async ({ page }) => {

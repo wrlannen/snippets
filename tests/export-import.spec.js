@@ -16,14 +16,18 @@ test.describe('Export/Import Functionality', () => {
 
   test('export button is visible', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('#exportBtn')).toBeVisible();
-    await expect(page.locator('#exportBtn')).toContainText('Export');
+    // Export is available via command palette
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('export');
+    await expect(page.locator('text=Export All Snippets')).toBeVisible();
   });
 
   test('import button is visible', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('#importBtn')).toBeVisible();
-    await expect(page.locator('#importBtn')).toContainText('Import');
+    // Import is available via command palette
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('import');
+    await expect(page.locator('text=Import Snippets')).toBeVisible();
   });
 
   test('exports snippets and settings to JSON', async ({ page }) => {
@@ -51,8 +55,10 @@ test.describe('Export/Import Functionality', () => {
     // Set up download listener
     const downloadPromise = page.waitForEvent('download');
 
-    // Click export button
-    await page.locator('#exportBtn').click();
+    // Open command palette and click export
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('export');
+    await page.keyboard.press('Enter');
 
     // Wait for download
     const download = await downloadPromise;
@@ -301,11 +307,13 @@ test.describe('Export/Import Functionality', () => {
   test('import button triggers file picker', async ({ page }) => {
     await page.goto('/');
 
-    // Click import button should not throw error
-    await page.locator('#importBtn').click();
-
-    // File input should be present (even if hidden)
+    // Import is available via command palette and file input exists
     await expect(page.locator('#importFileInput')).toBeAttached();
+    
+    // Verify import command is accessible via command palette
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('import');
+    await expect(page.locator('text=Import Snippets')).toBeVisible();
   });
 
   test('export and import roundtrip preserves data', async ({ page }) => {
@@ -330,9 +338,11 @@ test.describe('Export/Import Functionality', () => {
     await page.locator('#increaseFont').click();
     await page.waitForTimeout(500);
 
-    // Export
+    // Export via command palette
     const downloadPromise = page.waitForEvent('download');
-    await page.locator('#exportBtn').click();
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('export');
+    await page.keyboard.press('Enter');
     const download = await downloadPromise;
     const downloadPath = await download.path();
 
