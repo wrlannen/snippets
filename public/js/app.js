@@ -171,7 +171,7 @@ function scheduleAutosave() {
       const ts = nowIso();
       const mode = detectLanguage(content);
       const snippets = loadSnippets();
-      snippets.unshift({ id: activeId, content, mode, createdAt: ts, updatedAt: ts });
+      snippets.unshift({ id: activeId, content, mode, modeManual: false, createdAt: ts, updatedAt: ts });
       saveSnippets(snippets, { onStatus: setStatus });
       
       // Update editor mode and language selector
@@ -191,7 +191,9 @@ function scheduleAutosave() {
 
     if (idx === -1) return;
 
-    const mode = detectLanguage(content);
+    // Only auto-detect if user hasn't manually set the language
+    const currentSnippet = snippets[idx];
+    const mode = currentSnippet.modeManual ? currentSnippet.mode : detectLanguage(content);
     snippets[idx] = {
       ...snippets[idx],
       content,
@@ -269,7 +271,7 @@ function createNewSnippet() {
   const ts = nowIso();
 
   const snippets = loadSnippets();
-  snippets.unshift({ id: activeId, content: "", mode: 'javascript', createdAt: ts, updatedAt: ts });
+  snippets.unshift({ id: activeId, content: "", mode: 'javascript', modeManual: false, createdAt: ts, updatedAt: ts });
   saveSnippets(snippets, { onStatus: setStatus });
 
   loadIntoEditor(activeId);
@@ -605,8 +607,9 @@ function initializeApp() {
     if (!languageSelector || !activeId) return;
     
     const mode = getEditorMode();
-    if (mode) {
-      languageSelector.value = mode;
+    // Handle null mode (plain text) - explicitly check for undefined
+    if (mode !== undefined) {
+      languageSelector.value = mode === null ? 'null' : mode;
     }
   }
 
@@ -617,19 +620,23 @@ function initializeApp() {
     const newMode = e.target.value;
     if (!activeId) return;
 
-    setEditorMode(newMode);
+    // Convert 'null' string to actual null for plain text mode
+    const actualMode = newMode === 'null' ? null : newMode;
+    setEditorMode(actualMode);
 
-    // Update snippet mode in storage
+    // Update snippet mode in storage and mark as manually set
     const snippets = loadSnippets();
     const idx = snippets.findIndex(s => s.id === activeId);
     if (idx !== -1) {
       snippets[idx] = {
         ...snippets[idx],
-        mode: newMode,
+        mode: actualMode,
+        modeManual: true,
         updatedAt: nowIso(),
       };
       saveSnippets(snippets, { onStatus: setStatus });
-      flashStatus(`Language: ${newMode}`, 1000);
+      const displayName = actualMode === null ? 'Plain Text' : actualMode;
+      flashStatus(`Language: ${displayName} (manual)`, 1000);
     }
   });
 }

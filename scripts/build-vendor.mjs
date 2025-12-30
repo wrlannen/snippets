@@ -7,6 +7,11 @@ await mkdir(outDir, { recursive: true });
 const vendorFiles = [
   'public/vendor/codemirror.min.js',
   'public/vendor/javascript.min.js',
+  'public/vendor/python.min.js',
+  'public/vendor/markdown.min.js',
+  'public/vendor/sql.min.js',
+  'public/vendor/shell.min.js',
+  'public/vendor/yaml.min.js',
   'public/vendor/xml.min.js',
   'public/vendor/css.min.js',
   'public/vendor/htmlmixed.min.js',

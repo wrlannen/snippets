@@ -121,17 +121,18 @@ export function applyFontSettings(settings) {
 
 /**
  * Changes the editor's syntax highlighting mode.
- * @param {string} mode - CodeMirror mode name (javascript, xml, css, htmlmixed)
+ * @param {string|null} mode - CodeMirror mode name (javascript, xml, css, htmlmixed, null for plain text)
  */
 export function setEditorMode(mode) {
-  if (editor && typeof mode === 'string') {
+  if (editor) {
+    // null means plain text (no syntax highlighting)
     editor.setOption('mode', mode);
   }
 }
 
 /**
  * Gets the current editor mode.
- * @returns {string} - The current mode name
+ * @returns {string|null} - The current mode name
  */
 export function getEditorMode() {
   if (editor) {
