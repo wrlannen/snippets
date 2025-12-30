@@ -145,6 +145,15 @@
         <span class="text-gray-600"><span id="modKeyCopy">⌘</span>⇧C Copy snippet</span>
       </div>
       <div class="flex items-center gap-2">
+        <select id="languageSelector" 
+          class="bg-transparent border border-[#333] rounded px-2 py-0.5 text-xs text-gray-400 hover:text-gray-300 hover:border-[#444] focus:border-[#007acc] focus:ring-1 focus:ring-[#007acc] transition-colors cursor-pointer"
+          title="Change syntax highlighting">
+          <option value="javascript">JavaScript</option>
+          <option value="htmlmixed">HTML</option>
+          <option value="css">CSS</option>
+          <option value="xml">XML</option>
+        </select>
+        <span class="text-gray-700">|</span>
         <div class="flex items-center">
           <button id="decreaseFont" class="px-2 py-1 rounded hover:bg-[#2d2d2d] text-gray-400 hover:text-gray-300"
             title="Decrease font size">A-</button>

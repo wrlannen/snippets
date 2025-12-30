@@ -97,6 +97,44 @@ export function formatDate(iso) {
 }
 
 /**
+ * Detects the CodeMirror mode from content patterns.
+ * Supports: javascript, xml, css, htmlmixed.
+ * @param {string} content - The snippet content to analyze
+ * @returns {string} - The detected mode name
+ */
+export function detectLanguage(content) {
+  if (!content || typeof content !== 'string') return 'javascript';
+
+  const trimmed = content.trim();
+  const firstLine = trimmed.split('\n')[0].toLowerCase();
+
+  // HTML detection
+  if (trimmed.startsWith('<!DOCTYPE') || trimmed.startsWith('<!doctype')) return 'htmlmixed';
+  if (/<html|<head|<body|<div|<span|<p\b|<h[1-6]|<section|<article|<nav|<main|<footer|<header/i.test(firstLine)) return 'htmlmixed';
+  if (/<!--.*-->/.test(trimmed)) return 'htmlmixed';
+
+  // XML detection
+  if (trimmed.startsWith('<?xml')) return 'xml';
+  if (trimmed.startsWith('<')) {
+    // Simple XML if starts with tag but no HTML elements
+    const hasHtmlTags = /<(html|head|body|div|span|p|h[1-6]|section|article|nav|main|footer|header)\b/i.test(trimmed);
+    if (!hasHtmlTags) return 'xml';
+  }
+
+  // CSS detection
+  if (/^[.#]?[\w-]+\s*\{/.test(trimmed)) return 'css';
+  if (/^@(import|media|keyframes|charset|font-face|page)\b/.test(trimmed)) return 'css';
+  if (trimmed.includes('{') && trimmed.includes('}') && /:\s*[^;]+;/.test(trimmed)) {
+    // Has CSS-like property:value; patterns
+    const hasJsKeywords = /\b(function|const|let|var|if|else|for|while|return|class|import|export)\b/.test(trimmed);
+    if (!hasJsKeywords) return 'css';
+  }
+
+  // Default to JavaScript
+  return 'javascript';
+}
+
+/**
  * Copies text to the clipboard using modern or legacy APIs.
  * Falls back to execCommand for older browsers.
  */

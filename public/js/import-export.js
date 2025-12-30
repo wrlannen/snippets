@@ -67,10 +67,11 @@ export function importFromJson(file, constraints, onComplete) {
         // Enforce reasonable limits to prevent localStorage quota issues
         const id = snippet.id.trim().slice(0, 200);
         const content = snippet.content.slice(0, 1_000_000);
+        const mode = (typeof snippet.mode === 'string' && snippet.mode) ? snippet.mode : 'javascript';
         const createdAt = (typeof snippet.createdAt === 'string' && snippet.createdAt) ? snippet.createdAt : nowIso();
         const updatedAt = (typeof snippet.updatedAt === 'string' && snippet.updatedAt) ? snippet.updatedAt : nowIso();
 
-        return { id, content, createdAt, updatedAt };
+        return { id, content, mode, createdAt, updatedAt };
       };
 
       // Sanitize imported settings and clamp values to valid ranges

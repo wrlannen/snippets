@@ -13,10 +13,10 @@
  * 
  */
 
-import { nowIso, uid, copyTextToClipboard, safeLocalStorageGet } from './utils.js';
+import { nowIso, uid, copyTextToClipboard, safeLocalStorageGet, detectLanguage } from './utils.js';
 import { loadSnippets, saveSnippets, loadSettings, saveSettings, STORAGE_KEY } from './storage.js';
 import { bindEls, setStatus, flashStatus, updateCharCount } from './ui.js';
-import { initEditor, getEditorValue, setEditorValue, focusEditor, refreshEditor, clearHistory, applyFontSettings } from './editor.js';
+import { initEditor, getEditorValue, setEditorValue, focusEditor, refreshEditor, clearHistory, applyFontSettings, setEditorMode, getEditorMode } from './editor.js';
 import { renderList } from './list.js';
 import { seedSnippetsOnFirstRun } from './seed-snippets.js';
 import { initPwaInstall } from './pwa-install.js';
@@ -102,11 +102,21 @@ function loadIntoEditor(id) {
   activeId = found.id;
 
   setEditorValue(found.content ?? "");
+  
+  // Set mode from snippet or detect from content
+  const mode = found.mode || detectLanguage(found.content || '');
+  setEditorMode(mode);
+  
   clearHistory();
 
   setStatus("Editing");
   updateCharCount(found.content ?? "");
   renderSidebar();
+  
+  // Update language selector UI if available
+  if (typeof window._updateLanguageSelector === 'function') {
+    window._updateLanguageSelector();
+  }
 }
 
 /**
@@ -159,9 +169,17 @@ function scheduleAutosave() {
         return;
       }
       const ts = nowIso();
+      const mode = detectLanguage(content);
       const snippets = loadSnippets();
-      snippets.unshift({ id: activeId, content, createdAt: ts, updatedAt: ts });
+      snippets.unshift({ id: activeId, content, mode, createdAt: ts, updatedAt: ts });
       saveSnippets(snippets, { onStatus: setStatus });
+      
+      // Update editor mode and language selector
+      setEditorMode(mode);
+      if (typeof window._updateLanguageSelector === 'function') {
+        window._updateLanguageSelector();
+      }
+      
       setStatus("Saved");
       renderSidebar();
       return;
@@ -173,13 +191,22 @@ function scheduleAutosave() {
 
     if (idx === -1) return;
 
+    const mode = detectLanguage(content);
     snippets[idx] = {
       ...snippets[idx],
       content,
+      mode,
       updatedAt: nowIso(),
     };
 
     saveSnippets(snippets, { onStatus: setStatus });
+    
+    // Update editor mode and language selector if mode changed
+    setEditorMode(mode);
+    if (typeof window._updateLanguageSelector === 'function') {
+      window._updateLanguageSelector();
+    }
+    
     setStatus("Autosaved");
     renderSidebar();
   }, AUTOSAVE_DELAY_MS);
@@ -242,7 +269,7 @@ function createNewSnippet() {
   const ts = nowIso();
 
   const snippets = loadSnippets();
-  snippets.unshift({ id: activeId, content: "", createdAt: ts, updatedAt: ts });
+  snippets.unshift({ id: activeId, content: "", mode: 'javascript', createdAt: ts, updatedAt: ts });
   saveSnippets(snippets, { onStatus: setStatus });
 
   loadIntoEditor(activeId);
@@ -566,6 +593,43 @@ function initializeApp() {
   aboutModal?.addEventListener('click', (e) => {
     if (e.target === aboutModal) {
       aboutModal.classList.add('hidden');
+    }
+  });
+
+  // --- Language Selector ---
+
+  const languageSelector = document.getElementById('languageSelector');
+
+  // Update language selector to match current editor mode
+  function updateLanguageSelector() {
+    if (!languageSelector || !activeId) return;
+    
+    const mode = getEditorMode();
+    if (mode) {
+      languageSelector.value = mode;
+    }
+  }
+
+  // Make updateLanguageSelector available globally for loadIntoEditor
+  window._updateLanguageSelector = updateLanguageSelector;
+
+  languageSelector?.addEventListener('change', (e) => {
+    const newMode = e.target.value;
+    if (!activeId) return;
+
+    setEditorMode(newMode);
+
+    // Update snippet mode in storage
+    const snippets = loadSnippets();
+    const idx = snippets.findIndex(s => s.id === activeId);
+    if (idx !== -1) {
+      snippets[idx] = {
+        ...snippets[idx],
+        mode: newMode,
+        updatedAt: nowIso(),
+      };
+      saveSnippets(snippets, { onStatus: setStatus });
+      flashStatus(`Language: ${newMode}`, 1000);
     }
   });
 }

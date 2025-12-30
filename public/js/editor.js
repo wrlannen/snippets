@@ -15,7 +15,7 @@ let editor = null;
 let fallbackTextarea = null;
 const DEFAULT_FONT_COLOR = "#ffffff";
 
-export function initEditor(textarea, { onChange } = {}) {
+export function initEditor(textarea, { onChange, mode = 'javascript' } = {}) {
   fallbackTextarea = textarea;
 
   if (typeof CodeMirror === 'undefined' || !textarea) {
@@ -24,7 +24,7 @@ export function initEditor(textarea, { onChange } = {}) {
 
   editor = CodeMirror.fromTextArea(textarea, {
     lineNumbers: true,
-    mode: "javascript",
+    mode: mode,
     theme: "dracula",
     lineWrapping: true,
     tabSize: 2,
@@ -118,3 +118,25 @@ export function applyFontSettings(settings) {
     editor.refresh();
   }
 }
+
+/**
+ * Changes the editor's syntax highlighting mode.
+ * @param {string} mode - CodeMirror mode name (javascript, xml, css, htmlmixed)
+ */
+export function setEditorMode(mode) {
+  if (editor && typeof mode === 'string') {
+    editor.setOption('mode', mode);
+  }
+}
+
+/**
+ * Gets the current editor mode.
+ * @returns {string} - The current mode name
+ */
+export function getEditorMode() {
+  if (editor) {
+    return editor.getOption('mode');
+  }
+  return 'javascript';
+}
+
