@@ -1,0 +1,23 @@
+# Python Data Processing
+
+import pandas as pd
+import numpy as np
+from datetime import datetime
+
+def process_sales_data(filepath):
+    df = pd.read_csv(filepath)
+    
+    # Convert date column
+    df['date'] = pd.to_datetime(df['date'])
+    
+    # Calculate metrics
+    df['revenue'] = df['quantity'] * df['price']
+    df['month'] = df['date'].dt.to_period('M')
+    
+    # Group by month
+    monthly = df.groupby('month').agg({
+        'revenue': 'sum',
+        'quantity': 'sum'
+    }).reset_index()
+    
+    return monthly

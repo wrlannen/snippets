@@ -43,14 +43,17 @@ export function detectLanguage(content) {
   if (/^#{1,6}\s/.test(trimmed) && /\$\$[\s\S]+\$\$|\$[^$]+\$/.test(trimmed)) return 'markdown';
 
   // SQL detection - must have SQL keywords (moved up for higher priority)
+  // But check for Python imports first to avoid false positives with "from X import Y"
+  const hasPythonImportStatement = /^(import\s+[\w.]+|from\s+[\w.]+\s+import\s+)/m.test(trimmed);
+  
   const firstLineUpper = firstLine.trim().toUpperCase();
-  if (/^(SELECT|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|TRUNCATE|WITH)\b/.test(firstLineUpper)) return 'sql';
-  if (/\bSELECT\s+[\w*,\s.()]+\s+FROM\b/i.test(trimmed)) return 'sql';
-  if (/\bUPDATE\s+\w+\s+SET\b/i.test(trimmed)) return 'sql';
-  if (/\bINSERT\s+INTO\s+\w+/i.test(trimmed)) return 'sql';
-  if (/\bCREATE\s+(TABLE|INDEX|VIEW|DATABASE|UNIQUE)\b/i.test(trimmed)) return 'sql';
-  if (/\b(GROUP\s+BY|ORDER\s+BY|INNER\s+JOIN|LEFT\s+JOIN|RIGHT\s+JOIN|HAVING)\b/i.test(trimmed) && /\bFROM\b/i.test(trimmed)) return 'sql';
-  if (/\b(DATE_TRUNC|COUNT|SUM|AVG)\s*\(/i.test(trimmed) && /\bFROM\b/i.test(trimmed)) return 'sql';
+  if (!hasPythonImportStatement && /^(SELECT|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|TRUNCATE|WITH)\b/.test(firstLineUpper)) return 'sql';
+  if (!hasPythonImportStatement && /\bSELECT\s+[\w*,\s.()]+\s+FROM\b/i.test(trimmed)) return 'sql';
+  if (!hasPythonImportStatement && /\bUPDATE\s+\w+\s+SET\b/i.test(trimmed)) return 'sql';
+  if (!hasPythonImportStatement && /\bINSERT\s+INTO\s+\w+/i.test(trimmed)) return 'sql';
+  if (!hasPythonImportStatement && /\bCREATE\s+(TABLE|INDEX|VIEW|DATABASE|UNIQUE)\b/i.test(trimmed)) return 'sql';
+  if (!hasPythonImportStatement && /\b(GROUP\s+BY|ORDER\s+BY|INNER\s+JOIN|LEFT\s+JOIN|RIGHT\s+JOIN|HAVING)\b/i.test(trimmed) && /\bFROM\b/i.test(trimmed)) return 'sql';
+  if (!hasPythonImportStatement && /\b(DATE_TRUNC|COUNT|SUM|AVG)\s*\(/i.test(trimmed) && /\bFROM\b/i.test(trimmed)) return 'sql';
 
   // Python detection - look for Python-specific patterns
   const hasPythonImport = /^import\s+[\w.]+\s*$|^from\s+[\w.]+\s+import\s+/m.test(trimmed);
