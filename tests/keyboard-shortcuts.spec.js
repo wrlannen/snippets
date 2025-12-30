@@ -179,7 +179,7 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
     });
 
     test('displays correct modifier key for current platform', async ({ page }) => {
-        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        const isMac = await page.evaluate(() => navigator.platform.toUpperCase().indexOf('MAC') >= 0);
         const expectedKey = isMac ? '⌘' : 'Ctrl';
 
         // Check status bar
@@ -188,8 +188,7 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
         // Open About modal
         await page.locator('#aboutBtn').click();
 
-        // Check modal (no shortcuts now, but test the key if present)
-        // Since shortcuts removed, just check modal opens
+        // Check modal opens
         await expect(page.locator('#aboutModal')).not.toHaveClass('hidden');
     });
 
