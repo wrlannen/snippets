@@ -47,7 +47,7 @@ export function seedSnippetsOnFirstRun() {
       content: [
         '// Welcome to Snippets',
         '',
-        'A simple, fast scratchpad for code and notes.',
+        'Minimal local scratchpad for code & notes.',
         '',
         '- Everything is saved instantly in your browser',
         '- Your data never leaves your device',

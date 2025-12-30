@@ -443,8 +443,18 @@ function initializeApp() {
   initPwaInstall();
 
   // Adjust title for PWA standalone mode
-  if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
-    document.title = 'Snippets';
+  function updateTitleForPWA() {
+    if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+      document.title = 'Snippets';
+    }
+  }
+  
+  updateTitleForPWA();
+  
+  // Listen for display mode changes (when app is installed/launched as PWA)
+  const displayModeMediaQuery = window.matchMedia('(display-mode: standalone)');
+  if (displayModeMediaQuery.addEventListener) {
+    displayModeMediaQuery.addEventListener('change', updateTitleForPWA);
   }
 
   // Set up new snippet button

@@ -1,7 +1,7 @@
 {
     "name": "Snippets",
     "short_name": "Snippets",
-    "description": "A lightweight, privacy-focused snippet manager",
+    "description": "Minimal local scratchpad for code & notes. Everything is stored your browser, works offline, and no account is ever required.",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#1e1e1e",

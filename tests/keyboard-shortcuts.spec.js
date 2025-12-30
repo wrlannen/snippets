@@ -278,6 +278,6 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
         await page.locator('#aboutBtn').click();
 
         // Check privacy and backup section (updated copy)
-        await expect(page.locator('text=A keyboard-first scratchpad for snippets, drafts, and quick notes - stored locally in your browser.')).toBeVisible();
+        await expect(page.locator('text=Minimal local scratchpad for code & notes')).toBeVisible();
     });
 });
