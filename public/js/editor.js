@@ -29,9 +29,29 @@ export function initEditor(textarea, { onChange } = {}) {
     lineWrapping: true,
     tabSize: 2,
     indentUnit: 2,
-    autoCloseBrackets: true,
+    indentWithTabs: false,  // Use spaces, not tabs
+    smartIndent: true,      // Context-sensitive indentation
+    electricChars: true,    // Auto-reindent on special chars like }
+    autoCloseBrackets: {
+      pairs: "()[]{}''\"\"``",
+      explode: "()[]{}",
+      override: true  // Override mode-specific closeBrackets settings
+    },
     matchBrackets: true,
-    viewportMargin: Infinity  // Render entire document for proper scrolling
+    showCursorWhenSelecting: true,  // Show cursor even when selecting
+    viewportMargin: Infinity,  // Render entire document for proper scrolling
+    extraKeys: {
+      "Tab": (cm) => {
+        // If something is selected, indent it
+        if (cm.somethingSelected()) {
+          cm.indentSelection("add");
+        } else {
+          // Insert spaces instead of tab
+          cm.replaceSelection(" ".repeat(cm.getOption("indentUnit")));
+        }
+      },
+      "Shift-Tab": (cm) => cm.indentSelection("subtract")
+    }
   });
 
   editor.on("change", () => {
