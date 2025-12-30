@@ -1,53 +1,37 @@
 # Snippets
-A minimal, keyboard-focused scratchpad for code snippets and notes. Everything is stored locally in your browser - no accounts, no servers. It's fast, dark-themed, installable as a PWA and works offline.
+A minimal, keyboard-focused scratchpad for code snippets and notes. Everything is stored locally in the browser - no accounts, no servers. It's fast, dark-themed, installable as a PWA and works offline.
 
 Try it now at [https://snippets.dev](https://snippets.dev)
 
-![Screenshot](assets/demo_screenshot_3.png)
+![Screenshot](assets/screenshot_3012.png)
 
 ## Features
 
-- **Syntax highlighting for 11+ languages**: JavaScript, Python, SQL, Shell, Markdown, YAML, HTML, CSS, XML, TypeScript, JSON, Plain Text
-- **Automatic language detection**: Instantly highlights code as you type
-- **Manual language override**: Use the selector to lock in your preferred mode
-- **Offline-first**: PWA support means it works without an internet connection.
-- **Local storage**: Data lives in your browser, not on a backend server.
-- **Export/Import**: Backup your data to JSON anytime.
-- **Autosave**: Never lose work; edits save instantly.
-- **Fast search**: Filter snippets instantly.
-- **Copy to clipboard**: One shortcut to copy code blocks.
+- **Keyboard-first**: Fast, minimal, and designed for shortcuts
+- **Syntax highlighting**: Supports JavaScript, Python, SQL, Shell, Markdown, YAML, HTML, CSS, XML, TypeScript, JSON, and Plain Text
+- **Automatic language detection**: Highlights code as content is entered; manual override available
+- **Offline-first**: Functions as a PWA, no internet required
+- **Local storage**: Data is stored in the browser
+- **Export/Import**: Backup and restore with one click
+- **Autosave**: Edits are saved automatically
+- **Fast search**: Instant filtering
+- **Copy to clipboard**: Shortcut for copying code blocks
 
+## Syntax Highlighting
 
-## Syntax Highlighting & Language Support
-
-Snippets supports syntax highlighting for multiple languages out of the box:
-
-- **JavaScript** (and TypeScript, JSON)
-- **Python**
-- **SQL** (PostgreSQL, MySQL, SQLite, etc.)
-- **Shell** (Bash, sh)
-- **Markdown**
-- **YAML**
-- **HTML**
-- **CSS**
-- **XML**
-- **Plain Text**
-
-**Automatic detection:**
-- The editor auto-detects the language as you type, switching syntax highlighting instantly.
-- If you manually select a language from the dropdown, your choice is preserved and auto-detection is disabled for that snippet.
-
-**Manual override:**
-- Use the language selector in the status bar to force a specific language mode.
-- Your manual choice is saved and will not be changed by autosave or further edits.
-
-**Pro tip:**
-- The first line of your snippet (using comment syntax or plain text) becomes the title in the sidebar, and also helps with language detection.
-
+Language detection is automatic, with manual selection available via the dropdown. Supported languages:
+- JavaScript, TypeScript, JSON
+- Python
+- SQL
+- Shell
+- Markdown
+- YAML
+- HTML, CSS, XML
+- Plain Text
 
 ## Creating Snippets
 
-Just start typing - changes autosave. The first line becomes the title in the sidebar. You can use plain text or comment syntax to keep your code valid:
+Typing in the editor autosaves changes. The first line is used as the sidebar title. Titles can be plain text or comment syntax:
 
 
 ```javascript
