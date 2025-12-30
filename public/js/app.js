@@ -764,22 +764,22 @@ function initializeApp() {
     if (el) {
       if (isMac) {
         el.textContent = '⌘';
-        // For status bar, show "⌘K" (no space)
+        // For status bar, show "⌘+K"
         if (id === 'modKey') {
           el.textContent = '⌘';
           const modKeySpan = el;
           if (modKeySpan.nextSibling && modKeySpan.nextSibling.nodeType === 3) {
-            modKeySpan.nextSibling.textContent = 'K Commands';
+            modKeySpan.nextSibling.textContent = '+K Commands';
           }
         }
       } else {
         el.textContent = 'Ctrl';
-        // For status bar, show "Ctrl + K" (with space and plus)
+        // For status bar, show "Ctrl+K"
         if (id === 'modKey') {
           el.textContent = 'Ctrl';
           const modKeySpan = el;
           if (modKeySpan.nextSibling && modKeySpan.nextSibling.nodeType === 3) {
-            modKeySpan.nextSibling.textContent = ' + K Commands';
+            modKeySpan.nextSibling.textContent = '+K Commands';
           }
         }
       }
