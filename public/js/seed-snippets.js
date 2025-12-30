@@ -42,6 +42,7 @@ export function seedSnippetsOnFirstRun() {
       id: welcomeId,
       createdAt: ts,
       updatedAt: ts,
+      mode: 'javascript',
       content: [
         '// Welcome to Snippets',
         '',
@@ -58,6 +59,7 @@ export function seedSnippetsOnFirstRun() {
       id: shortcutsId,
       createdAt: ts,
       updatedAt: ts,
+      mode: 'javascript',
       content: [
         '// Keyboard shortcuts',
         '',
@@ -74,6 +76,7 @@ export function seedSnippetsOnFirstRun() {
       id: pwaId,
       createdAt: ts,
       updatedAt: ts,
+      mode: 'javascript',
       content: [
         '// Install as an app',
         '',
@@ -90,6 +93,7 @@ export function seedSnippetsOnFirstRun() {
       id: backupId,
       createdAt: ts,
       updatedAt: ts,
+      mode: 'javascript',
       content: [
         '// Backup & sync',
         '',
@@ -104,6 +108,7 @@ export function seedSnippetsOnFirstRun() {
       id: openSourceId,
       createdAt: ts,
       updatedAt: ts,
+      mode: 'javascript',
       content: [
         '// Open source',
         '',

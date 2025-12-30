@@ -100,12 +100,12 @@ export function formatDate(iso) {
  * Detects the CodeMirror mode from content patterns.
  * Supports: javascript, python, sql, shell, markdown, yaml, xml, css, htmlmixed, typescript, null (plain text).
  * @param {string} content - The snippet content to analyze
- * @returns {string} - The detected mode name
+ * @returns {string|null} - The detected mode name
  */
 export function detectLanguage(content) {
   if (!content || typeof content !== 'string') return 'javascript';
 
-  const trimmed = content.trim();
+  const trimmed = content.replaceAll('\r\n', '\n').trim();
   const firstLine = trimmed.split('\n')[0];
   const firstLineLower = firstLine.toLowerCase();
 
@@ -113,13 +113,23 @@ export function detectLanguage(content) {
   if (trimmed.startsWith('#!/bin/bash') || trimmed.startsWith('#!/bin/sh') || trimmed.startsWith('#!/usr/bin/env bash')) return 'shell';
   if (trimmed.startsWith('#!/usr/bin/env python') || trimmed.startsWith('#!/usr/bin/python')) return 'python';
 
-  // SQL detection (check before Python to avoid 'from' confusion)
-  if (/\b(SELECT|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|WITH|GRANT|REVOKE|TRUNCATE|BEGIN|COMMIT|ROLLBACK)\b/i.test(trimmed)) return 'sql';
-  if (/\b(WHERE|FROM|JOIN|INNER|LEFT|RIGHT|OUTER|ON|GROUP BY|ORDER BY|HAVING|LIMIT|OFFSET)\b/i.test(trimmed)) return 'sql';
+  // SQL detection (avoid matching common English phrases like "from" or "on")
+  // Strong signals: statements at the start of *any* line.
+  if (/^\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|WITH|TRUNCATE)\b/im.test(trimmed)) return 'sql';
+  // Common SQL structures.
+  if (/\bSELECT\b[\s\S]{0,400}\bFROM\b/i.test(trimmed)) return 'sql';
+  if (/\bUPDATE\b[\s\S]{0,200}\bSET\b/i.test(trimmed)) return 'sql';
+  if (/\bINSERT\b[\s\S]{0,120}\bINTO\b/i.test(trimmed)) return 'sql';
+  if (/\bCREATE\b[\s\S]{0,120}\bTABLE\b/i.test(trimmed)) return 'sql';
+  // Partial clauses are allowed only when they look query-ish.
+  if (/^\s*(WHERE|FROM|JOIN|GROUP BY|ORDER BY|HAVING|LIMIT|OFFSET)\b/im.test(trimmed) && /[=;*'"()]/.test(trimmed)) return 'sql';
 
-  // Python detection
-  if (/^(def |class |import |from .+ import|if __name__|async def |@\w+)/.test(firstLine)) return 'python';
-  if (/\b(def |class |import |print\(|range\(|len\(|str\(|int\(|lambda |self\.|elif )/.test(trimmed)) return 'python';
+  // Python detection (avoid matching prose like "import"/"class")
+  if (/^\s*(async\s+def|def)\s+\w+\s*\(/m.test(trimmed)) return 'python';
+  if (/^\s*class\s+\w+\s*[:(]/m.test(trimmed)) return 'python';
+  if (/^\s*from\s+[\w.]+\s+import\s+/m.test(trimmed)) return 'python';
+  if (/^\s*import\s+[\w.]+/m.test(trimmed)) return 'python';
+  if (/\b(__name__\s*==\s*['"]__main__['"]|self\.|elif\b|except\b|yield\b|await\b|print\()/.test(trimmed)) return 'python';
 
   // Shell detection
   if (/^(echo |cd |ls |grep |curl |wget |sudo |apt |brew |export |source |alias )/.test(firstLine)) return 'shell';
@@ -132,7 +142,11 @@ export function detectLanguage(content) {
 
   // YAML detection
   if (/^---\s*$/.test(firstLine)) return 'yaml'; // YAML document start
-  if (/^\w+:\s*[^{}]+$/.test(firstLine) && !trimmed.includes('{') && !trimmed.includes(';')) return 'yaml';
+  // Require at least 2 key/value lines to avoid matching prose like "Note: ..."
+  if (!trimmed.includes('{') && !trimmed.includes('}') && !trimmed.includes(';')) {
+    const yamlPairs = trimmed.match(/^\s*[A-Za-z0-9_-]+:\s+\S.*$/gm) || [];
+    if (yamlPairs.length >= 2) return 'yaml';
+  }
 
   // JSON detection
   if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
@@ -169,20 +183,28 @@ export function detectLanguage(content) {
   if (/:.*=>|: (string|number|boolean|any|void|unknown|never)\b/.test(trimmed)) return 'javascript';
 
   // Smart default: detect if content looks like code vs natural language
-  const hasCodePatterns = /[{};()[\]<>]|^\s*(function|const|let|var|if|else|class|def|import|export|return|for|while|do)/m.test(trimmed);
-  const hasOperators = /[=+\-*/<>!&|]{1,2}/.test(trimmed);
+  // Parentheses are common in prose; only treat them as "code" when call-like (e.g. foo()).
+  const hasStructuralPunctuation = /[{};[\]<>]/.test(trimmed);
+  // Call-like only when identifier is immediately followed by '(' (no space), e.g. print(...)
+  const hasCallLikeParens = /\b[A-Za-z_]\w*\(/.test(trimmed);
+  const hasCodeKeywordLineStart = /^\s*(function|const|let|var|if|else|class|def|import|export|return|for|while|do)\b/m.test(trimmed);
+  const hasCodePatterns = hasStructuralPunctuation || hasCallLikeParens || hasCodeKeywordLineStart;
+  // Operators: keep this fairly code-specific; a lone '&' appears in prose ("A & B").
+  const hasOperators = /(==|!=|<=|>=|=>|&&|\|\||\+=|-=|\*=|\/=|::|->|=)/.test(trimmed);
   const words = trimmed.split(/\s+/);
   
   // Plain text indicators:
   // - Has multiple sentences (periods, question marks, exclamation points)
   // - No code patterns or operators
-  // - More than 10 words
+  // - More than ~6 words
   const hasSentences = (trimmed.match(/[.!?]\s/g) || []).length >= 2;
-  const hasMultipleWords = words.length >= 10;
+  const hasMultipleWords = words.length >= 6;
+  const startsWithCommentTitle = /^\s*(\/\/|#|--)\s+\S/.test(trimmed);
   
   // If it looks like natural language prose, use plain text
   if (hasSentences && !hasCodePatterns && !hasOperators) return null;
   if (hasMultipleWords && !hasCodePatterns && !hasOperators) return null;
+  if (startsWithCommentTitle && words.length >= 3 && !hasCodePatterns && !hasOperators) return null;
   
   // Default to JavaScript for ambiguous code-like content
   return 'javascript';

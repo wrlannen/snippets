@@ -149,6 +149,33 @@ test.describe('Language Detection & Switching', () => {
     ]);
   });
 
+  test('does not mis-detect prose containing "from" as SQL', async ({ page }) => {
+    await page.keyboard.press('Meta+K');
+    await fillEditor(page, `// Backup & sync\n\nSnippets are stored locally in your browser (localStorage).\n\nUse Export to download a JSON backup.\n\nUse Import to restore from a backup.`);
+    await page.waitForTimeout(1100);
+
+    // Should treat this as plain text
+    await expect(page.locator('#languageSelector')).toHaveValue('null');
+  });
+
+  test('manual language selection disables auto-detection for that snippet', async ({ page }) => {
+    await page.keyboard.press('Meta+K');
+    await fillEditor(page, '<div>Hello</div>');
+    await page.waitForTimeout(1000);
+
+    // Auto-detect HTML
+    await expect(page.locator('#languageSelector')).toHaveValue('htmlmixed');
+
+    // Manually override to Python
+    await page.locator('#languageSelector').selectOption('python');
+    await expect(page.locator('#languageSelector')).toHaveValue('python');
+
+    // Keep typing HTML; should remain Python due to manual lock
+    await fillEditor(page, '<div>Hello</div>\n<div>Still HTML</div>');
+    await page.waitForTimeout(1100);
+    await expect(page.locator('#languageSelector')).toHaveValue('python');
+  });
+
   test('exports and imports snippets with mode field', async ({ page }) => {
     // Create snippet with HTML content
     await page.keyboard.press('Meta+K');
