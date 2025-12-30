@@ -146,3 +146,35 @@ Or run interactively:
 ```bash
 npm run test:ui
 ```
+
+## Language Detection Tests
+
+The app uses a robust, pattern-based language detection engine to automatically highlight code snippets. To ensure accuracy and avoid overfitting, the detection logic is tested against a large and diverse set of real-world code and text examples.
+
+### Test Coverage
+- **Languages tested:** JavaScript, Python, SQL, Shell, Markdown, YAML, HTML, CSS, XML, TypeScript, JSON, and Plain Text
+- **Fixture-based tests:** 200+ test files (snippets) across all supported languages, including edge cases and ambiguous examples
+- **Generalization:** New random examples are regularly added to ensure detection logic is not overfit to a fixed set
+
+### How It Works
+- The detection logic lives in `public/js/detect-language.js` and is shared by both the app and the test runner
+- Each fixture file in `tests/fixtures/language-detection/` contains a code or text snippet and is named for its expected language
+- The test runner (`npm run test:lang-fixtures`) loads all fixtures, runs detection, and checks for correct classification
+- All detection tests must pass before merging changes
+
+### Running Detection Tests
+To run the language detection tests:
+```bash
+npm run test:lang-fixtures
+```
+
+- The output will show the number of passed/failed tests and details for any failures
+- All Playwright UI tests must also pass (`npm test`)
+
+### Adding New Fixtures
+To add a new detection test:
+1. Create a new file in `tests/fixtures/language-detection/<language>/` (e.g. `python/my-example.txt`)
+2. Add a code or text snippet that represents a real-world or edge case for that language
+3. Run `npm run test:lang-fixtures` to verify detection
+
+See `tests/README.md` for more details on the test infrastructure.
