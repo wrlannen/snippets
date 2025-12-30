@@ -83,27 +83,23 @@ export function buildSnippetItemHtml(snippet, isActive) {
     }
   }
 
-  const timestamp = escapeHtml(formatDate(snippet.updatedAt));
-
   const containerClasses = isActive
     ? "bg-[#252526] border-l-[3px] border-[#007acc] shadow-sm"
     : "hover:bg-[#2d2d2d] border-l-[3px] border-transparent hover:border-[#404040]";
 
   const titleClasses = isActive ? "text-white font-semibold" : "text-gray-200 font-medium";
   const previewClasses = isActive ? "text-gray-400" : "text-gray-500";
-  const dateClasses = isActive ? "text-gray-500" : "text-gray-600";
 
   const trashIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 pointer-events-none">
     <path fill-rule="evenodd" d="M7.5 3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V4h3.25a.75.75 0 0 1 0 1.5h-.305l-.548 9.32A2.75 2.75 0 0 1 12.156 17H7.844a2.75 2.75 0 0 1-2.741-2.18l-.548-9.32H4.25a.75.75 0 0 1 0-1.5H7.5V3Zm1 .5V4h3v-.5h-3ZM5.75 5.5l.54 9.18a1.25 1.25 0 0 0 1.246 1.07h4.312a1.25 1.25 0 0 0 1.246-1.07l.54-9.18H5.75Z" clip-rule="evenodd" />
   </svg>`;
 
   return `
-    <div class="group relative ${containerClasses} transition-all duration-200 rounded-r-md mx-1 my-0.5">
+    <div class="group relative ${containerClasses} transition-all duration-200 rounded-r-md mx-1 my-2">
       <button type="button" data-action="open" 
-        class="w-full pl-3 pr-10 py-3 text-left transition-colors flex flex-col">
-        <div class="truncate text-sm leading-tight ${titleClasses} mb-1">${escapeHtml(title)}</div>
-        ${preview ? `<div class="truncate text-xs leading-tight ${previewClasses} mb-1 font-mono">${escapeHtml(preview)}</div>` : ''}
-        <div class="text-xs leading-tight ${dateClasses}">${timestamp}</div>
+        class="w-full pl-3 pr-9 py-3 text-left transition-colors flex flex-col gap-1.5">
+        <div class="truncate text-sm leading-tight ${titleClasses}">${escapeHtml(title)}</div>
+        ${preview ? `<div class="truncate text-xs leading-tight ${previewClasses} font-mono">${escapeHtml(preview)}</div>` : ''}
       </button>
       <div class="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100">
         <button type="button" data-action="delete" 
