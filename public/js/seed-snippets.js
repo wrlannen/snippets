@@ -46,13 +46,13 @@ export function seedSnippetsOnFirstRun() {
       content: [
         '// Welcome to Snippets',
         '',
-        'A minimal, keyboard-first scratchpad for code, drafts, and quick notes — stored locally in your browser.',
+        'A simple, fast scratchpad for code and notes.',
         '',
-        'Everything saves automatically and works offline.',
+        '- Everything is saved instantly in your browser',
+        '- Your data never leaves your device',
+        '- Works offline — no account or sync needed',
         '',
-        'Titles come from the first line (plain text or comment-style).',
-        '',
-        'Tip: Press ⌘K (or Ctrl+K) to create a new snippet.'
+        'The first line becomes the title in the sidebar. Use a comment or plain text.'
       ].join('\n')
     },
     {
@@ -61,15 +61,22 @@ export function seedSnippetsOnFirstRun() {
       updatedAt: ts,
       mode: 'javascript',
       content: [
-        '// Keyboard shortcuts',
+        '// The Command Palette',
         '',
-        '⌘B / Ctrl+B  Toggle sidebar',
+        'The Command Palette lets you do everything in Snippets from one place.',
         '',
-        '⌘K / Ctrl+K  New snippet',
+        'Press ⌘K (or Ctrl+K) and type to:',
+        '- Create a new snippet',
+        '- Open a file from disk',
+        '- Search your snippets',
+        '- Toggle the sidebar',
+        '- Copy the current snippet',
+        '- Delete the current snippet',
+        '- Export all snippets',
+        '- Import snippets from a file',
+        '- Increase or decrease font size',
         '',
-        '⌘F / Ctrl+F  Search',
-        '',
-        '⌘⇧C / Ctrl+Shift+C  Copy snippet',
+        'If you ever feel lost, open the Command Palette and start typing.'
       ].join('\n')
     },
     {
@@ -95,13 +102,14 @@ export function seedSnippetsOnFirstRun() {
       updatedAt: ts,
       mode: 'javascript',
       content: [
-        '// Backup & sync',
+        '// Backup & restore (Export / Import)',
         '',
-        'Snippets are stored locally in your browser (localStorage).',
+        'You own your data.',
         '',
-        'Use Export to download a JSON backup.',
+        '- Export downloads a single JSON file',
+        '- Import merges snippets + restores settings',
         '',
-        'Use Import to restore from a backup.',
+        'Suggested habit: Export occasionally (or before clearing browser data).'
       ].join('\n')
     },
     {

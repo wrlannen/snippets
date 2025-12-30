@@ -19,8 +19,8 @@ test.describe('Snippets App', () => {
 
     await expect(page.locator('#list li')).toHaveCount(5);
     await expect(page.locator('#list')).toContainText('Welcome to Snippets');
-    await expect(page.locator('#list')).toContainText('Keyboard shortcuts');
-    await expect(page.locator('#list')).toContainText('Backup & sync');
+    await expect(page.locator('#list')).toContainText('The Command Palette');
+    await expect(page.locator('#list')).toContainText('Backup & restore');
     await expect(page.locator('#list')).toContainText('Install as an app');
     await expect(page.locator('#list')).toContainText('Open source');
   });
