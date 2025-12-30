@@ -31,14 +31,5 @@
             "type": "image/png",
             "purpose": "maskable"
         }
-    ],
-    "screenshots": [
-        {
-            "src": "/screenshot-desktop.png",
-            "sizes": "1665x1136",
-            "type": "image/png",
-            "form_factor": "wide",
-            "label": "Snippets app on desktop"
-        }
     ]
 }
