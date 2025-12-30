@@ -199,9 +199,15 @@
 
         <!-- Description -->
         <div class="bg-[#181818] border border-[#2a2a2a] rounded-xl p-4 space-y-3 text-[13px] text-gray-400 leading-relaxed font-light">
+          <h3 class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+              <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd" />
+            </svg>
+            Feedback & Bugs
+          </h3>
           <div class="space-y-3">
-            <div>
-              Minimal local scratchpad for code & notes. Everything is stored locally on your device, works offline, and no account is required. Use the Command Palette (⌘K / Ctrl+K) to export and import backups.
+            <div class="text-gray-400 text-[13px]">
+              Please raise any feedback, feature requests, or bugs as a GitHub issue.
             </div>
             <div class="pt-1">
               <a href="https://github.com/wrlannen/snippets" target="_blank" rel="noopener"
@@ -214,15 +220,30 @@
               </a>
             </div>
           </div>
-          <div class="text-gray-400 text-[13px]">
-            Please raise any feedback, feature requests, or bugs as a GitHub issue.
+        </div>
+
+        <!-- Privacy & Security -->
+        <div class="bg-[#181818] border border-[#2a2a2a] rounded-xl p-4 space-y-3">
+          <h3 class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+            </svg>
+            Privacy & Security
+          </h3>
+          <div class="text-[13px] text-gray-400 leading-relaxed">
+            Your snippets never leave your device. No servers, no accounts, no tracking. Everything stays local, just like a native desktop app. Use the Command Palette (⌘K / Ctrl+K) to export and import backups for extra security.
           </div>
         </div>
 
         <!-- Install Section (Dynamic) -->
         <div id="installSection" class="hidden">
           <div class="bg-[#181818] border border-[#2a2a2a] rounded-xl p-4 space-y-3">
-            <h3 class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Install as App</h3>
+            <h3 class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+              Install as App
+            </h3>
 
           <!-- Chrome/Edge -->
             <div id="pwaInstallable" class="hidden">
@@ -251,31 +272,6 @@
                     class="bg-[#252526] px-1.5 py-0.5 rounded border border-[#333] font-mono text-[10px] text-gray-400">Add
                     to Dock...</span>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Shortcuts -->
-        <div class="bg-[#181818] border border-[#2a2a2a] rounded-xl p-4 space-y-3">
-          <h3 class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Shortcuts</h3>
-          <div class="space-y-2.5">
-            <div class="flex items-center justify-between group">
-              <span class="text-[13px] text-gray-400 group-hover:text-gray-300 transition-colors">Command palette</span>
-              <div class="flex gap-1.5">
-                <kbd id="modalModKey1"
-                  class="min-w-[24px] h-6 flex items-center justify-center bg-[#252526] border border-[#333] rounded text-[10px] font-mono text-gray-400 shadow-sm">⌘</kbd>
-                <kbd
-                  class="min-w-[24px] h-6 flex items-center justify-center bg-[#252526] border border-[#333] rounded text-[10px] font-mono text-gray-400 shadow-sm">K</kbd>
-              </div>
-            </div>
-            <div class="flex items-center justify-between group">
-              <span class="text-[13px] text-gray-400 group-hover:text-gray-300 transition-colors">Toggle sidebar</span>
-              <div class="flex gap-1.5">
-                <kbd id="modalModKey2"
-                  class="min-w-[24px] h-6 flex items-center justify-center bg-[#252526] border border-[#333] rounded text-[10px] font-mono text-gray-400 shadow-sm">⌘</kbd>
-                <kbd
-                  class="min-w-[24px] h-6 flex items-center justify-center bg-[#252526] border border-[#333] rounded text-[10px] font-mono text-gray-400 shadow-sm">/</kbd>
               </div>
             </div>
           </div>
