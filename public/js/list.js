@@ -97,13 +97,13 @@ export function buildSnippetItemHtml(snippet, isActive) {
   return `
     <div class="group relative ${containerClasses} transition-all duration-200 rounded-r-md mx-1 my-2">
       <button type="button" data-action="open" 
-        class="w-full pl-3 pr-9 py-3 text-left transition-colors flex flex-col gap-1.5">
-        <div class="truncate text-sm leading-tight ${titleClasses}">${escapeHtml(title)}</div>
-        ${preview ? `<div class="truncate text-xs leading-tight ${previewClasses} font-mono">${escapeHtml(preview)}</div>` : ''}
+        class="w-full pl-3 pr-9 py-3 text-left transition-colors flex flex-col gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[#007acc]">
+        <div class="truncate text-[15px] leading-tight ${titleClasses}">${escapeHtml(title)}</div>
+        ${preview ? `<div class="truncate text-[13px] leading-tight ${previewClasses} font-mono">${escapeHtml(preview)}</div>` : ''}
       </button>
-      <div class="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100">
+      <div class="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100">
         <button type="button" data-action="delete" 
-          class="h-6 w-6 rounded hover:bg-[#404040] text-gray-500 hover:text-gray-200 flex items-center justify-center transition-colors" 
+          class="h-6 w-6 rounded hover:bg-[#404040] text-gray-500 hover:text-gray-200 flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[#404040]" 
           aria-label="Delete snippet" title="Delete">
           ${trashIcon}
         </button>

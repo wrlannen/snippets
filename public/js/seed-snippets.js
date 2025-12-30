@@ -86,6 +86,7 @@ export function seedSnippetsOnFirstRun() {
       createdAt: ts,
       updatedAt: ts,
       mode: 'javascript',
+      modeManual: true,
       content: [
         '// Install as an app',
         '',
@@ -103,6 +104,7 @@ export function seedSnippetsOnFirstRun() {
       createdAt: ts,
       updatedAt: ts,
       mode: 'javascript',
+      modeManual: true,
       content: [
         '// Backup & restore (Export / Import)',
         '',
@@ -120,6 +122,7 @@ export function seedSnippetsOnFirstRun() {
       createdAt: ts,
       updatedAt: ts,
       mode: 'javascript',
+      modeManual: true,
       content: [
         '// Open source',
         '',
