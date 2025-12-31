@@ -1,14 +1,16 @@
 import { test, expect } from '@playwright/test';
-import { fillEditor } from './test-utils';
+import { fillEditor, clearAllStorage } from './test-utils';
 
 test.describe('Keyboard Shortcuts & Platform Detection', () => {
     test.beforeEach(async ({ page }) => {
+    // Disable welcome seed in tests
+    await page.addInitScript(() => {
+        window.__DISABLE_WELCOME_SEED__ = true;
+    });
         await page.goto('/');
-        await page.evaluate(() => {
-            localStorage.clear();
-            localStorage.setItem('snippets.v1', '[]');
-        });
+        await clearAllStorage(page);
         await page.reload();
+        await page.waitForTimeout(300);
     });
 
     test('⌘+K opens command palette on Mac', async ({ page }) => {

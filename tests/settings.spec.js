@@ -1,13 +1,16 @@
 import { test, expect } from '@playwright/test';
+import { clearAllStorage } from './test-utils';
 
 test.describe('Settings & Fonts', () => {
     test.beforeEach(async ({ page }) => {
+    // Disable welcome seed in tests
+    await page.addInitScript(() => {
+        window.__DISABLE_WELCOME_SEED__ = true;
+    });
         await page.goto('/');
-        await page.evaluate(() => {
-            localStorage.clear();
-            localStorage.setItem('snippets.v1', '[]');
-        });
+        await clearAllStorage(page);
         await page.reload();
+        await page.waitForTimeout(1000);
     });
 
     test('adjusts font size with A+/A- buttons', async ({ page }) => {
@@ -26,6 +29,9 @@ test.describe('Settings & Fonts', () => {
         await page.locator('#decreaseFont').click();
         const decreasedSize = await editor.evaluate((el) => parseInt(getComputedStyle(el).fontSize));
         expect(decreasedSize).toBeLessThan(increasedSize);
+
+        // Wait for settings to persist to IndexedDB
+        await page.waitForTimeout(500);
 
         // Reload and verify persistence
         await page.reload();

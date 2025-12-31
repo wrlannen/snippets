@@ -1,20 +1,20 @@
 import { test, expect } from '@playwright/test';
-import { fillEditor } from './test-utils';
+import { fillEditor, clearAllStorage } from './test-utils';
 
 test.describe('Copy to Clipboard', () => {
   test.beforeEach(async ({ page }) => {
-    // Clear localStorage before each test
-    await page.goto('/');
-    await page.evaluate(() => {
-      localStorage.clear();
-      localStorage.setItem('snippets.v1', '[]');
+    // Disable welcome seed in tests
+    await page.addInitScript(() => {
+        window.__DISABLE_WELCOME_SEED__ = true;
     });
+    // Clear all storage before each test
+    await page.goto('/');
+    await clearAllStorage(page);
     await page.reload();
+    await page.waitForTimeout(300);
   });
 
   test('copy shortcut works', async ({ context, page }) => {
-    await page.goto('/');
-
     // Grant clipboard permissions
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
@@ -43,7 +43,6 @@ test.describe('Copy to Clipboard', () => {
   });
 
   test('shows "Copied to clipboard" status message with white text', async ({ context, page }) => {
-    await page.goto('/');
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
     // Create a snippet
@@ -71,8 +70,6 @@ test.describe('Copy to Clipboard', () => {
   });
 
   test('handles empty content gracefully', async ({ page }) => {
-    await page.goto('/');
-
     // Create empty snippet
     await page.keyboard.press('Meta+k');
     await page.locator('#commandPaletteInput').fill('new');
@@ -90,8 +87,6 @@ test.describe('Copy to Clipboard', () => {
   });
 
   test('handles whitespace-only content', async ({ page }) => {
-    await page.goto('/');
-
     // Create snippet with only whitespace
     await page.keyboard.press('Meta+k');
     await page.locator('#commandPaletteInput').fill('new');
@@ -112,7 +107,6 @@ test.describe('Copy to Clipboard', () => {
   });
 
   test('copies multi-line content correctly', async ({ context, page }) => {
-    await page.goto('/');
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
     // Create multi-line snippet with special characters
@@ -139,7 +133,6 @@ test.describe('Copy to Clipboard', () => {
   });
 
   test('copies content with special characters', async ({ context, page }) => {
-    await page.goto('/');
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
     // Create snippet with special characters
@@ -163,7 +156,6 @@ test.describe('Copy to Clipboard', () => {
   });
 
   test('can copy different snippets sequentially', async ({ context, page }) => {
-    await page.goto('/');
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
     // Create first snippet

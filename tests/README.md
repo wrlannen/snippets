@@ -31,7 +31,7 @@ The language detection fixture test output is printed to the terminal.
 
 The following test files cover end-to-end scenarios:
 
-- **snippets.spec.js**: Core snippet CRUD (create, edit, delete), autosave, empty state, first-run seeding, sidebar updates, character count, localStorage persistence.
+- **snippets.spec.js**: Core snippet CRUD (create, edit, delete), autosave, empty state, first-run seeding, sidebar updates, character count, IndexedDB persistence.
 - **keyboard-shortcuts.spec.js**: Platform-specific shortcuts (⌘+K / Ctrl+K for palette, CMD+F/Ctrl+F for search, CMD+B/Ctrl+B for sidebar toggle, copy shortcuts).
 - **sidebar-toggle.spec.js**: Sidebar show/hide functionality and persistence.
 - **sidebar-resize.spec.js**: Draggable sidebar resizing and state persistence.

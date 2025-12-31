@@ -7,17 +7,21 @@
  */
 
 import { nowIso, uid } from './utils.js';
-import { saveSnippets, STORAGE_KEY } from './storage.js';
-import { safeLocalStorageGet } from './utils.js';
+import { loadSnippets, saveSnippets } from './storage.js';
 
 /**
  * Seeds the storage with welcome snippets on first run.
  * Creates example snippets showing features and shortcuts.
- * Only runs if localStorage is empty.
+ * Only runs if storage is empty.
  */
 export function seedSnippetsOnFirstRun() {
-  const existingRaw = safeLocalStorageGet(STORAGE_KEY);
-  if (existingRaw !== null && existingRaw !== undefined) return;
+  // Skip seeding in test environment
+  if (typeof window !== 'undefined' && window.__DISABLE_WELCOME_SEED__) {
+    return;
+  }
+
+  const existing = loadSnippets();
+  if (existing.length > 0) return;
 
   const ts = nowIso();
   let welcomeId;
@@ -44,7 +48,7 @@ export function seedSnippetsOnFirstRun() {
         'Getting started:',
         '',
         '• Type here to create snippets — they autosave instantly.',
-        '• Your snippets never leave your device (stored in localStorage).',
+        '• Your snippets never leave your device (stored in IndexedDB).',
         '• ⌘+K (Ctrl+K) opens commands, including export for backups.',
         '• Install as PWA for desktop app experience:',
         '    -> Click the install icon in your browser\'s address bar or menu',

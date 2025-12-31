@@ -1,37 +1,44 @@
 import { test, expect } from '@playwright/test';
-import { fillEditor, getEditorValue } from './test-utils';
+import { fillEditor, getEditorValue, clearAllStorage } from './test-utils';
 
-test.describe('Snippets App', () => {
-  test.beforeEach(async ({ page }) => {
-    // Reset to an explicit empty state (avoid first-run seeding)
-    await page.goto('/');
-    await page.evaluate(() => {
-      localStorage.clear();
-      localStorage.setItem('snippets.v1', '[]');
-    });
-    await page.reload();
-  });
-
+// Test for welcome snippet seeding (runs without disabled seed flag)
+test.describe('Welcome Snippet Seeding', () => {
   test('seeds welcome snippets on first run', async ({ page }) => {
+    // Don't disable welcome seed for this test
     await page.goto('/');
-    await page.evaluate(() => localStorage.clear());
+    await clearAllStorage(page);
     await page.reload();
+    await page.waitForTimeout(1000);
 
     await expect(page.locator('#list li')).toHaveCount(1);
     await expect(page.locator('#list')).toContainText('Welcome to Snippets');
     await expect(page.locator('#list')).toContainText('Minimal local scratchpad');
     await expect(page.locator('#list')).toContainText('Getting started:');
   });
+});
+
+test.describe('Snippets App', () => {
+  test.beforeEach(async ({ page }) => {
+    // Disable welcome seed in tests
+    await page.addInitScript(() => {
+        window.__DISABLE_WELCOME_SEED__ = true;
+    });
+    // Reset to an explicit empty state (avoid first-run seeding)
+    await page.goto('/');
+    await clearAllStorage(page);
+    await page.reload();
+    await page.waitForTimeout(1000); // Wait for IndexedDB init and app ready
+  });
 
   test('loads app with empty state', async ({ page }) => {
-    await page.goto('/');
+    // beforeEach already loaded the page with empty state
     await expect(page.locator('#empty')).toBeVisible();
     await expect(page.locator('text=Ready to code?')).toBeVisible();
     await expect(page.locator('text=Start typing your first snippet')).toBeVisible();
   });
 
   test('creates a new snippet via command palette', async ({ page }) => {
-    await page.goto('/');
+    // beforeEach already loaded the page
 
     // Open command palette and create new snippet
     await page.keyboard.press('Meta+k');
@@ -51,8 +58,6 @@ test.describe('Snippets App', () => {
   });
 
   test('edits existing snippet', async ({ page }) => {
-    await page.goto('/');
-
     // Create snippet via command palette
     await page.keyboard.press('Meta+k');
     await page.locator('#commandPaletteInput').fill('new');
@@ -71,7 +76,7 @@ test.describe('Snippets App', () => {
   });
 
   test('deletes snippet with confirmation', async ({ page }) => {
-    await page.goto('/');
+    // beforeEach already loaded the page
 
     // Create snippet via command palette
     await page.keyboard.press('Meta+k');
@@ -94,8 +99,6 @@ test.describe('Snippets App', () => {
 
 
   test('searches snippets with search command', async ({ page }) => {
-    await page.goto('/');
-
     // Create multiple snippets via command palette
     await page.keyboard.press('Meta+k');
     await page.locator('#commandPaletteInput').fill('new');
@@ -137,8 +140,6 @@ test.describe('Snippets App', () => {
   });
 
   test('clears search with Escape', async ({ page }) => {
-    await page.goto('/');
-
     // Type in search
     const searchInput = page.locator('#search');
     await searchInput.fill('test search');
@@ -150,8 +151,6 @@ test.describe('Snippets App', () => {
   });
 
   test('switches between snippets', async ({ page }) => {
-    await page.goto('/');
-
     // Create first snippet via command palette
     await page.keyboard.press('Meta+k');
     await page.locator('#commandPaletteInput').fill('new');
@@ -179,8 +178,6 @@ test.describe('Snippets App', () => {
   });
 
   test('autosaves snippet', async ({ page }) => {
-    await page.goto('/');
-
     // Create snippet via command palette
     await page.keyboard.press('Meta+k');
     await page.locator('#commandPaletteInput').fill('new');
@@ -202,8 +199,6 @@ test.describe('Snippets App', () => {
   });
 
   test('shows character count', async ({ page }) => {
-    await page.goto('/');
-
     await page.keyboard.press('Meta+k');
     await page.locator('#commandPaletteInput').fill('new');
     await page.keyboard.press('Enter');
@@ -215,8 +210,6 @@ test.describe('Snippets App', () => {
   });
 
   test('displays first line as snippet title with content preview', async ({ page }) => {
-    await page.goto('/');
-
     await page.keyboard.press('Meta+k');
     await page.locator('#commandPaletteInput').fill('new');
     await page.keyboard.press('Enter');
@@ -232,8 +225,6 @@ test.describe('Snippets App', () => {
   });
 
   test('shows "Untitled snippet" for empty snippets', async ({ page }) => {
-    await page.goto('/');
-
     await page.keyboard.press('Meta+k');
     await page.locator('#commandPaletteInput').fill('new');
     await page.keyboard.press('Enter');

@@ -10,8 +10,8 @@ Try it now at [https://snippets.dev](https://snippets.dev)
 
 - **Command palette & keyboard-first**: ⌘+K / Ctrl+K to run any action. Minimal interactions and clear shortcuts.
 - **Syntax highlighting & language detection**: Automatic highlighting for JavaScript, Python, SQL, Shell, Markdown, YAML, HTML, CSS, XML, TypeScript, JSON, and Plain Text. Manual override available.
-- **Offline-first & local storage**: Works as a PWA, storing all data in the browser. No accounts, no servers, no internet required.
-- **Export/Import & autosave**: Edits are autosaved. Backup or restore with a single click.
+- **Offline-first & local storage**: Works as a PWA with IndexedDB storage (50MB+ capacity). All data stays in your browser - no accounts, no servers, no internet required.
+- **Export/Import & autosave**: Edits are autosaved instantly. Backup or restore with a single click.
 - **Fast search**: Instantly filter and find snippets in the sidebar.
 
 ## Syntax Highlighting
@@ -74,8 +74,8 @@ Open with ⌘+K / Ctrl+K. Commands include:
 - **Backend:** Node.js + Express (static only)
 - **Frontend:** Vanilla JS, HTML, CodeMirror
 - **Styling:** Tailwind CSS (built + minified via CLI)
-- **Storage:** Browser localStorage
-- **Testing:** Playwright
+- **Storage:** IndexedDB with in-memory cache
+- **Testing:** Playwright with comprehensive test coverage (78 tests)
 
 
 ## Getting Started

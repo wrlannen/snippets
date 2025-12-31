@@ -1,10 +1,10 @@
 # GitHub Copilot Instructions
 
 ## Project Overview
-This is a minimal, modern snippet management app with a dark UI inspired by Sublime Text. It stores text snippets in browser localStorage with no backend database.
+This is a minimal, modern snippet management app with a dark UI inspired by Sublime Text. It stores text snippets in browser IndexedDB with no backend database.
 
 ## Key Architectural Decisions
-- **Client-side only**: All data stored in localStorage, no server-side storage
+- **Client-side only**: All data stored in IndexedDB, no server-side storage
 - **Node.js + Express**: Serves static files only (could be replaced with nginx)
 - **Tailwind CSS**: All styling via CDN, no build step
 - **Comment-based titles**: The first line uses comment syntax (//, #, --, /* */, <!-- -->) for titles in the sidebar
@@ -15,7 +15,7 @@ This is a minimal, modern snippet management app with a dark UI inspired by Subl
 - Use `??` for null coalescing, `?.` for optional chaining
 - Escape all user content with `escapeHtml()` to prevent XSS
 - Use `crypto.randomUUID()` for secure ID generation
-- Add error handling for localStorage operations (quota exceeded)
+- Add error handling for IndexedDB operations
 
 ## Security Requirements
 - **Always escape HTML**: Use `escapeHtml()` for any user content in innerHTML
@@ -43,7 +43,7 @@ All PRs/commits must pass Playwright tests covering:
 - Search (CMD+F) and filter
 - Keyboard shortcuts (CMD+., CMD+F, Escape)
 - Sidebar updates and first-line title
-- localStorage persistence and reload
+- IndexedDB persistence and reload
 - Edge cases (delete all, create new, etc.)
 
 **Note:** For pure static hosting, consider using nginx or Caddy for even lower resource usage than Node.js.
@@ -59,7 +59,7 @@ All PRs/commits must pass Playwright tests covering:
 ## Common Pitfalls
 - **Don't add global event listeners in loops**: Clean up old listeners or use delegation
 - **Don't block the UI**: Use debouncing for expensive operations like renderList()
-- **Don't trust localStorage**: Always wrap in try/catch for quota errors
+- **Don't trust IndexedDB**: Always wrap in try/catch for errors
 - **Test on every change**: Run `npm test` before committing
 
 ## File Structure
@@ -80,4 +80,4 @@ All PRs/commits must pass Playwright tests covering:
 - Debounce renderList() during typing (150ms)
 - Debounce autosave (800ms)
 - Use event delegation for dynamic sidebar items
-- Keep localStorage writes to minimum
+- IndexedDB writes use fire-and-forget pattern with in-memory cache

@@ -12,6 +12,10 @@ import { resetStorage, fillEditor, createSnippet } from './test-utils.js';
 
 test.describe('Language Detection & Switching', () => {
   test.beforeEach(async ({ page }) => {
+    // Disable welcome seed in tests
+    await page.addInitScript(() => {
+        window.__DISABLE_WELCOME_SEED__ = true;
+    });
     await resetStorage(page);
   });
 

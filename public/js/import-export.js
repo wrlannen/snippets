@@ -6,7 +6,7 @@
  * - Imports from JSON with validation and sanitization
  * - Supports both old format (array) and new format (versioned object)
  * - Prevents duplicates during import
- * - Enforces size limits to prevent localStorage quota issues
+ * - Enforces size limits to prevent storage quota issues
  * 
  */
 
@@ -64,7 +64,7 @@ export function importFromJson(file, constraints, onComplete) {
         if (typeof snippet.id !== 'string' || !snippet.id.trim()) return null;
         if (typeof snippet.content !== 'string') return null;
 
-        // Enforce reasonable limits to prevent localStorage quota issues
+        // Enforce reasonable limits to prevent storage quota issues
         const id = snippet.id.trim().slice(0, 200);
         const content = snippet.content.slice(0, 1_000_000);
         const allowedModes = new Set(['javascript', 'python', 'sql', 'shell', 'markdown', 'yaml', 'xml', 'css', 'htmlmixed']);

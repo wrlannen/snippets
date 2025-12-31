@@ -3,6 +3,10 @@ import { resetStorage, waitForSnippetsToLoad, createSnippet } from './test-utils
 
 test.describe('Sidebar Toggle', () => {
   test.beforeEach(async ({ page }) => {
+    // Disable welcome seed in tests
+    await page.addInitScript(() => {
+        window.__DISABLE_WELCOME_SEED__ = true;
+    });
     await resetStorage(page);
     await page.goto('http://localhost:3000');
     await waitForSnippetsToLoad(page);

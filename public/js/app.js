@@ -13,8 +13,8 @@
  * 
  */
 
-import { nowIso, uid, copyTextToClipboard, safeLocalStorageGet, detectLanguage } from './utils.js';
-import { loadSnippets, saveSnippets, loadSettings, saveSettings, STORAGE_KEY } from './storage.js';
+import { nowIso, uid, copyTextToClipboard, detectLanguage } from './utils.js';
+import { initStorage, loadSnippets, saveSnippets, loadSettings, saveSettings, flushToStorage } from './storage.js';
 import { bindEls, setStatus, flashStatus, updateCharCount } from './ui.js';
 import { initEditor, getEditorValue, setEditorValue, focusEditor, refreshEditor, clearHistory, applyFontSettings, setEditorMode, getEditorMode } from './editor.js';
 import { renderList } from './list.js';
@@ -28,7 +28,7 @@ import { initCommandPalette, registerCommands, openPalette, closePalette, isPale
 // Configuration Constants
 // =============================================================================
 
-/** localStorage key for sidebar visibility state */
+/** localStorage key for sidebar visibility (uses localStorage for synchronous early boot access) */
 const SIDEBAR_VISIBLE_KEY = "snippets.sidebar.visible";
 
 /** Font size constraints (in pixels) */
@@ -382,7 +382,17 @@ function initializeFontControls() {
  * Sets up DOM references, event listeners, and loads initial data.
  * Called when DOM is ready.
  */
-function initializeApp() {
+async function initializeApp() {
+  // Initialize IndexedDB storage
+  try {
+    const result = await initStorage();
+    if (result.migration && result.migration.snippetsMigrated > 0) {
+      console.log(`Migrated ${result.migration.snippetsMigrated} snippets to IndexedDB`);
+    }
+  } catch (error) {
+    console.error('Storage initialization failed:', error);
+    setStatus('Warning: Storage initialization failed');
+  }
   // Cache DOM element references
   els = {
     search: document.getElementById("search"),
@@ -546,13 +556,14 @@ function initializeApp() {
   }
 
   /**
-   * Restore sidebar visibility state from localStorage
+   * Restore sidebar visibility state from localStorage.
+   * Note: Sidebar state uses localStorage for synchronous access during early boot.
    */
   function restoreSidebarState() {
     try {
       const sidebarVisible = localStorage.getItem(SIDEBAR_VISIBLE_KEY);
       const html = document.documentElement;
-      
+
       // Default to visible if no preference is saved
       // Note: State is already applied by inline script in HTML head
       // This function ensures the class is in sync
@@ -874,6 +885,11 @@ function initializeApp() {
       const displayName = actualMode === null ? 'Plain Text' : actualMode;
       flashStatus(`Language: ${displayName} (manual)`, 1000);
     }
+  });
+
+  // Flush storage to IndexedDB before page unload
+  window.addEventListener('beforeunload', () => {
+    flushToStorage();
   });
 }
 

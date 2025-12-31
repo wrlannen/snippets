@@ -1,8 +1,16 @@
 import { test, expect } from '@playwright/test';
+import { clearAllStorage } from './test-utils';
 
 test.describe('PWA Install UI', () => {
     test.beforeEach(async ({ page }) => {
+    // Disable welcome seed in tests
+    await page.addInitScript(() => {
+        window.__DISABLE_WELCOME_SEED__ = true;
+    });
         await page.goto('/');
+        await clearAllStorage(page);
+        await page.reload();
+        await page.waitForTimeout(300);
     });
 
     test('Install section is hidden by default if no event or non-Safari', async ({ page }) => {

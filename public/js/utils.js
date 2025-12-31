@@ -5,7 +5,7 @@
  * - Secure ID generation (crypto.randomUUID)
  * - Date/time formatting
  * - HTML escaping for XSS prevention
- * - Safe JSON parsing and localStorage access
+ * - Safe JSON parsing
  * - Clipboard operations
  * - Text truncation
  * 
@@ -37,18 +37,6 @@ export function uid() {
   }
 
   throw new Error('Secure ID generation is unavailable');
-}
-
-/**
- * Safely reads from localStorage, returning null on failure.
- */
-export function safeLocalStorageGet(key) {
-  try {
-    return localStorage.getItem(key);
-  } catch (e) {
-    console.error('localStorage read failed', e);
-    return null;
-  }
 }
 
 /**

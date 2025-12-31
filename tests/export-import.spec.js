@@ -1,21 +1,22 @@
 import { test, expect } from '@playwright/test';
-import { fillEditor } from './test-utils';
+import { fillEditor, clearAllStorage } from './test-utils';
 import fs from 'fs';
 import path from 'path';
 
 test.describe('Export/Import Functionality', () => {
   test.beforeEach(async ({ page }) => {
-    // Clear localStorage before each test
-    await page.goto('/');
-    await page.evaluate(() => {
-      localStorage.clear();
-      localStorage.setItem('snippets.v1', '[]');
+    // Disable welcome seed in tests
+    await page.addInitScript(() => {
+        window.__DISABLE_WELCOME_SEED__ = true;
     });
+    // Clear all storage before each test
+    await page.goto('/');
+    await clearAllStorage(page);
     await page.reload();
+    await page.waitForTimeout(300);
   });
 
   test('export button is visible', async ({ page }) => {
-    await page.goto('/');
     // Export is available via command palette
     await page.keyboard.press('Meta+k');
     await page.locator('#commandPaletteInput').fill('export');
@@ -23,7 +24,6 @@ test.describe('Export/Import Functionality', () => {
   });
 
   test('import button is visible', async ({ page }) => {
-    await page.goto('/');
     // Import is available via command palette
     await page.keyboard.press('Meta+k');
     await page.locator('#commandPaletteInput').fill('import');
@@ -31,8 +31,6 @@ test.describe('Export/Import Functionality', () => {
   });
 
   test('exports snippets and settings to JSON', async ({ page }) => {
-    await page.goto('/');
-
     // Create some snippets via command palette
     await page.keyboard.press('Meta+k');
     await page.locator('#commandPaletteInput').fill('new');
@@ -90,8 +88,6 @@ test.describe('Export/Import Functionality', () => {
   });
 
   test('imports snippets from JSON (new format with settings)', async ({ page }) => {
-    await page.goto('/');
-
     // Create test import data with settings
     const importData = {
       version: 1,
@@ -148,8 +144,6 @@ test.describe('Export/Import Functionality', () => {
   });
 
   test('imports snippets from JSON (old array format)', async ({ page }) => {
-    await page.goto('/');
-
     // Create test import data (old array format)
     const importData = [
       {
@@ -185,18 +179,23 @@ test.describe('Export/Import Functionality', () => {
   });
 
   test('skips duplicate snippets on import', async ({ page }) => {
-    await page.goto('/');
-
-    // Create existing snippet
+    // Create existing snippet via command palette
     await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('new');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
     await fillEditor(page, 'Existing\nExisting content');
     await page.waitForTimeout(1000);
 
-    // Get the ID of the existing snippet
-    const snippetId = await page.evaluate(() => {
-      const snippets = JSON.parse(localStorage.getItem('snippets.v1'));
-      return snippets[0].id;
-    });
+    // Export to get the snippet ID
+    const downloadPromise = page.waitForEvent('download');
+    await page.keyboard.press('Meta+k');
+    await page.locator('#commandPaletteInput').fill('export');
+    await page.keyboard.press('Enter');
+    const download = await downloadPromise;
+    const downloadPath = await download.path();
+    const exportedData = JSON.parse(fs.readFileSync(downloadPath, 'utf8'));
+    const snippetId = exportedData.snippets[0].id;
 
     // Create import data with same ID
     const importData = {
@@ -245,8 +244,6 @@ test.describe('Export/Import Functionality', () => {
   });
 
   test('handles invalid JSON on import', async ({ page }) => {
-    await page.goto('/');
-
     // Create temporary file with invalid JSON
     const tempDir = path.join(process.cwd(), 'test-results', 'temp');
     fs.mkdirSync(tempDir, { recursive: true });
@@ -268,8 +265,6 @@ test.describe('Export/Import Functionality', () => {
   });
 
   test('handles invalid snippet format on import', async ({ page }) => {
-    await page.goto('/');
-
     // Create test import data with missing required fields
     const importData = {
       version: 1,
@@ -305,8 +300,6 @@ test.describe('Export/Import Functionality', () => {
   });
 
   test('import button triggers file picker', async ({ page }) => {
-    await page.goto('/');
-
     // Import is available via command palette and file input exists
     await expect(page.locator('#importFileInput')).toBeAttached();
     
@@ -317,8 +310,6 @@ test.describe('Export/Import Functionality', () => {
   });
 
   test('export and import roundtrip preserves data', async ({ page }) => {
-    await page.goto('/');
-
     // Create snippets via command palette
     await page.keyboard.press('Meta+k');
     await page.locator('#commandPaletteInput').fill('new');
@@ -347,11 +338,9 @@ test.describe('Export/Import Functionality', () => {
     const downloadPath = await download.path();
 
     // Clear everything
-    await page.evaluate(() => {
-      localStorage.clear();
-      localStorage.setItem('snippets.v1', '[]');
-    });
+    await clearAllStorage(page);
     await page.reload();
+    await page.waitForTimeout(1000);
     await expect(page.locator('#empty')).toBeVisible();
 
     // Import the exported file
