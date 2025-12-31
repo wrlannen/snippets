@@ -21,17 +21,9 @@ export function seedSnippetsOnFirstRun() {
 
   const ts = nowIso();
   let welcomeId;
-  let shortcutsId;
-  let backupId;
-  let pwaId;
-  let openSourceId;
 
   try {
     welcomeId = uid();
-    shortcutsId = uid();
-    backupId = uid();
-    pwaId = uid();
-    openSourceId = uid();
   } catch (err) {
     console.error('Failed to seed snippets: secure IDs unavailable', err);
     return;
@@ -49,86 +41,15 @@ export function seedSnippetsOnFirstRun() {
         '',
         'Minimal local scratchpad for code & notes.',
         '',
-        '- Everything is saved instantly in your browser',
-        '- Your data never leaves your device',
-        '- Works offline — no account or sync needed',
+        'Getting started:',
         '',
-        'The first line becomes the title in the sidebar. Use a comment or plain text.'
-      ].join('\n')
-    },
-    {
-      id: shortcutsId,
-      createdAt: ts,
-      updatedAt: ts,
-      mode: 'javascript',
-      modeManual: true,
-      content: [
-        '// The Command Palette',
+        '• Type here to create snippets — they autosave instantly.',
+        '• Your snippets never leave your device (stored in localStorage).',
+        '• ⌘+K (Ctrl+K) opens commands, including export for backups.',
+        '• Install as PWA for desktop app experience:',
+        '    -> Click the install icon in your browser\'s address bar or menu',
         '',
-        'The Command Palette lets you do everything in Snippets from one place.',
-        '',
-        'Press ⌘+K (or Ctrl+K) and type to:',
-        '- Create a new snippet',
-        '- Open a file from disk',
-        '- Search your snippets',
-        '- Toggle the sidebar',
-        '- Copy the current snippet',
-        '- Delete the current snippet',
-        '- Export all snippets',
-        '- Import snippets from a file',
-        '- Increase or decrease font size',
-        '',
-        'If you ever feel lost, open the Command Palette and start typing.'
-      ].join('\n')
-    },
-    {
-      id: pwaId,
-      createdAt: ts,
-      updatedAt: ts,
-      mode: 'javascript',
-      modeManual: true,
-      content: [
-        '// Install as an app',
-        '',
-        'You can install Snippets as a PWA (Progressive Web App) for quick access from your desktop or dock.',
-        '',
-        'Chrome: Look for "Install Snippets" (↓) in the address bar or menu.',
-        '',
-        'Safari: Go to File → Add to Dock...',
-        '',
-        'Or use the About (i) button for more instructions.',
-      ].join('\n')
-    },
-    {
-      id: backupId,
-      createdAt: ts,
-      updatedAt: ts,
-      mode: 'javascript',
-      modeManual: true,
-      content: [
-        '// Backup & restore (Export / Import)',
-        '',
-        'You own your data.',
-        '',
-        'Use the Command Palette (⌘+K / Ctrl+K):',
-        '- Export downloads a single JSON file',
-        '- Import merges snippets + restores settings',
-        '',
-        'Suggested habit: Export occasionally (or before clearing browser data).'
-      ].join('\n')
-    },
-    {
-      id: openSourceId,
-      createdAt: ts,
-      updatedAt: ts,
-      mode: 'javascript',
-      modeManual: true,
-      content: [
-        '// Open source',
-        '',
-        'Snippets is open source. View or contribute on GitHub:',
-        '',
-        'https://github.com/wrlannen/snippets',
+        'Replace this with your first snippet!'
       ].join('\n')
     }
   ];

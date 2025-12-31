@@ -17,12 +17,10 @@ test.describe('Snippets App', () => {
     await page.evaluate(() => localStorage.clear());
     await page.reload();
 
-    await expect(page.locator('#list li')).toHaveCount(5);
+    await expect(page.locator('#list li')).toHaveCount(1);
     await expect(page.locator('#list')).toContainText('Welcome to Snippets');
-    await expect(page.locator('#list')).toContainText('The Command Palette');
-    await expect(page.locator('#list')).toContainText('Backup & restore');
-    await expect(page.locator('#list')).toContainText('Install as an app');
-    await expect(page.locator('#list')).toContainText('Open source');
+    await expect(page.locator('#list')).toContainText('Getting started:');
+    await expect(page.locator('#list')).toContainText('Type here to create snippets');
   });
 
   test('loads app with empty state', async ({ page }) => {
