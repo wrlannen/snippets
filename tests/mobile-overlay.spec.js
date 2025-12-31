@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
-// This test checks that the mobile overlay appears and the app is hidden on small screens
+// This test checks that the mobile overlay appears with app preview on small screens
 
 test.describe('Mobile Overlay', () => {
-  test('shows desktop-only overlay on small screens with mobile user agent', async ({ browser }) => {
+  test('shows desktop app experience overlay on small screens with mobile user agent', async ({ browser }) => {
     // Create a mobile context with iPhone user agent
     const context = await browser.newContext({
       userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15A372 Safari/604.1',
@@ -14,13 +14,16 @@ test.describe('Mobile Overlay', () => {
 
     const overlay = page.locator('#mobileOverlay');
     await expect(overlay).toBeVisible();
-    await expect(overlay).toContainText('Desktop Only');
-    await expect(overlay).toContainText('designed for desktop browsers');
+    await expect(overlay).toContainText('Snippets');
+    await expect(overlay).toContainText('Minimal local scratchpad for code & notes');
+
+    // Check that screenshot is shown
+    await expect(overlay.locator('img[alt="Snippets app screenshot"]')).toBeVisible();
 
     // The main app should be hidden
     const appMain = page.locator('.app-main');
     await expect(appMain).toBeHidden();
-    
+
     await context.close();
   });
 

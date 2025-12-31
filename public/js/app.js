@@ -393,19 +393,25 @@ function initializeApp() {
   const mobileOverlay = document.getElementById('mobileOverlay');
   const appMain = document.getElementById('appMain');
   const sidebar = document.getElementById('sidebar');
-  
-  // Utility to detect mobile devices
+
+  // Utility to detect mobile devices (phones only, allow tablets)
   function isMobileDevice() {
-    return /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent);
+    return /Mobi|Android|iPhone|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent) &&
+           window.innerWidth < 768; // Only block phones, allow tablets
+  }
+
+  // Utility to detect touch devices for UX adjustments
+  function isTouchDevice() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   }
   
   function handleResponsiveUI() {
     const width = window.innerWidth;
-    const html = document.documentElement;
     const isMobile = isMobileDevice();
-    
-    // Show overlay and hide app for mobile devices on small screens
-    if (isMobile && width < 700) {
+    const isTouch = isTouchDevice();
+
+    // Show overlay and hide app for mobile phones
+    if (isMobile) {
       if (mobileOverlay) mobileOverlay.classList.remove('hidden');
       if (appMain) appMain.classList.add('hidden');
     } else {
@@ -415,7 +421,15 @@ function initializeApp() {
         appMain.classList.add('flex');
       }
     }
-    
+
+    // Add touch-friendly classes for mobile devices
+    const html = document.documentElement;
+    if (isTouch) {
+      html.classList.add('touch-device');
+    } else {
+      html.classList.remove('touch-device');
+    }
+
     // Auto-hide sidebar on small widths (desktop only) - hide earlier for more editor space
     if (!isMobile && width < 900) {
       html.classList.add('sidebar-hidden');
@@ -423,6 +437,9 @@ function initializeApp() {
       html.classList.remove('sidebar-hidden');
     }
   }
+
+  window.addEventListener('resize', handleResponsiveUI);
+  handleResponsiveUI();
   
   window.addEventListener('resize', handleResponsiveUI);
   handleResponsiveUI();
