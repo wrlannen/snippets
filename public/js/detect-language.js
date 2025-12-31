@@ -1,6 +1,3 @@
-// Standalone language detection for both browser and Node.js
-// No browser APIs, pure function
-
 /**
  * Detects the CodeMirror mode from content patterns.
  * Supports: javascript, python, sql, shell, markdown, yaml, xml, css, htmlmixed, typescript, null (plain text).
