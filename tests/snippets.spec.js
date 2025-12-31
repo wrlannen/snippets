@@ -19,8 +19,8 @@ test.describe('Snippets App', () => {
 
     await expect(page.locator('#list li')).toHaveCount(1);
     await expect(page.locator('#list')).toContainText('Welcome to Snippets');
+    await expect(page.locator('#list')).toContainText('Minimal local scratchpad');
     await expect(page.locator('#list')).toContainText('Getting started:');
-    await expect(page.locator('#list')).toContainText('Type here to create snippets');
   });
 
   test('loads app with empty state', async ({ page }) => {
