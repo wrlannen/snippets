@@ -24,13 +24,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const publicDir = path.join(__dirname, "public");
 
-function getRequestOrigin(req) {
-  const forwardedProto = req.get("x-forwarded-proto");
-  const proto = (forwardedProto ?? req.protocol ?? "http").split(",")[0].trim();
-  const host = req.get("host");
-  return `${proto}://${host}`;
-}
-
 // =============================================================================
 // Security Headers Middleware
 // =============================================================================

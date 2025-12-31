@@ -295,14 +295,11 @@ function renderCommands() {
  */
 function executeCommand(commandId) {
   const command = commands.find(cmd => cmd.id === commandId);
-  
+
   if (command && typeof command.action === 'function') {
     // Close the palette first, then execute the command
-    isOpen = false;
-    paletteEl.classList.add('hidden');
-    inputEl.value = '';
-    selectedIndex = 0;
-    
+    closePalette();
+
     // Execute the action synchronously
     command.action();
   }

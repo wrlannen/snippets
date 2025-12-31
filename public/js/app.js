@@ -45,6 +45,27 @@ const AUTOSAVE_DELAY_MS = 800;
 /** Debounce delay for sidebar re-renders during typing */
 const RENDER_DEBOUNCE_MS = 150;
 
+/** Supported file extensions for opening files from disk */
+const SUPPORTED_FILE_EXTENSIONS = {
+  'js': 'javascript',
+  'ts': 'javascript',
+  'tsx': 'javascript',
+  'jsx': 'javascript',
+  'py': 'python',
+  'md': 'markdown',
+  'html': 'htmlmixed',
+  'htm': 'htmlmixed',
+  'css': 'css',
+  'json': 'javascript',
+  'yaml': 'yaml',
+  'yml': 'yaml',
+  'xml': 'xml',
+  'sql': 'sql',
+  'sh': 'shell',
+  'bash': 'shell',
+  'txt': 'null'
+};
+
 // =============================================================================
 // Application State
 // =============================================================================
@@ -295,44 +316,23 @@ function createNewSnippet(initialContent = "", initialMode = 'javascript') {
 function openFileFromDisk() {
   const input = document.createElement('input');
   input.type = 'file';
-  input.accept = '.txt,.js,.ts,.py,.md,.html,.css,.json,.yaml,.yml,.xml,.sql,.sh';
-  
+  const acceptedExts = Object.keys(SUPPORTED_FILE_EXTENSIONS).map(ext => `.${ext}`).join(',');
+  input.accept = acceptedExts;
+
   input.addEventListener('change', async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     try {
       const text = await file.text();
-      
+
       // Detect language from file extension
       const ext = file.name.split('.').pop()?.toLowerCase();
-      let mode = 'javascript'; // default
-      
-      const extMap = {
-        'js': 'javascript',
-        'ts': 'javascript',
-        'tsx': 'javascript',
-        'jsx': 'javascript',
-        'py': 'python',
-        'md': 'markdown',
-        'html': 'htmlmixed',
-        'htm': 'htmlmixed',
-        'css': 'css',
-        'json': 'javascript',
-        'yaml': 'yaml',
-        'yml': 'yaml',
-        'xml': 'xml',
-        'sql': 'sql',
-        'sh': 'shell',
-        'bash': 'shell',
-        'txt': 'null'
-      };
-      
-      mode = extMap[ext] || 'javascript';
-      
+      const mode = SUPPORTED_FILE_EXTENSIONS[ext] || 'javascript';
+
       // Add filename as first line comment
       const commentedContent = `// ${file.name}\n${text}`;
-      
+
       createNewSnippet(commentedContent, mode);
       flashStatus(`Opened ${file.name}`, 1500);
     } catch (err) {
@@ -340,8 +340,20 @@ function openFileFromDisk() {
       flashStatus('Failed to open file', 1500);
     }
   });
-  
+
   input.click();
+}
+
+/**
+ * Adjusts font size by a delta value and persists to settings.
+ * @param {number} delta - Amount to change font size (positive or negative)
+ */
+function adjustFontSize(delta) {
+  const settings = loadSettings();
+  const newSize = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, settings.fontSize + delta));
+  const newSettings = { ...settings, fontSize: newSize };
+  saveSettings(newSettings);
+  applyFontSettings(newSettings);
 }
 
 /**
@@ -354,20 +366,12 @@ function initializeFontControls() {
 
   // Font size increase button (A+)
   document.getElementById('increaseFont')?.addEventListener('click', () => {
-    const settings = loadSettings();
-    const newSize = Math.min(MAX_FONT_SIZE, settings.fontSize + 1);
-    const newSettings = { ...settings, fontSize: newSize };
-    saveSettings(newSettings);
-    applyFontSettings(newSettings);
+    adjustFontSize(1);
   });
 
   // Font size decrease button (A-)
   document.getElementById('decreaseFont')?.addEventListener('click', () => {
-    const settings = loadSettings();
-    const newSize = Math.max(MIN_FONT_SIZE, settings.fontSize - 1);
-    const newSettings = { ...settings, fontSize: newSize };
-    saveSettings(newSettings);
-    applyFontSettings(newSettings);
+    adjustFontSize(-1);
   });
 }
 
@@ -438,9 +442,6 @@ function initializeApp() {
     }
   }
 
-  window.addEventListener('resize', handleResponsiveUI);
-  handleResponsiveUI();
-  
   window.addEventListener('resize', handleResponsiveUI);
   handleResponsiveUI();
 
@@ -617,8 +618,6 @@ function initializeApp() {
     }
   });
 
-  // --- Initial Data Load ---
-
   // --- Editor Initialization ---
 
   const handleEditorChange = (value) => {
@@ -740,26 +739,14 @@ function initializeApp() {
       label: 'Increase Font Size',
       description: 'Make the editor text larger',
       keywords: ['zoom', 'bigger'],
-      action: () => {
-        const settings = loadSettings();
-        const newSize = Math.min(MAX_FONT_SIZE, settings.fontSize + 1);
-        const newSettings = { ...settings, fontSize: newSize };
-        saveSettings(newSettings);
-        applyFontSettings(newSettings);
-      }
+      action: () => adjustFontSize(1)
     },
     {
       id: 'decrease-font',
       label: 'Decrease Font Size',
       description: 'Make the editor text smaller',
       keywords: ['zoom', 'smaller'],
-      action: () => {
-        const settings = loadSettings();
-        const newSize = Math.max(MIN_FONT_SIZE, settings.fontSize - 1);
-        const newSettings = { ...settings, fontSize: newSize };
-        saveSettings(newSettings);
-        applyFontSettings(newSettings);
-      }
+      action: () => adjustFontSize(-1)
     }
   ]);
 
@@ -834,18 +821,6 @@ function initializeApp() {
 
   aboutBtn?.addEventListener('click', () => {
     aboutModal?.classList.remove('hidden');
-    // If install prompt is available, ensure UI is updated
-    if (deferredPwaPrompt) {
-      const installSection = document.getElementById('installSection');
-      const pwaInstallable = document.getElementById('pwaInstallable');
-      const pwaSafari = document.getElementById('pwaSafari');
-
-      if (installSection && pwaInstallable) {
-        installSection.classList.remove('hidden');
-        pwaInstallable.classList.remove('hidden');
-        if (pwaSafari) pwaSafari.classList.add('hidden');
-      }
-    }
   });
 
   closeAboutModal?.addEventListener('click', () => {

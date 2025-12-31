@@ -8,6 +8,7 @@
  * @returns {string|null} - The detected mode name
  */
 export function detectLanguage(content) {
+  // Default to JavaScript for empty or invalid content
   if (!content || typeof content !== 'string') return 'javascript';
 
   const trimmed = content.replaceAll('\r\n', '\n').trim();
@@ -142,10 +143,14 @@ export function detectLanguage(content) {
   if (!trimmed.includes('{') && !trimmed.includes(';') && !/\bdef\s+|\bclass\s+.*:/.test(trimmed)) {
     const yamlLines = lines.filter(l => /^\s*[a-zA-Z0-9_-]+:\s*(\S|$)/.test(l));
     const hasNestedYaml = lines.some(l => /^\s{2,}[a-zA-Z0-9_-]+:/.test(l));
-    if (yamlLines.length >= 3 && (hasNestedYaml || yamlLines.length >= 5)) {
+    const MIN_YAML_LINES = 3;
+    const MIN_YAML_LINES_FLAT = 5;
+    const MAX_PROSE_WORDS = 3;
+
+    if (yamlLines.length >= MIN_YAML_LINES && (hasNestedYaml || yamlLines.length >= MIN_YAML_LINES_FLAT)) {
       // Avoid matching plain text with colons - count prose words
       const proseWordCount = (trimmed.match(/\b(is|are|was|were|that|the|and|or|but|in|of|to|for|as|at|by)\b/gi) || []).length;
-      if (proseWordCount < 3) return 'yaml';
+      if (proseWordCount < MAX_PROSE_WORDS) return 'yaml';
     }
   }
 

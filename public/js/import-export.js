@@ -134,15 +134,15 @@ export function importFromJson(file, constraints, onComplete) {
       const existing = loadSnippets();
       const existingIds = new Set(existing.map(s => s.id));
 
-      let imported_count = 0;
-      let skipped_count = 0;
+      let importedCount = 0;
+      let skippedCount = 0;
 
       for (const snippet of sanitizedSnippets) {
         if (existingIds.has(snippet.id)) {
-          skipped_count++;
+          skippedCount++;
         } else {
           existing.push(snippet);
-          imported_count++;
+          importedCount++;
         }
       }
 
@@ -162,20 +162,20 @@ export function importFromJson(file, constraints, onComplete) {
       if (onComplete) onComplete();
 
       const statusParts = [];
-      if (imported_count > 0) {
-        statusParts.push(`${imported_count} snippet${imported_count !== 1 ? 's' : ''}`);
+      if (importedCount > 0) {
+        statusParts.push(`${importedCount} snippet${importedCount !== 1 ? 's' : ''}`);
       }
-      if (skipped_count > 0) {
-        statusParts.push(`${skipped_count} duplicate${skipped_count !== 1 ? 's' : ''} skipped`);
+      if (skippedCount > 0) {
+        statusParts.push(`${skippedCount} duplicate${skippedCount !== 1 ? 's' : ''} skipped`);
       }
       if (settingsToImport) {
         statusParts.push('settings');
       }
 
-      if (imported_count > 0 || settingsToImport) {
+      if (importedCount > 0 || settingsToImport) {
         setStatus(`Imported ${statusParts.join(', ')}`);
       } else {
-        setStatus(`No new snippets imported (${skipped_count} duplicate${skipped_count !== 1 ? 's' : ''} skipped)`);
+        setStatus(`No new snippets imported (${skippedCount} duplicate${skippedCount !== 1 ? 's' : ''} skipped)`);
       }
     } catch (err) {
       setStatus('Error: Failed to parse JSON file');
