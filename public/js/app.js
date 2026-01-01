@@ -447,7 +447,13 @@ async function initializeApp() {
 
     // Show overlay and hide app for mobile phones
     if (isMobile) {
-      if (mobileOverlay) mobileOverlay.classList.remove('hidden');
+      if (mobileOverlay) {
+        mobileOverlay.classList.remove('hidden');
+        const screenshot = mobileOverlay.querySelector('#appScreenshot');
+        if (screenshot && !screenshot.src) {
+          screenshot.src = '/app-screenshot.png';
+        }
+      }
       if (appMain) appMain.classList.add('hidden');
     } else {
       if (mobileOverlay) mobileOverlay.classList.add('hidden');
