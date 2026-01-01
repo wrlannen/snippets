@@ -7,12 +7,12 @@ Try it now at [https://snippets.dev](https://snippets.dev)
 
 ## Table of Contents
 
-- ✨  [Features](#features)
-- 📖  [Usage](#usage)
-- 🛠️  [Tech Stack](#tech-stack)
-- 🚀  [Development Setup](#development-setup)
-- 🧪  [Testing & Language Detection](#testing--language-detection)
-- 📄  [License & Acknowledgments](#license--acknowledgments)
+- [Features](#features)
+- [Usage](#usage)
+- [Tech Stack](#tech-stack)
+- [Development Setup](#development-setup)
+- [Testing & Language Detection](#testing--language-detection)
+- [License & Acknowledgments](#license--acknowledgments)
 
 ## Features
 
