@@ -88,6 +88,20 @@ let renderDebounceTimer = null;
 
 // Status and footer helpers are provided by ui.js
 
+/**
+ * Updates the language selector dropdown to match the current editor mode.
+ * Handles plain text (null mode) correctly.
+ */
+function updateLanguageSelector() {
+  if (!els?.languageSelector || !activeId) return;
+  
+  const mode = getEditorMode();
+  // Handle null mode (plain text) - explicitly check for undefined
+  if (mode !== undefined) {
+    els.languageSelector.value = mode === null ? 'null' : mode;
+  }
+}
+
 // =============================================================================
 // Editor Functions
 // =============================================================================
@@ -135,10 +149,8 @@ function loadIntoEditor(id) {
   updateCharCount(found.content ?? "");
   renderSidebar();
   
-  // Update language selector UI if available
-  if (typeof window._updateLanguageSelector === 'function') {
-    window._updateLanguageSelector();
-  }
+  // Update language selector UI
+  updateLanguageSelector();
 }
 
 /**
@@ -198,9 +210,7 @@ function scheduleAutosave() {
       
       // Update editor mode and language selector
       setEditorMode(mode);
-      if (typeof window._updateLanguageSelector === 'function') {
-        window._updateLanguageSelector();
-      }
+      updateLanguageSelector();
       
       setStatus("Saved");
       renderSidebar();
@@ -227,9 +237,7 @@ function scheduleAutosave() {
     
     // Update editor mode and language selector if mode changed
     setEditorMode(mode);
-    if (typeof window._updateLanguageSelector === 'function') {
-      window._updateLanguageSelector();
-    }
+    updateLanguageSelector();
     
     setStatus("Autosaved");
     renderSidebar();
@@ -401,6 +409,7 @@ async function initializeApp() {
     empty: document.getElementById("empty"),
     status: document.getElementById("status"),
     charCount: document.getElementById("charCount"),
+    languageSelector: document.getElementById("languageSelector"),
   };
 
   // --- Responsive Overlay & Sidebar Auto-hide ---
@@ -859,23 +868,7 @@ async function initializeApp() {
 
   // --- Language Selector ---
 
-  const languageSelector = document.getElementById('languageSelector');
-
-  // Update language selector to match current editor mode
-  function updateLanguageSelector() {
-    if (!languageSelector || !activeId) return;
-    
-    const mode = getEditorMode();
-    // Handle null mode (plain text) - explicitly check for undefined
-    if (mode !== undefined) {
-      languageSelector.value = mode === null ? 'null' : mode;
-    }
-  }
-
-  // Make updateLanguageSelector available globally for loadIntoEditor
-  window._updateLanguageSelector = updateLanguageSelector;
-
-  languageSelector?.addEventListener('change', (e) => {
+  els.languageSelector?.addEventListener('change', (e) => {
     const newMode = e.target.value;
     if (!activeId) return;
 
