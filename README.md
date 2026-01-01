@@ -170,3 +170,11 @@ To add a new detection test:
 3. Run `npm run test:lang-fixtures` to verify detection
 
 See `tests/README.md` for more details on the test infrastructure.
+
+## License
+
+This project is licensed under the O'Saasy License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+Built with [CodeMirror](https://codemirror.net/) and the [Dracula theme](https://draculatheme.com/) (both MIT licensed).
