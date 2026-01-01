@@ -248,13 +248,13 @@ test.describe('Keyboard Shortcuts & Platform Detection', () => {
         // Check feedback section
         await expect(modal.getByText('Please raise any feedback')).toBeVisible();
         // Check privacy section
-        await expect(modal.getByText('Your snippets never leave your device')).toBeVisible();
+        await expect(modal.getByText('Snippets are stored locally')).toBeVisible();
     });
 
     test('About modal shows privacy information', async ({ page }) => {
         await page.locator('#aboutBtn').click();
 
         // Check privacy section
-        await expect(page.locator('text=Your snippets never leave your device')).toBeVisible();
+        await expect(page.locator('text=Snippets are stored locally')).toBeVisible();
     });
 });
