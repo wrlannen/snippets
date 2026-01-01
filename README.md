@@ -11,7 +11,7 @@ Try it now at [https://snippets.dev](https://snippets.dev)
 - **Command palette & keyboard-first**: ⌘+K / Ctrl+K to run any action. Minimal interactions and clear shortcuts.
 - **Syntax highlighting & language detection**: Automatic highlighting for JavaScript, Python, SQL, Shell, Markdown, YAML, HTML, CSS, XML, TypeScript, JSON, and Plain Text. Manual override available.
 - **Offline-first & local storage**: Works as a PWA with IndexedDB storage (50MB+ capacity). All data stays in your browser - no accounts, no servers, no internet required.
-- **Export/Import & autosave**: Edits are autosaved instantly. Backup or restore with a single click.
+- **Export/Import & autosave**: Edits are autosaved instantly. Backup or restore via the command palette.
 - **Fast search**: Instantly filter and find snippets in the sidebar.
 
 ## Syntax Highlighting
@@ -65,8 +65,8 @@ Open with ⌘+K / Ctrl+K. Commands include:
 
 ## Export & Import
 
-- **Export:** Click Export in the sidebar to download all snippets/settings as JSON (`snippets-YYYY-MM-DD.json`).
-- **Import:** Click Import to restore from a JSON file. Imports merge with existing snippets and restore settings.
+- **Export:** Use the command palette (⌘+K / Ctrl+K) to export all snippets/settings as JSON (`snippets-YYYY-MM-DD.json`).
+- **Import:** Use the command palette to import from a JSON file. Imports merge with existing snippets and restore settings.
 
 
 ## Tech Stack
