@@ -4,7 +4,15 @@ A minimal, keyboard-focused scratchpad for code snippets and notes. Everything i
 Try it now at [https://snippets.dev](https://snippets.dev)
 
 ![Main editor interface](assets/screenshot_1_3012.png)
-![Command palette](assets/screenshot_2_3012.png)
+
+## Table of Contents
+
+- ✨  [Features](#features)
+- 📖  [Usage](#usage)
+- 🛠️  [Tech Stack](#tech-stack)
+- 🚀  [Development Setup](#development-setup)
+- 🧪  [Testing & Language Detection](#testing--language-detection)
+- 📄  [License & Acknowledgments](#license--acknowledgments)
 
 ## Features
 
@@ -14,9 +22,8 @@ Try it now at [https://snippets.dev](https://snippets.dev)
 - **Export/Import & autosave**: Edits are autosaved instantly. Backup or restore via the command palette.
 - **Fast search**: Instantly filter and find snippets in the sidebar.
 
-## Syntax Highlighting
-
-Language detection is automatic, with manual selection available via the dropdown. Supported languages:
+### Supported Languages
+Language detection is automatic, with manual selection available via the dropdown:
 - JavaScript, TypeScript, JSON
 - Python
 - SQL
@@ -26,10 +33,10 @@ Language detection is automatic, with manual selection available via the dropdow
 - HTML, CSS, XML
 - Plain Text
 
-## Creating Snippets
+## Usage
 
+### Creating Snippets
 Typing in the editor autosaves changes. The first line is used as the sidebar title. Titles can be plain text or comment syntax, e.g:
-
 
 ```javascript
 // React useEffect Hook
@@ -48,8 +55,7 @@ import pandas as pd
 SELECT * FROM users WHERE active = true;
 ```
 
-## Command Palette
-
+### Command Palette
 Open with ⌘+K / Ctrl+K. Commands include:
 - New snippet
 - Open file from disk
@@ -62,9 +68,7 @@ Open with ⌘+K / Ctrl+K. Commands include:
 - Increase font size
 - Decrease font size
 
-
-## Export & Import
-
+### Export & Import
 - **Export:** Use the command palette (⌘+K / Ctrl+K) to export all snippets/settings as JSON (`snippets-YYYY-MM-DD.json`).
 - **Import:** Use the command palette to import from a JSON file. Imports merge with existing snippets and restore settings.
 
@@ -78,7 +82,9 @@ Open with ⌘+K / Ctrl+K. Commands include:
 - **Testing:** Playwright with comprehensive test coverage (78 tests)
 
 
-## Getting Started
+## Development Setup
+
+This section covers how to run the app locally for development and testing.
 
 1. **Install dependencies:**
    ```bash
@@ -93,7 +99,6 @@ Open with ⌘+K / Ctrl+K. Commands include:
    ```
 
 ### Tailwind CSS
-
 We use the Tailwind CLI to generate the stylesheet at `public/tailwind.output.css`.
 
 - One-time build:
@@ -106,7 +111,6 @@ We use the Tailwind CLI to generate the stylesheet at `public/tailwind.output.cs
    ```
 
 ### JavaScript Bundling
-
 Client-side code is bundled and minified using esbuild. Output files go to `public/dist/`:
 
 - `public/dist/app.js` (bundled from `public/js/app.js`)
@@ -119,16 +123,14 @@ npm run build
 
 Vendor scripts (CodeMirror and its addons) are concatenated into `public/dist/vendor.js` to keep network requests low.
 
-
-## Docker
-
+### Docker
 ```bash
 docker build -t snippets-app .
 docker run -p 3000:3000 snippets-app
 ```
 
 
-## Testing
+## Testing & Language Detection
 
 Run all Playwright tests:
 ```bash
@@ -139,42 +141,26 @@ Or run interactively:
 npm run test:ui
 ```
 
-## Language Detection Tests
+### Language Detection Tests
+The app uses pattern-based language detection to automatically highlight code snippets. Detection is tested against 200+ real-world examples across all supported languages.
 
-The app uses a robust, pattern-based language detection engine to automatically highlight code snippets. To ensure accuracy and avoid overfitting, the detection logic is tested against a large and diverse set of real-world code and text examples.
+#### How It Works
+- Detection logic in `public/js/detect-language.js`
+- Tests use fixtures in `tests/fixtures/language-detection/`
+- Each fixture file contains a code snippet named by expected language
 
-### Test Coverage
-- **Languages tested:** JavaScript, Python, SQL, Shell, Markdown, YAML, HTML, CSS, XML, TypeScript, JSON, and Plain Text
-- **Fixture-based tests:** 200+ test files (snippets) across all supported languages, including edge cases and ambiguous examples
-- **Generalization:** New random examples are regularly added to ensure detection logic is not overfit to a fixed set
-
-### How It Works
-- The detection logic lives in `public/js/detect-language.js` and is shared by both the app and the test runner
-- Each fixture file in `tests/fixtures/language-detection/` contains a code or text snippet and is named for its expected language
-- The test runner (`npm run test:lang-fixtures`) loads all fixtures, runs detection, and checks for correct classification
-- All detection tests must pass before merging changes
-
-### Running Detection Tests
-To run the language detection tests:
+#### Running Tests
 ```bash
 npm run test:lang-fixtures
 ```
 
-- The output will show the number of passed/failed tests and details for any failures
-- All Playwright UI tests must also pass (`npm test`)
+#### Adding New Fixtures
+1. Create file in `tests/fixtures/language-detection/<language>/`
+2. Add code snippet representing real-world usage
+3. Run tests to verify detection
 
-### Adding New Fixtures
-To add a new detection test:
-1. Create a new file in `tests/fixtures/language-detection/<language>/` (e.g. `python/my-example.txt`)
-2. Add a code or text snippet that represents a real-world or edge case for that language
-3. Run `npm run test:lang-fixtures` to verify detection
-
-See `tests/README.md` for more details on the test infrastructure.
-
-## License
+## License & Acknowledgments
 
 This project is licensed under the O'Saasy License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
 
 Built with [CodeMirror](https://codemirror.net/) and the [Dracula theme](https://draculatheme.com/) (both MIT licensed).
