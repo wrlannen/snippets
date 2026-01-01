@@ -266,7 +266,7 @@ function renderCommands() {
       <div 
         data-command-id="${escapeHtml(cmd.id)}"
         data-selected="${isSelected}"
-        class="px-3 py-3.5 cursor-pointer transition-colors ${
+        class="px-4 py-3.5 cursor-pointer transition-colors ${
           isSelected 
             ? 'bg-[#252525] text-gray-100 shadow-[inset_0_0_0_1px_#3a3a3a]' 
             : 'hover:bg-[#1f1f1f] text-gray-400 hover:text-gray-300'
