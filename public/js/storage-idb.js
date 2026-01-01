@@ -9,11 +9,32 @@
  *
  */
 
+// =============================================================================
+// Database Configuration
+// =============================================================================
+
 const DB_NAME = 'snippets-db';
 const DB_VERSION = 1;
 const SNIPPETS_STORE = 'snippets';
 const SETTINGS_STORE = 'settings';
 const METADATA_STORE = 'metadata';
+
+// =============================================================================
+// Default Settings Values
+// =============================================================================
+
+/** Default editor font size in pixels */
+const DEFAULT_FONT_SIZE = 15;
+
+/** Default editor font family stack */
+const DEFAULT_FONT_FAMILY = "'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace";
+
+/** Default sidebar width in pixels */
+const DEFAULT_SIDEBAR_WIDTH = 300;
+
+// =============================================================================
+// Database Instance Management
+// =============================================================================
 
 let dbInstance = null;
 let initPromise = null;
@@ -79,7 +100,7 @@ async function getDB() {
 
 /**
  * Migrate data from localStorage to IndexedDB (one-time operation)
- * @returns {Promise<{snippetsMigrated: number, settingsMigrated: boolean}>}
+ * @returns {Promise<{snippetsMigrated: number, settingsMigrated: boolean, alreadyMigrated?: boolean}>}
  */
 export async function migrateFromLocalStorage() {
   const db = await getDB();
@@ -102,11 +123,15 @@ export async function migrateFromLocalStorage() {
       const store = tx.objectStore(SNIPPETS_STORE);
 
       for (const snippet of snippets) {
-        await store.add(snippet);
+        store.add(snippet);
         snippetsMigrated++;
       }
 
-      await tx.complete;
+      // Wait for transaction to complete
+      await new Promise((resolve, reject) => {
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(tx.error);
+      });
 
       // Backup old data before clearing
       localStorage.setItem('snippets.v1.backup', oldSnippets);
@@ -278,13 +303,9 @@ export async function deleteSnippet(id) {
 
 /**
  * Load settings from IndexedDB
- * @returns {Promise<Object>}
+ * @returns {Promise<{fontSize: number, fontFamily: string, sidebarWidth: number}>}
  */
 export async function loadSettings() {
-  const DEFAULT_FONT_SIZE = 15;
-  const DEFAULT_FONT_FAMILY = "'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace";
-  const DEFAULT_SIDEBAR_WIDTH = 300;
-
   try {
     const db = await getDB();
     const tx = db.transaction(SETTINGS_STORE, 'readonly');

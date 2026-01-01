@@ -10,7 +10,7 @@
  * 
  */
 
-import { escapeHtml, formatDate } from './utils.js';
+import { escapeHtml } from './utils.js';
 
 let lastRenderIds = [];
 let delegatedListEl = null;

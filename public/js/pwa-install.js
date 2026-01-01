@@ -2,13 +2,14 @@
  * PWA Install Module
  * 
  * Handles Progressive Web App installation prompts and UI:
- * - Captures beforeinstallprompt event
- * - Shows install button for Chrome/Edge
- * - Displays Safari-specific install instructions
- * - Manages install button state and feedback
+ * - Captures beforeinstallprompt event for Chrome/Edge
+ * - Shows install button when native install is available
+ * - Displays Safari-specific "Add to Dock" instructions
+ * - Manages install button state and user feedback
  * 
  */
 
+/** @type {BeforeInstallPromptEvent|null} Deferred install prompt event */
 let deferredPwaPrompt = null;
 
 /**
@@ -38,6 +39,11 @@ export function initPwaInstall() {
   setupPwaInstallUI();
 }
 
+/**
+ * Sets up PWA install UI for different browser types.
+ * Shows native install button for Chromium or Safari instructions for macOS.
+ * @private
+ */
 function setupPwaInstallUI() {
   const installSection = document.getElementById('installSection');
   const pwaInstallable = document.getElementById('pwaInstallable');

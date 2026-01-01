@@ -15,7 +15,10 @@ import { loadSettings, saveSettings } from './storage.js';
 /**
  * Applies sidebar width to the sidebar element.
  * @param {number} width - Width in pixels
- * @param {Object} constraints - Min/max width constraints
+ * @param {Object} constraints - Width constraints
+ * @param {number} constraints.MIN_SIDEBAR_WIDTH - Minimum allowed width
+ * @param {number} constraints.MAX_SIDEBAR_WIDTH - Maximum allowed width
+ * @private
  */
 function applySidebarWidth(width, constraints) {
   const { MIN_SIDEBAR_WIDTH, MAX_SIDEBAR_WIDTH } = constraints;
@@ -27,9 +30,13 @@ function applySidebarWidth(width, constraints) {
 }
 
 /**
- * Initializes the sidebar resize functionality by detecting mouse position near the right edge.
- * Allows users to drag the sidebar edge to resize it.
- * Persists the width to settings.
+ * Initializes the sidebar resize functionality.
+ * Sets up mouse event listeners to detect when the user is near the sidebar edge
+ * and allow drag-to-resize behavior. Width is persisted to settings.
+ * 
+ * @param {Object} constraints - Width constraints
+ * @param {number} constraints.MIN_SIDEBAR_WIDTH - Minimum allowed width in pixels
+ * @param {number} constraints.MAX_SIDEBAR_WIDTH - Maximum allowed width in pixels
  */
 export function initializeSidebarResize(constraints) {
   const { MIN_SIDEBAR_WIDTH, MAX_SIDEBAR_WIDTH } = constraints;

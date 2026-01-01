@@ -404,21 +404,33 @@ async function initializeApp() {
   };
 
   // --- Responsive Overlay & Sidebar Auto-hide ---
+  // Breakpoints: 768px (mobile/tablet threshold), 900px (sidebar auto-hide threshold)
   const mobileOverlay = document.getElementById('mobileOverlay');
   const appMain = document.getElementById('appMain');
   const sidebar = document.getElementById('sidebar');
 
-  // Utility to detect mobile devices (phones only, allow tablets)
+  /**
+   * Detects mobile phone devices (excludes tablets).
+   * Uses user agent and viewport width to identify phones.
+   * @returns {boolean} True if running on a mobile phone
+   */
   function isMobileDevice() {
     return /Mobi|Android|iPhone|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent) &&
-           window.innerWidth < 768; // Only block phones, allow tablets
+           window.innerWidth < 768;
   }
 
-  // Utility to detect touch devices for UX adjustments
+  /**
+   * Detects touch-enabled devices for UX adjustments.
+   * @returns {boolean} True if device supports touch input
+   */
   function isTouchDevice() {
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   }
   
+  /**
+   * Handles responsive UI state based on viewport size and device type.
+   * Shows mobile overlay on phones, auto-hides sidebar on narrow screens.
+   */
   function handleResponsiveUI() {
     const width = window.innerWidth;
     const isMobile = isMobileDevice();
