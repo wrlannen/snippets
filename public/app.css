@@ -49,7 +49,7 @@ body.resizing-sidebar {
 .cm-s-dracula.CodeMirror {
   height: 100% !important;
   width: 100% !important;
-  font-family: 'Source Code Pro', monospace;
+  font-family: monospace;
   font-size: 15px;
   padding-top: 5px;
   background-color: #252526 !important;

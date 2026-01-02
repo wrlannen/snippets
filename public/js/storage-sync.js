@@ -14,7 +14,7 @@ import * as IDB from './storage-idb.js';
 let snippetsCache = [];
 let settingsCache = {
   fontSize: 15,
-  fontFamily: "'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace",
+  fontFamily: "monospace",
   sidebarWidth: 300
 };
 let isInitialized = false;
