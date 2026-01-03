@@ -27,7 +27,7 @@ const METADATA_STORE = 'metadata';
 const DEFAULT_FONT_SIZE = 15;
 
 /** Default editor font family stack */
-const DEFAULT_FONT_FAMILY = "'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace";
+const DEFAULT_FONT_FAMILY = "monospace";
 
 /** Default sidebar width in pixels */
 const DEFAULT_SIDEBAR_WIDTH = 300;

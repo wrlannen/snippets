@@ -141,5 +141,5 @@ export async function getStorageStats() {
 export const STORAGE_KEY = "snippets.v1";
 export const SETTINGS_KEY = "snippets.settings.v1";
 export const DEFAULT_FONT_SIZE = 15;
-export const DEFAULT_FONT_FAMILY = "'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace";
+export const DEFAULT_FONT_FAMILY = "monospace";
 export const DEFAULT_SIDEBAR_WIDTH = 300;

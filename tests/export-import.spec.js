@@ -108,7 +108,7 @@ test.describe('Export/Import Functionality', () => {
       ],
       settings: {
         fontSize: 18,
-        fontFamily: "'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace"
+        fontFamily: "monospace"
       }
     };
 
