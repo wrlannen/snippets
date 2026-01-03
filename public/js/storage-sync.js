@@ -92,7 +92,7 @@ export function loadSettings() {
     console.warn('Storage not initialized, returning defaults');
     return {
       fontSize: 15,
-      fontFamily: "'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace",
+      fontFamily: "monospace",
       sidebarWidth: 300
     };
   }
